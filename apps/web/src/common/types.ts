@@ -8,4 +8,5 @@ export type ChatMsg = {
   userName: string;
   userId: string;
   tstamp: string;
+  priv?: boolean;
 };

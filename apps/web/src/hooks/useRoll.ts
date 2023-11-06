@@ -18,7 +18,7 @@ export const useRoll = (user: TLUserPreferences) => {
   };
 
   const rollSingleToChat = useCallback(
-    (notation: string, comment?: string) => {
+    (notation: string, priv: boolean, comment?: string) => {
       const result = roller.roll(notation) as DiceRoll;
       return {
         id: v4(),
@@ -27,6 +27,7 @@ export const useRoll = (user: TLUserPreferences) => {
         roll: result,
         comment: comment,
         tstamp: prettyNow(),
+        priv: priv,
       } as ChatMsg;
     },
     [user, user.id, user.name]

@@ -1,4 +1,4 @@
-import { Editor, JsonArray } from "@tldraw/tldraw";
+import { Editor, JsonArray, JsonObject } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { ChatMsg, compressData64, decompressData64 } from "../common";
 
@@ -48,6 +48,29 @@ export const useChat = (editor: Editor | undefined) => {
     [editor]
   );
 
+  const updateChatMessage = useCallback(
+    (msg: ChatMsg) => {
+      if (!editor) return;
+      let list = editor.documentSettings.meta["chat"] as JsonArray;
+      if (!list) list = [];
+      else list = decompressData64(list);
+      if (!list) list = []; // bad compression ?
+      for (let i = 0; i < list.length; i++) {
+        const l = list[i] as unknown as ChatMsg;
+        if (l && l.id === msg.id) {
+          list[i] = { ...msg } as any;
+          break;
+        }
+      }
+      const newMeta = {
+        ...editor.documentSettings.meta,
+        chat: compressData64(list),
+      };
+      editor.updateDocumentSettings({ meta: newMeta });
+    },
+    [editor]
+  );
+
   const clearChat = useCallback(() => {
     if (!editor) return;
     const newMeta = {
@@ -57,5 +80,11 @@ export const useChat = (editor: Editor | undefined) => {
     editor.updateDocumentSettings({ meta: newMeta });
   }, [editor]);
 
-  return { chatList, addChatMessage, clearChat, chatListSize };
+  return {
+    chatList,
+    addChatMessage,
+    clearChat,
+    chatListSize,
+    updateChatMessage,
+  };
 };

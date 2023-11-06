@@ -13,8 +13,16 @@ import {
 import { MdDashboardCustomize } from "react-icons/md";
 import { VscRequestChanges } from "react-icons/vsc";
 import { RxReset } from "react-icons/rx";
-import { Button, getUserPreferences, useEditor } from "@tldraw/tldraw";
+import {
+  Button,
+  getUserPreferences,
+  useDialogs,
+  useEditor,
+  useToasts,
+} from "@tldraw/tldraw";
 import { useChat, useRoll } from "../../hooks";
+import React from "react";
+import { DiceDialog } from "./DiceDialog";
 
 export const DiceRollerSelector = () => {
   const MAX_DICE_POOL = 99;
@@ -27,6 +35,8 @@ export const DiceRollerSelector = () => {
   const { addChatMessage, clearChat } = useChat(editor);
   const user = getUserPreferences();
   const { rollSingleToChat } = useRoll(user);
+  const { addDialog } = useDialogs();
+  const { addToast } = useToasts();
 
   useEffect(() => {
     reset();
@@ -50,9 +60,48 @@ export const DiceRollerSelector = () => {
   };
 
   const roll = () => {
-    if (notation.trim() === "") return;
-    const msg = rollSingleToChat(notation);
+    if (notation.trim() === "") {
+      addToast({ title: "Error", description: "You need to select some dice" });
+      return;
+    }
+    if (mMod || mComment) {
+      addDialog({
+        component: ({ onClose }) => (
+          <DiceDialog
+            onClose={onClose}
+            notation={notation}
+            private={mPrivate}
+            hasComment={mComment}
+            hasMod={mMod}
+            isCustom={false}
+          />
+        ),
+        onClose: () => {
+          void null;
+        },
+      });
+      return;
+    }
+    const msg = rollSingleToChat(notation, mPrivate);
     addChatMessage(msg);
+  };
+
+  const rollCustom = () => {
+    addDialog({
+      component: ({ onClose }) => (
+        <DiceDialog
+          onClose={onClose}
+          notation={notation}
+          private={mPrivate}
+          hasComment={mComment}
+          hasMod={mMod}
+          isCustom={true}
+        />
+      ),
+      onClose: () => {
+        void null;
+      },
+    });
   };
 
   const reset = () => {
@@ -162,7 +211,7 @@ export const DiceRollerSelector = () => {
           className={flexRowStyle}
           style={{ gap: "0px", borderLeft: "solid 1px var(--color-text-3)" }}
         >
-          <Button title="Custom roll" onClick={roll}>
+          <Button title="Custom roll" onClick={rollCustom}>
             <MdDashboardCustomize />
           </Button>
           <Button title="Clear list" onClick={clear}>

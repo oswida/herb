@@ -25,6 +25,7 @@ export const diceRollerListStyle = style([
     flexDirection: "column",
     gap: "5px",
     overflow: "auto",
+    scrollbarWidth: "thin",
   },
 ]);
 
@@ -32,7 +33,7 @@ export const diceRollerItemStyle = style([
   flexColumnStyle,
   {
     borderRadius: "var(--radius-2)",
-    border: "solid 1px var(--color-panel)",
+    border: "solid 1px var(--color-text-3)",
     padding: "5px",
     fontFamily: "var(--tl-font-serif)",
     fontSize: "15px",
