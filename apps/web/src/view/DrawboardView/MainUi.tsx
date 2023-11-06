@@ -73,6 +73,7 @@ export const MainUI = track(() => {
       <div className={actionsRootStyle}>
         <div className={actionsPanelStyle}>
           <Button
+            type="tool"
             data-state={hu ? "selected" : undefined}
             onClick={() => setHu(!hu)}
             title="Draw tools"
@@ -80,11 +81,12 @@ export const MainUI = track(() => {
             <Icon icon="tool-pencil" />
           </Button>
           <Button
+            type="tool"
             data-state={dv ? "selected" : undefined}
             onClick={() => setDv(!dv)}
             title="Dice roller"
           >
-            <FaDiceD20 />
+            <FaDiceD20 size={16} />
           </Button>
           {/* <Button
             title="Charsheets"
@@ -102,6 +104,7 @@ export const MainUI = track(() => {
           </Button> */}
 
           <Button
+            type="tool"
             title="Settings"
             onClick={() => {
               addDialog({
@@ -112,7 +115,7 @@ export const MainUI = track(() => {
               });
             }}
           >
-            <FaCogs />
+            <FaCogs size={16} />
           </Button>
 
           <div className={actionsInfoStyle}>

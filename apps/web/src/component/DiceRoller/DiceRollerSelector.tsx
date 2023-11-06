@@ -147,7 +147,7 @@ export const DiceRollerSelector = () => {
             )}
           </div>
         ))}
-        <Button title="Reset pool" smallIcon onClick={reset}>
+        <Button type="icon" title="Reset pool" onClick={reset}>
           <RxReset />
         </Button>
       </div>
@@ -164,25 +164,28 @@ export const DiceRollerSelector = () => {
           style={{ gap: "0px", borderRight: "solid 1px var(--color-text-3)" }}
         >
           <Button
+            type="tool"
             title="Private roll"
             data-state={mPrivate ? "selected" : undefined}
             onClick={() => setMPrivate(!mPrivate)}
           >
-            <FaUserSecret />
+            <FaUserSecret size={16} />
           </Button>
           <Button
+            type="tool"
             title="With modifier"
             data-state={mMod ? "selected" : undefined}
             onClick={() => setMMod(!mMod)}
           >
-            <VscRequestChanges />
+            <VscRequestChanges size={16} />
           </Button>
           <Button
+            type="tool"
             title="With comment"
             data-state={mComment ? "selected" : undefined}
             onClick={() => setMComment(!mComment)}
           >
-            <FaCommentDots />
+            <FaCommentDots size={16} />
           </Button>
         </div>
         <div
@@ -203,19 +206,19 @@ export const DiceRollerSelector = () => {
           >
             {notation}
           </div>
-          <Button title="Roll" onClick={roll}>
-            <FaDiceD20 />
+          <Button title="Roll" type="tool" onClick={roll}>
+            <FaDiceD20 size={16} />
           </Button>
         </div>
         <div
           className={flexRowStyle}
           style={{ gap: "0px", borderLeft: "solid 1px var(--color-text-3)" }}
         >
-          <Button title="Custom roll" onClick={rollCustom}>
-            <MdDashboardCustomize />
+          <Button title="Custom roll" onClick={rollCustom} type="tool">
+            <MdDashboardCustomize size={16} />
           </Button>
-          <Button title="Clear list" onClick={clear}>
-            <FaTrashAlt />
+          <Button title="Clear list" onClick={clear} type="tool">
+            <FaTrashAlt size={16} />
           </Button>
         </div>
       </div>

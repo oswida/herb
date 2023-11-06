@@ -49,6 +49,7 @@ export const DEFAULT_STORE = {
       stylesForNextShape: {},
       brush: null,
       scribble: null,
+      scribbles: [],
       cursor: {
         type: "default",
         rotation: 0,
