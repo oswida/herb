@@ -129,6 +129,7 @@ export const DEFAULT_STORE = {
           embed: 4,
           image: 2,
           video: 1,
+          pdf: 1,
         },
       },
       instance_presence: {

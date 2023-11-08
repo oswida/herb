@@ -10,3 +10,5 @@ export type ChatMsg = {
   tstamp: string;
   priv?: boolean;
 };
+
+export const UPLOAD_URL = "http://localhost:5001/api/upload";

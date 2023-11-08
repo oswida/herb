@@ -12,12 +12,10 @@ import { NoteViewer } from "../../component/NoteViewer";
 import { useParams } from "react-router-dom";
 import { drawBoardViewRoottyle } from "./style.css";
 import * as React from "react";
-import { useAssetHandler } from "../../hooks";
+import { registerPdfContent, useAssetHandler } from "../../hooks";
+import { PdfShapeUtil } from "../../shapes/PdfContent";
 
 const HOST_URL = "ws://localhost:5001";
-// import.meta.env.MODE === "development"
-//   ? "ws://localhost:1234"
-//   : "wss://demos.yjs.dev";
 
 export const DrawboardView = track(() => {
   const [visible, setVisible] = useAtom(uiVisible);
@@ -37,6 +35,7 @@ export const DrawboardView = track(() => {
   const store = useYjsStore({
     roomId: params.roomId,
     hostUrl: HOST_URL,
+    shapeUtils: [PdfShapeUtil],
   });
 
   useEffect(() => {
@@ -54,11 +53,18 @@ export const DrawboardView = track(() => {
     editor.updateInstanceState({ isDebugMode: false, isChatting: true });
     editor.user.updateUserPreferences({ locale: "en" });
     registerHostedImages(editor);
+    registerPdfContent(editor);
   }, []);
 
   return (
     <div className={drawBoardViewRoottyle}>
-      <Tldraw autoFocus store={store} inferDarkMode onMount={mount}>
+      <Tldraw
+        autoFocus
+        store={store}
+        inferDarkMode
+        onMount={mount}
+        shapeUtils={[PdfShapeUtil]}
+      >
         <ContextMenu>
           <Canvas />
         </ContextMenu>

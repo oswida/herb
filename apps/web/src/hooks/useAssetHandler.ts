@@ -8,8 +8,7 @@ import {
   isGifAnimated,
   uniqueId,
 } from "@tldraw/tldraw";
-
-const UPLOAD_URL = "http://localhost:5001/api/upload";
+import { UPLOAD_URL } from "../common";
 
 export const useAssetHandler = () => {
   const registerHostedImages = (editor: Editor) => {
