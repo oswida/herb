@@ -13,9 +13,17 @@ import { useParams } from "react-router-dom";
 import { drawBoardViewRoottyle } from "./style.css";
 import * as React from "react";
 import { registerPdfContent, useAssetHandler } from "../../hooks";
-import { PdfShapeUtil } from "../../shapes/PdfContent";
+import { PdfShapeUtil } from "../../shapes/PdfShape";
+import {
+  RpgClockShapeTool,
+  RpgClockShapeUtil,
+} from "../../shapes/RpgClockShape";
+import { uiOverrides } from "./ui-overrides";
 
 const HOST_URL = "ws://localhost:5001";
+
+const customShapeUtils = [PdfShapeUtil, RpgClockShapeUtil];
+const customTools = [RpgClockShapeTool];
 
 export const DrawboardView = track(() => {
   const [visible, setVisible] = useAtom(uiVisible);
@@ -35,7 +43,7 @@ export const DrawboardView = track(() => {
   const store = useYjsStore({
     roomId: params.roomId,
     hostUrl: HOST_URL,
-    shapeUtils: [PdfShapeUtil],
+    shapeUtils: customShapeUtils,
   });
 
   useEffect(() => {
@@ -63,7 +71,9 @@ export const DrawboardView = track(() => {
         store={store}
         inferDarkMode
         onMount={mount}
-        shapeUtils={[PdfShapeUtil]}
+        tools={customTools}
+        shapeUtils={customShapeUtils}
+        overrides={uiOverrides}
       >
         <ContextMenu>
           <Canvas />

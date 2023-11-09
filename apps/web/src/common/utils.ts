@@ -20,7 +20,6 @@ export const hideStylePanel = (hide: boolean) => {
 };
 
 export const hideRestUi = (hide: boolean) => {
-  console.log("hideRestUi", hide);
   const zones = ["tlui-navigation-zone", "tlui-menu-zone", "tlui-toolbar"];
   zones.forEach((z) => {
     const el = document.getElementsByClassName(z);

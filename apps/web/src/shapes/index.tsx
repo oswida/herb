@@ -1,1 +1,1 @@
-export * from "./PdfContent";
+export * from "./PdfShape";

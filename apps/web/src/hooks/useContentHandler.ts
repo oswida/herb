@@ -1,5 +1,5 @@
 import { Editor, TLEmbedShape, uniqueId } from "@tldraw/tldraw";
-import { IPdfShape } from "../shapes/PdfContent";
+import { IPdfShape } from "../shapes/PdfShape";
 import { UPLOAD_URL } from "../common";
 
 export const registerPdfContent = (editor: Editor) => {
