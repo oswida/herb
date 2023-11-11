@@ -2,38 +2,33 @@ import {
   BaseBoxShapeTool,
   BaseBoxShapeUtil,
   Button,
-  DefaultColorStyle,
-  HTMLContainer,
   Rectangle2d,
   ShapeProps,
-  ShapeUtil,
   T,
-  TLBaseBoxShape,
   TLBaseShape,
   TLClickEvent,
-  TLDefaultColorStyle,
   TLOnResizeHandler,
   TLShapePartial,
   TLShapeUtilFlag,
   getDefaultColorTheme,
   resizeBox,
-  toDomPrecision,
+  useDialogs,
   useIsEditing,
-  useValue,
+  useKeyboardShortcuts,
 } from "@tldraw/tldraw";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { PieChart } from "react-minimal-pie-chart";
-import { flexColumnStyle, flexRowStyle } from "../common";
-import { FaMinus, FaMinusCircle, FaPlusCircle, FaTools } from "react-icons/fa";
+import { FaMinusCircle, FaPlusCircle, FaTools } from "react-icons/fa";
+import { RpgClockSettings } from "./RpgClockSettings";
 
 export type IRpgClockShape = TLBaseShape<
   "rpg-clock",
   {
     w: number;
     h: number;
-    color: TLDefaultColorStyle;
     parts: number;
     count: number;
+    label: string;
   }
 >;
 
@@ -48,9 +43,9 @@ export class RpgClockShapeTool extends BaseBoxShapeTool {
 export const rpgClockShapeProps: ShapeProps<IRpgClockShape> = {
   w: T.number,
   h: T.number,
-  color: DefaultColorStyle,
   parts: T.number,
   count: T.number,
+  label: T.string,
 };
 
 export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
@@ -65,9 +60,9 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
     return {
       w: 300,
       h: 300,
-      color: "black",
       parts: 6,
       count: 1,
+      label: "clock",
     };
   }
 
@@ -86,11 +81,12 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
 
     const getData = useCallback(() => {
       const result = [];
+
       for (let i = 0; i < shape.props.parts; i++) {
         result.push({
           title: `p${i}`,
           value: 100 / shape.props.parts,
-          color: i < shape.props.count ? theme.text : theme.solid,
+          color: i < shape.props.count ? theme.text : `${theme.text}22`,
         });
       }
       return result;
@@ -115,16 +111,26 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
 
     const isEditing = useIsEditing(shape.id);
 
+    const { addDialog } = useDialogs();
+
     return (
-      <div id={shape.id}>
+      <div id={shape.id} style={{ padding: "10px" }}>
         <PieChart
           data={getData()}
           background={theme.background}
-          paddingAngle={1}
           startAngle={-90}
-          onClick={(e) => console.log(e)}
+          segmentsShift={0.3}
+          radius={48}
         ></PieChart>
-
+        <div
+          style={{
+            position: "absolute",
+            left: 5,
+            top: 5,
+          }}
+        >
+          {shape.props.label}
+        </div>
         {isEditing && (
           <>
             <Button
@@ -155,6 +161,16 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
                 position: "absolute",
                 right: 0,
                 top: 0,
+              }}
+              onPointerDown={() => {
+                addDialog({
+                  component: ({ onClose }) => (
+                    <RpgClockSettings onClose={onClose} shape={shape} />
+                  ),
+                  onClose: () => {
+                    void null;
+                  },
+                });
               }}
             >
               <FaTools />

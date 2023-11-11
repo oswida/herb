@@ -51,7 +51,9 @@ export const Settings = (props: TLUiDialogProps) => {
       </Dialog.Body>
       <Dialog.Footer>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button onClick={update}>Save</Button>
+          <Button onClick={update} type="normal">
+            Save
+          </Button>
         </div>
       </Dialog.Footer>
     </>

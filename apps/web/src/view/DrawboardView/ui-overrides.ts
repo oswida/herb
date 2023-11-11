@@ -6,7 +6,7 @@ export const uiOverrides: TLUiOverrides = {
   tools(editor, tools) {
     tools.rpgClock = {
       id: "rpg-clock",
-      icon: "code",
+      icon: "question-mark-circle",
       label: "RPG clock" as any,
       readonlyOk: false,
       onSelect: () => {
