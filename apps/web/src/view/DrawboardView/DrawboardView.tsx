@@ -17,14 +17,14 @@ import { NoteViewer } from "../../component/NoteViewer";
 import { useParams } from "react-router-dom";
 import { drawBoardViewRoottyle } from "./style.css";
 import * as React from "react";
-import { registerPdfContent, useAssetHandler } from "../../hooks";
+import { useAssetHandler } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
   RpgClockShapeUtil,
 } from "../../shapes/RpgClockShape";
-import { uiOverrides } from "./ui-overrides";
 import { Presence } from "../../common";
+import { useUiOverride } from "../../hooks/useUiOverride";
 
 const HOST_URL = "ws://localhost:5001";
 
@@ -38,6 +38,8 @@ export const DrawboardView = track(() => {
   const { registerHostedImages } = useAssetHandler();
   const [room, setRoom] = useAtom(currentRoom);
   const [rp, setRp] = useAtom(roomPresence);
+  const [ed, setEd] = React.useState<Editor | undefined>(undefined);
+  const { uiOverrides } = useUiOverride(ed);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -86,7 +88,7 @@ export const DrawboardView = track(() => {
     editor.updateInstanceState({ isDebugMode: false, isChatting: true });
     editor.user.updateUserPreferences({ locale: "en" });
     registerHostedImages(editor);
-    registerPdfContent(editor);
+    setEd(editor);
   }, []);
 
   return (
