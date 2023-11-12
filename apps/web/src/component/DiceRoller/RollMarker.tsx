@@ -3,7 +3,7 @@ import React from "react";
 import { diceMarkerStyle } from "./style.css";
 import { BsDice5Fill } from "react-icons/bs";
 import { D10Icon, D12Icon, D20Icon, D4Icon, D6Icon, D8Icon } from "../Icons";
-import { PiPercentFill } from "react-icons/pi";
+import { PiPercentFill, PiPlusMinusFill } from "react-icons/pi";
 
 export const RollMarker = ({ id }: { id?: string }) => {
   const editor = useEditor();
@@ -15,6 +15,7 @@ export const RollMarker = ({ id }: { id?: string }) => {
     case "trophy_dark":
       return (
         <div
+          title="Trophy Light"
           className={diceMarkerStyle}
           style={{ backgroundColor: `${theme.text}22` }}
         >
@@ -24,10 +25,21 @@ export const RollMarker = ({ id }: { id?: string }) => {
     case "trophy_light":
       return (
         <div
+          title="Trophy Dark"
           className={diceMarkerStyle}
           style={{ backgroundColor: `${theme.text}22` }}
         >
           <BsDice5Fill fill="white" />
+        </div>
+      );
+    case "fate":
+      return (
+        <div
+          title="FATE"
+          className={diceMarkerStyle}
+          style={{ backgroundColor: `${theme.text}22` }}
+        >
+          <PiPlusMinusFill size="1.2rem" />
         </div>
       );
     case "d4":

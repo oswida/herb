@@ -32,6 +32,7 @@ export const useRoll = (
         } else {
           if (p.includes("Td")) m = "trophy_dark";
           if (p.includes("Tl")) m = "trophy_light";
+          if (p.includes("dF")) m = "fate";
           const i = p.indexOf("d");
           if (i && m === "") {
             m = p.substring(i);

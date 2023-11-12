@@ -163,7 +163,6 @@ export const DiceRollerSelector = () => {
   };
 
   const switchDice = () => {
-    reset();
     if (Object.keys(currentFace).includes(Object.keys(faces)[0]))
       setCurrentFace(faces2);
     else setCurrentFace(faces);
