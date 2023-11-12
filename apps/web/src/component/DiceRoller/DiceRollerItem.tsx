@@ -1,10 +1,11 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback } from "react";
 import { diceRollerItemStyle } from "./style.css";
-import { ChatMsg, flexRowStyle } from "../../common";
+import { ChatMsg, flexRowStyle, roomPresence } from "../../common";
 import { FaUserSecret } from "react-icons/fa";
-import { Button, useEditor } from "@tldraw/tldraw";
+import { Button, getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
 import { useChat } from "../../hooks";
 import { RollResultItem } from "./RollResultItem";
+import { useAtomValue } from "jotai";
 
 type Props = {
   item: ChatMsg;
@@ -13,16 +14,31 @@ type Props = {
 export const DiceRollerItem = (props: Props) => {
   const editor = useEditor();
   const { updateChatMessage } = useChat(editor);
+  const rp = useAtomValue(roomPresence);
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.isDarkMode,
+  });
 
   const reveal = () => {
     props.item.priv = false;
     updateChatMessage(props.item);
   };
 
+  const userColor = useCallback(
+    (id: string) => {
+      console.log(id, props.item, rp[id]);
+      if (!rp[id]) return theme.text;
+      return rp[id].color;
+    },
+    [props.item]
+  );
+
   return (
     <div className={diceRollerItemStyle} key={props.item.id}>
       <div className={flexRowStyle({ justify: "space" })}>
-        <div>{props.item.userName}</div>
+        <div style={{ color: `${userColor(props.item.userId)}` }}>
+          {props.item.userName}
+        </div>
         <div className={flexRowStyle({})} style={{ gap: "10px" }}>
           {props.item.tstamp}
           {props.item.priv && (

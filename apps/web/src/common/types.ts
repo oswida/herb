@@ -13,3 +13,9 @@ export type ChatMsg = {
 };
 
 export const UPLOAD_URL = "http://localhost:5001/api/upload";
+
+export type Presence = {
+  id: string;
+  name: string;
+  color: string;
+};

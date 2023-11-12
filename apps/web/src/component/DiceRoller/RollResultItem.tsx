@@ -1,15 +1,9 @@
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import React, { useMemo } from "react";
-import { ChatMsg, flexColumnStyle, flexRowStyle } from "../../common";
+import { flexColumnStyle, flexRowStyle } from "../../common";
 import { TbSum } from "react-icons/tb";
-import { BsDice5Fill, BsDice5 } from "react-icons/bs";
-import {
-  getDefaultColorTheme,
-  useDefaultHelpers,
-  useEditor,
-} from "@tldraw/tldraw";
-import { diceMarkerStyle, diceValueStyle } from "./style.css";
-import { D20Icon, D6Icon, D8Icon } from "../Icons";
+import { getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
+import { diceValueStyle } from "./style.css";
 import { RollMarker } from "./RollMarker";
 
 type Props = {

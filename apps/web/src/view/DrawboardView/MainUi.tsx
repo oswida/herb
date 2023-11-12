@@ -88,20 +88,6 @@ export const MainUI = track(() => {
           >
             <FaDiceD20 size={16} />
           </Button>
-          {/* <Button
-            title="Charsheets"
-            data-state={csv ? "selected" : undefined}
-            onClick={() => setCsv(!csv)}
-          >
-            <FaUserAlt />
-          </Button>
-          <Button
-            title="Notes"
-            data-state={nv ? "selected" : undefined}
-            onClick={() => setNv(!nv)}
-          >
-            <FaStickyNote />
-          </Button> */}
 
           <Button
             type="tool"

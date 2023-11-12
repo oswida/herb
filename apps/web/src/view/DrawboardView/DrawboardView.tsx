@@ -3,7 +3,12 @@ import { useYjsStore } from "../../hooks/useYjsStore";
 import "@tldraw/tldraw/tldraw.css";
 import { MainUI } from "./MainUi";
 import { DiceRollerPanel } from "../../component/DiceRoller";
-import { csheetVisible, currentRoom, uiVisible } from "../../common/state";
+import {
+  csheetVisible,
+  currentRoom,
+  roomPresence,
+  uiVisible,
+} from "../../common/state";
 import { useAtom, useAtomValue } from "jotai";
 import { CsViewer } from "../../component/CsViewer";
 import { useCallback, useEffect } from "react";
@@ -19,6 +24,7 @@ import {
   RpgClockShapeUtil,
 } from "../../shapes/RpgClockShape";
 import { uiOverrides } from "./ui-overrides";
+import { Presence } from "../../common";
 
 const HOST_URL = "ws://localhost:5001";
 
@@ -31,6 +37,7 @@ export const DrawboardView = track(() => {
   const params = useParams();
   const { registerHostedImages } = useAssetHandler();
   const [room, setRoom] = useAtom(currentRoom);
+  const [rp, setRp] = useAtom(roomPresence);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -40,7 +47,7 @@ export const DrawboardView = track(() => {
     setRoom(params.roomId);
   }, [params]);
 
-  const store = useYjsStore({
+  const { storeWithStatus: store, room: roomConnector } = useYjsStore({
     roomId: params.roomId,
     hostUrl: HOST_URL,
     shapeUtils: customShapeUtils,
@@ -56,6 +63,25 @@ export const DrawboardView = track(() => {
     hideStylePanel(true);
     hideRestUi(true);
   }, [visible]);
+
+  useEffect(() => {
+    const states = roomConnector.awareness.getStates();
+    if (!states) return;
+    const ps: Record<string, Presence> = {};
+    for (let [k, v] of states) {
+      const obj = states.get(k);
+      console.log(obj);
+      if (obj && obj["presence"] !== undefined) {
+        const p: Presence = {
+          id: obj.presence.userId,
+          name: obj.presence.userName,
+          color: obj.presence.color,
+        };
+        ps[p.id] = p;
+      }
+    }
+    setRp(ps);
+  }, [roomConnector.awareness]);
 
   const mount = useCallback((editor: Editor) => {
     editor.updateInstanceState({ isDebugMode: false, isChatting: true });

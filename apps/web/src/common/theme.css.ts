@@ -79,3 +79,7 @@ globalStyle("html", {
 globalStyle(".hidden_tlui", {
   display: "none",
 });
+
+globalStyle("[data-color-mode*='dark'] .w-color-compact", {
+  "--compact-background-color": "#323232 !important",
+});

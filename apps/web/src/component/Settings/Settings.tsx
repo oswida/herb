@@ -5,14 +5,16 @@ import {
   TLUiDialogProps,
   getUserPreferences,
   setUserPreferences,
+  useEditor,
 } from "@tldraw/tldraw";
 import { flexColumnStyle } from "../../common";
 import React, { useState } from "react";
+import Compact from "@uiw/react-color-compact";
 
 export const Settings = (props: TLUiDialogProps) => {
   const user = getUserPreferences();
   const [username, setUsername] = useState(user.name);
-  const [color, setColor] = useState(user.color);
+  const [color, setColor] = useState(user.color ? user.color : "#000000");
 
   const update = () => {
     props.onClose();
@@ -27,25 +29,21 @@ export const Settings = (props: TLUiDialogProps) => {
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})}>
+          <div>Name</div>
           <Input
             className="tlui-embed-dialog__input"
             placeholder=""
-            label="people-menu.change-name"
             defaultValue={user.name !== null ? user.name : ""}
             autofocus
             onValueChange={(value) => {
               setUsername(value);
             }}
           />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder=""
-            label="people-menu.change-color"
-            defaultValue={user.color !== null ? user.color : ""}
-            autofocus
-            onValueChange={(value) => {
-              setColor(value);
-            }}
+          <Compact
+            style={{ alignSelf: "center" }}
+            data-color-mode="dark"
+            color={color}
+            onChange={(color) => setColor(color.hex)}
           />
         </div>
       </Dialog.Body>

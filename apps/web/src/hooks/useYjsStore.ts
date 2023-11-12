@@ -18,14 +18,11 @@ import { YKeyValue } from "y-utility/y-keyvalue";
 // @ts-ignore
 import { WebsocketProvider } from "y-websocket";
 import * as Y from "yjs";
-import { DEFAULT_STORE } from "../view/DrawboardView/default_store";
+import { DEFAULT_STORE } from "./default_store";
 
 export function useYjsStore({
   roomId = "example",
   hostUrl = "ws://localhost:5001",
-  // import.meta.env.MODE === "development"
-  //   ? "ws://localhost:5001"
-  //   : "wss://demos.yjs.dev",
   shapeUtils = [],
 }: Partial<{
   hostUrl: string;
@@ -63,9 +60,6 @@ export function useYjsStore({
     const unsubs: (() => void)[] = [];
 
     function handleSync() {
-      // 1.
-      // Connect store to yjs store and vis versa, for both the document and awareness
-
       /* -------------------- Document -------------------- */
 
       // Sync store changes to the yjs doc
@@ -273,5 +267,5 @@ export function useYjsStore({
     };
   }, [room, yDoc, store, yStore]);
 
-  return storeWithStatus;
+  return {storeWithStatus, room};
 }
