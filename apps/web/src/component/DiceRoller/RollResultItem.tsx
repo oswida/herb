@@ -81,16 +81,17 @@ export const RollResultItem = (props: Props) => {
         style={{ gap: "15px", flexWrap: "wrap" }}
       >
         {itemRolls.map((it, idx) => (
-          <div className={flexRowStyle({})}>
+          <div className={flexRowStyle({})} key={`p${idx}`}>
             <RollMarker id={props.markers ? props.markers[idx] : ""} />
             <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
-              {it.map((r) => (
+              {it.map((r, ridx) => (
                 <div
                   className={diceValueStyle}
                   style={{
                     backgroundColor: `${theme.text}22`,
                     border: `dotted 1px var(--color-text-3)`,
                   }}
+                  key={`r${idx}-${ridx}`}
                 >
                   {r.value}
                 </div>

@@ -70,7 +70,6 @@ export const DrawboardView = track(() => {
     const ps: Record<string, Presence> = {};
     for (let [k, v] of states) {
       const obj = states.get(k);
-      console.log(obj);
       if (obj && obj["presence"] !== undefined) {
         const p: Presence = {
           id: obj.presence.userId,
@@ -81,7 +80,7 @@ export const DrawboardView = track(() => {
       }
     }
     setRp(ps);
-  }, [roomConnector.awareness, roomConnector]);
+  }, [roomConnector.awareness, roomConnector.synced, roomConnector]);
 
   const mount = useCallback((editor: Editor) => {
     editor.updateInstanceState({ isDebugMode: false, isChatting: true });

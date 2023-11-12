@@ -26,7 +26,6 @@ export const DiceRollerItem = (props: Props) => {
 
   const userColor = useCallback(
     (id: string) => {
-      console.log(id, props.item, rp[id]);
       if (!rp[id]) return theme.text;
       return rp[id].color;
     },

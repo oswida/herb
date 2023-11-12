@@ -29,7 +29,6 @@ export const RpgClockSettings = (props: Props) => {
         label: label,
       },
     };
-    console.log(shapeUpdate);
     editor.updateShapes([shapeUpdate]);
     props.onClose();
   };
