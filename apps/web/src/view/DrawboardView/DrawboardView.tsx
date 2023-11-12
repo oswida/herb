@@ -81,7 +81,7 @@ export const DrawboardView = track(() => {
       }
     }
     setRp(ps);
-  }, [roomConnector.awareness]);
+  }, [roomConnector.awareness, roomConnector]);
 
   const mount = useCallback((editor: Editor) => {
     editor.updateInstanceState({ isDebugMode: false, isChatting: true });

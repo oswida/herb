@@ -26,6 +26,7 @@
     "react-icons": "^4.11.0",
     "react-minimal-pie-chart": "^8.4.0",
     "react-router-dom": "^6.18.0",
+    "react-use-clipboard": "^1.0.9",
     "sort-by": "^1.2.0",
     "uuid": "^9.0.1",
     "y-utility": "^0.1.3",
