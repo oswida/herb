@@ -45,9 +45,7 @@ export const DiceRollerPanel = track(() => {
             ))}
             <div ref={ref}></div>
           </div>
-          <div>
-            <DiceRollerSelector />
-          </div>
+          <DiceRollerSelector />
         </div>
       )}
     </>

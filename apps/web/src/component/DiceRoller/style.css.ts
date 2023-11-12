@@ -1,5 +1,6 @@
 import { style } from "@vanilla-extract/css";
 import { appPanelStyle, flexColumnStyle } from "../../common";
+import { recipe } from "@vanilla-extract/recipes";
 
 export const diceRollerRootStyle = style([
   appPanelStyle,
@@ -7,7 +8,7 @@ export const diceRollerRootStyle = style([
     position: "absolute",
     left: "10px",
     top: "50px",
-    width: "370px",
+    width: "350px",
     padding: "5px",
     height: "calc(100vh - 110px)",
     flexDirection: "column",
@@ -30,7 +31,7 @@ export const diceRollerListStyle = style([
 ]);
 
 export const diceRollerItemStyle = style([
-  flexColumnStyle,
+  flexColumnStyle({}),
   {
     borderRadius: "var(--radius-2)",
     border: "solid 1px var(--color-text-3)",
@@ -43,7 +44,7 @@ export const diceRollerItemStyle = style([
 export const diceRollerSelectorStyle = style([
   {
     border: "1px solid var(--color-text)",
-    borderRadius: "40%",
+    borderRadius: "50%",
     fontSize: "17px",
     fontWeight: "normal",
     padding: "3px",
@@ -78,3 +79,20 @@ export const diceRollerSelectorValueStyle = style([
     fontFamily: "var(--tl-font-sans)",
   },
 ]);
+
+export const diceValueStyle = style({
+  minWidth: "2rem",
+  padding: "3px",
+  borderRadius: "5px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+export const diceMarkerStyle = style({
+  padding: "5px",
+  borderRadius: "50%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});

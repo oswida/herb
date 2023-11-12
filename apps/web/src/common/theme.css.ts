@@ -1,4 +1,5 @@
 import { globalStyle, style } from "@vanilla-extract/css";
+import { recipe } from "@vanilla-extract/recipes";
 
 export const appPanelStyle = style({
   boxShadow: "var(--shadow-2)",
@@ -24,16 +25,40 @@ export const hintStyle = style({
   fontFamily: "var(--tl-font-sans)",
 });
 
-export const flexColumnStyle = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "5px",
+export const flexColumnStyle = recipe({
+  base: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  },
 });
 
-export const flexRowStyle = style({
-  display: "flex",
-  flexDirection: "row",
-  gap: "5px",
+export const flexRowStyle = recipe({
+  base: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "5px",
+    alignItems: "center",
+  },
+  variants: {
+    justify: {
+      center: {
+        justifyContent: "center",
+      },
+      space: {
+        justifyContent: "space-between",
+      },
+      end: {
+        justifyContent: "end",
+      },
+      start: {
+        justifyContent: "start",
+      },
+    },
+  },
+  defaultVariants: {
+    justify: "start",
+  },
 });
 
 globalStyle("html, body", {

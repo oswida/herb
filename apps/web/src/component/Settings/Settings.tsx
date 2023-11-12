@@ -26,7 +26,7 @@ export const Settings = (props: TLUiDialogProps) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexColumnStyle}>
+        <div className={flexColumnStyle({})}>
           <Input
             className="tlui-embed-dialog__input"
             placeholder=""

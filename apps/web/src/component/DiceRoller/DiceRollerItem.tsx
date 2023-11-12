@@ -4,6 +4,7 @@ import { ChatMsg, flexRowStyle } from "../../common";
 import { FaUserSecret } from "react-icons/fa";
 import { Button, useEditor } from "@tldraw/tldraw";
 import { useChat } from "../../hooks";
+import { RollResultItem } from "./RollResultItem";
 
 type Props = {
   item: ChatMsg;
@@ -20,15 +21,12 @@ export const DiceRollerItem = (props: Props) => {
 
   return (
     <div className={diceRollerItemStyle} key={props.item.id}>
-      <div className={flexRowStyle} style={{ justifyContent: "space-between" }}>
+      <div className={flexRowStyle({ justify: "space" })}>
         <div>{props.item.userName}</div>
-        <div
-          className={flexRowStyle}
-          style={{ gap: "10px", alignItems: "center" }}
-        >
+        <div className={flexRowStyle({})} style={{ gap: "10px" }}>
           {props.item.tstamp}
           {props.item.priv && (
-            <div className={flexRowStyle} style={{ justifyContent: "end" }}>
+            <div className={flexRowStyle({ justify: "end" })}>
               <FaUserSecret
                 fill="var(--color-accent)"
                 title="Reveal private roll"
@@ -39,14 +37,11 @@ export const DiceRollerItem = (props: Props) => {
           )}
         </div>
       </div>
-      <span style={{ color: "var(--color-primary)" }}>
-        {props.item?.roll?.output.split(":")[0]}
-      </span>
-      {props.item?.roll?.output.split(":")[1]}
+      <RollResultItem roll={props.item.roll} markers={props.item.rollMarkers} />
+
       <div
-        className={flexRowStyle}
+        className={flexRowStyle({ justify: "space" })}
         style={{
-          justifyContent: "space-between",
           alignItems: "end",
           borderTop: "solid 1px var(--color-text-3)",
           display: !props.item.comment ? "none" : undefined,

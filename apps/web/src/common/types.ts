@@ -3,6 +3,7 @@ import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 export type ChatMsg = {
   id: string;
   roll?: DiceRoll;
+  rollMarkers?: string[];
   text?: string;
   comment?: string;
   userName: string;

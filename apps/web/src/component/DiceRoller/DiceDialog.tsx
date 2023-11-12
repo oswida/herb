@@ -3,6 +3,7 @@ import {
   Dialog,
   Input,
   TLUiDialogProps,
+  getDefaultColorTheme,
   getUserPreferences,
   useEditor,
 } from "@tldraw/tldraw";
@@ -25,7 +26,10 @@ export const DiceDialog = (props: Props) => {
   const [comment, setComment] = useState("");
   const editor = useEditor();
   const user = getUserPreferences();
-  const { rollSingleToChat } = useRoll(user);
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.isDarkMode,
+  });
+  const { rollSingleToChat } = useRoll(user, theme);
   const { addChatMessage } = useChat(editor);
 
   const roll = () => {
@@ -46,7 +50,7 @@ export const DiceDialog = (props: Props) => {
     <>
       <Dialog.Header>
         <Dialog.Title>
-          <div className={flexRowStyle}>
+          <div className={flexRowStyle({})}>
             {props.private && <FaUserSecret fill="var(--color-accent)" />}
             Roll {props.notation}
           </div>
@@ -54,7 +58,7 @@ export const DiceDialog = (props: Props) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexColumnStyle}>
+        <div className={flexColumnStyle({})}>
           {props.isCustom && (
             <Input
               className="tlui-embed-dialog__input"
@@ -89,7 +93,9 @@ export const DiceDialog = (props: Props) => {
       </Dialog.Body>
       <Dialog.Footer>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button onClick={roll}>Roll</Button>
+          <Button onClick={roll} type="normal">
+            Roll
+          </Button>
         </div>
       </Dialog.Footer>
     </>

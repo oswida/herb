@@ -47,7 +47,7 @@ export const RpgClockSettings = (props: Props) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexColumnStyle}>
+        <div className={flexColumnStyle({})}>
           <div>Size</div>
           <Input
             className="tlui-embed-dialog__input"

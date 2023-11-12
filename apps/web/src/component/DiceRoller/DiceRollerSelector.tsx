@@ -6,7 +6,13 @@ import {
 import { flexColumnStyle, flexRowStyle } from "../../common";
 import {
   FaCommentDots,
+  FaDice,
   FaDiceD20,
+  FaDiceD6,
+  FaDiceFour,
+  FaDiceThree,
+  FaReply,
+  FaSwift,
   FaTrashAlt,
   FaUserSecret,
 } from "react-icons/fa";
@@ -15,6 +21,7 @@ import { VscRequestChanges } from "react-icons/vsc";
 import { RxReset } from "react-icons/rx";
 import {
   Button,
+  getDefaultColorTheme,
   getUserPreferences,
   useDialogs,
   useEditor,
@@ -23,19 +30,38 @@ import {
 import { useChat, useRoll } from "../../hooks";
 import React from "react";
 import { DiceDialog } from "./DiceDialog";
+import { Confirmation } from "../Confirmation";
 
 export const DiceRollerSelector = () => {
   const MAX_DICE_POOL = 99;
   const [selectedDice, setSelectedDice] = useState<Record<string, number>>({});
-  const faces = ["4", "6", "8", "10", "12", "20", "100"];
+  const faces = {
+    "4": "d4",
+    "6": "d6",
+    "8": "d8",
+    "10": "d10",
+    "12": "d12",
+    "20": "d20",
+    "100": "d100",
+  };
+  const faces2 = {
+    F: "Fate",
+    Td: "Trophy dark",
+    Tl: "Trophy light",
+    "2": "d2",
+  };
+  const [currentFace, setCurrentFace] = useState<Record<string, string>>(faces);
   const [mPrivate, setMPrivate] = useState(false);
   const [mMod, setMMod] = useState(false);
   const [mComment, setMComment] = useState(false);
   const editor = useEditor();
   const { addChatMessage, clearChat } = useChat(editor);
   const user = getUserPreferences();
-  const { rollSingleToChat } = useRoll(user);
-  const { addDialog } = useDialogs();
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.isDarkMode,
+  });
+  const { rollSingleToChat } = useRoll(user, theme);
+  const { addDialog, dialogs } = useDialogs();
   const { addToast } = useToasts();
 
   useEffect(() => {
@@ -99,14 +125,14 @@ export const DiceRollerSelector = () => {
         />
       ),
       onClose: () => {
-        void null;
+        editor.setCurrentTool("select");
       },
     });
   };
 
   const reset = () => {
     const rr: Record<string, number> = {};
-    faces.forEach((it) => (rr[it] = 0));
+    Object.keys(currentFace).forEach((it) => (rr[it] = 0));
     setSelectedDice(rr);
   };
 
@@ -121,48 +147,98 @@ export const DiceRollerSelector = () => {
   }, [selectedDice]);
 
   const clear = () => {
-    clearChat();
+    addDialog({
+      component: ({ onClose }) => (
+        <Confirmation
+          onClose={onClose}
+          title="Clear chat"
+          message="Clear dice chat?"
+          callback={clearChat}
+        />
+      ),
+      onClose: () => {
+        editor.setCurrentTool("select");
+      },
+    });
+  };
+
+  const switchDice = () => {
+    reset();
+    if (Object.keys(currentFace).includes(Object.keys(faces)[0]))
+      setCurrentFace(faces2);
+    else setCurrentFace(faces);
+  };
+
+  const compareDice = (a: string, b: string) => {
+    const n1 = Number.parseInt(a);
+    const n2 = Number.parseInt(b);
+    if (n1 !== Number.NaN && n2 !== Number.NaN)
+      return n1 > n2 ? 1 : n2 > n1 ? -1 : 0;
+    if (n1 !== Number.NaN) return 1;
+    return 0;
   };
 
   return (
-    <div className={flexColumnStyle}>
+    <div className={flexColumnStyle()}>
+      {/* Dice */}
+      <div className={flexRowStyle({ justify: "center" })}>
+        {currentFace &&
+          Object.keys(currentFace)
+            .sort(compareDice)
+            .map((it) => (
+              <div
+                key={it}
+                className={diceRollerSelectorStyle}
+                title={`${currentFace[it]}\nClick to increase.\nShift+click to decrease.`}
+                onClick={(e) => inc(e, it)}
+              >
+                <span>{it}</span>
+                {selectedDice[it] > 0 && (
+                  <div className={diceRollerSelectorValueStyle}>
+                    {selectedDice[it]}
+                  </div>
+                )}
+              </div>
+            ))}
+      </div>
+
+      {/* Roll buttons */}
       <div
-        className={flexRowStyle}
+        className={flexRowStyle({ justify: "space" })}
         style={{
-          justifyContent: "center",
+          gap: "0px",
+          padding: "0px 10px",
         }}
       >
-        {faces.map((it) => (
+        <Button title="Roll" type="normal" onClick={roll}>
+          <FaDiceD20 size={20} fill={"var(--color-primary)"} />
           <div
-            key={it}
-            className={diceRollerSelectorStyle}
-            title="Click to increase. Shift+click to decrease."
-            onClick={(e) => inc(e, it)}
+            style={{
+              fontSize: 14,
+              overflowWrap: "break-word",
+              wordWrap: "break-word",
+              color: "var(--color-text)",
+              marginLeft: "10px",
+              maxWidth: "200px",
+            }}
           >
-            <span>{it}</span>
-            {selectedDice[it] > 0 && (
-              <div className={diceRollerSelectorValueStyle}>
-                {selectedDice[it]}
-              </div>
-            )}
+            {notation}
           </div>
-        ))}
-        <Button type="icon" title="Reset pool" onClick={reset}>
-          <RxReset />
+        </Button>
+
+        <Button title="Custom roll" onClick={rollCustom} type="normal">
+          <FaDiceD6 size={20} />
         </Button>
       </div>
+
+      {/* Actions */}
       <div
-        className={flexRowStyle}
+        className={flexRowStyle({ justify: "space" })}
         style={{
           gap: 0,
-          justifyContent: "space-between",
-          alignItems: "center",
         }}
       >
-        <div
-          className={flexRowStyle}
-          style={{ gap: "0px", borderRight: "solid 1px var(--color-text-3)" }}
-        >
+        <div className={flexRowStyle({})} style={{ gap: "0px" }}>
           <Button
             type="tool"
             title="Private roll"
@@ -188,36 +264,15 @@ export const DiceRollerSelector = () => {
             <FaCommentDots size={16} />
           </Button>
         </div>
-        <div
-          className={flexRowStyle}
-          style={{
-            gap: "0px",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 12,
-              maxWidth: "100px",
-              overflowWrap: "break-word",
-              wordWrap: "break-word",
-              color: "var(--color-text)",
-            }}
-          >
-            {notation}
-          </div>
-          <Button title="Roll" type="tool" onClick={roll}>
-            <FaDiceD20 size={16} />
+
+        <div className={flexRowStyle({})} style={{ gap: "0px" }}>
+          <Button type="normal" title="Switch dice type" onClick={switchDice}>
+            <FaDice size={18} />
           </Button>
-        </div>
-        <div
-          className={flexRowStyle}
-          style={{ gap: "0px", borderLeft: "solid 1px var(--color-text-3)" }}
-        >
-          <Button title="Custom roll" onClick={rollCustom} type="tool">
-            <MdDashboardCustomize size={16} />
+          <Button type="normal" title="Reset pool" onClick={reset}>
+            <FaReply size={16} />
           </Button>
-          <Button title="Clear list" onClick={clear} type="tool">
+          <Button title="Clear list" onClick={clear} type="normal">
             <FaTrashAlt size={16} />
           </Button>
         </div>

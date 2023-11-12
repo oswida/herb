@@ -123,6 +123,9 @@ importers:
       '@vanilla-extract/css':
         specifier: ^1.13.0
         version: 1.13.0
+      '@vanilla-extract/recipes':
+        specifier: ^0.5.1
+        version: 0.5.1(@vanilla-extract/css@1.13.0)
       jotai:
         specifier: ^2.5.0
         version: 2.5.0(@types/react@18.2.21)(react@18.2.0)
@@ -3351,6 +3354,14 @@ packages:
 
   /@vanilla-extract/private@1.0.3:
     resolution: {integrity: sha512-17kVyLq3ePTKOkveHxXuIJZtGYs+cSoev7BlP+Lf4916qfDhk/HBjvlYDe8egrea7LNPHKwSZJK/bzZC+Q6AwQ==}
+
+  /@vanilla-extract/recipes@0.5.1(@vanilla-extract/css@1.13.0):
+    resolution: {integrity: sha512-7dCuBgPQQ/89siQ0w2lkfjgkmToPUUDzFlHf5DRmt9ykiiycfA52tmPJ2RI/mr7jXi7U/vEN2aGP9QJSXEpGlA==}
+    peerDependencies:
+      '@vanilla-extract/css': ^1.0.0
+    dependencies:
+      '@vanilla-extract/css': 1.13.0
+    dev: false
 
   /@vanilla-extract/vite-plugin@3.9.0(vite@4.4.9):
     resolution: {integrity: sha512-Q2HYAyEJ93Uy7GHQPPiP8SXwPMHGpd4d0YnrIQqB0YZccYbGJR/WFIln9Dmbzx2pdngQUoOfhwEg6kJF8sQrog==}
