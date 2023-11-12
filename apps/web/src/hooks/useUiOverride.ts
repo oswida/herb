@@ -1,21 +1,24 @@
 import {
   Editor,
   TLUiOverrides,
+  menuCustom,
+  menuGroup,
   menuItem,
+  menuSubmenu,
   toolbarItem,
   useEditor,
 } from "@tldraw/tldraw";
 import { useInsertPdf } from "./useInsertPdf";
+import { useInsertJson } from "./useInsertJson";
 
 // // In order to see select our custom shape tool, we need to add it to the ui.
 export const useUiOverride = (editor: Editor | undefined) => {
   const insertPdf = useInsertPdf(editor);
+  const insertJson = useInsertJson(editor);
 
   const uiOverrides: TLUiOverrides = {
     menu(editor, menu) {
-      menu.splice(
-        3,
-        0,
+      const items = [
         menuItem({
           id: "upload-pdf",
           label: "Upload PDF" as any,
@@ -23,8 +26,20 @@ export const useUiOverride = (editor: Editor | undefined) => {
           onSelect: () => {
             insertPdf();
           },
-        })
-      );
+        }),
+        menuItem({
+          id: "upload-json",
+          label: "Upload JSON" as any,
+          readonlyOk: false,
+          onSelect: () => {
+            insertJson();
+          },
+        }),
+      ];
+      const grp = menuGroup("upload-other", ...items);
+      if (grp) {
+        menu.push(grp);
+      }
       return menu;
     },
     tools(editor, tools) {

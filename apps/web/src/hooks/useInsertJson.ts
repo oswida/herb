@@ -1,16 +1,15 @@
-import { Editor, uniqueId, useEditor } from "@tldraw/tldraw";
+import { Editor, uniqueId } from "@tldraw/tldraw";
 import { useCallback, useEffect, useRef } from "react";
-import { UPLOAD_URL } from "../common";
-import { IPdfShape } from "../shapes";
 
-export const useInsertPdf = (editor: Editor | undefined) => {
+// Insert shapes from JSON file
+export const useInsertJson = (editor: Editor | undefined) => {
   const inputRef = useRef<HTMLInputElement>();
 
   useEffect(() => {
     if (!editor) return;
     const input = window.document.createElement("input");
     input.type = "file";
-    input.accept = "application/pdf";
+    input.accept = "application/json";
     input.multiple = true;
     inputRef.current = input;
     async function onchange(e: Event) {
@@ -20,23 +19,11 @@ export const useInsertPdf = (editor: Editor | undefined) => {
       Array.from(fileList).forEach(async (f) => {
         if (!editor) return;
         const id = uniqueId();
-        const objectName = `${id}-${f.name}`.replaceAll(/[^a-zA-Z0-9.]/g, "-");
-        const url = `${UPLOAD_URL}/${objectName}`;
-        await fetch(url, {
-          method: "POST",
-          body: f,
-        });
-
-        editor.createShape<IPdfShape>({
-          type: "pdf",
-          x: editor.viewportScreenCenter.x,
-          y: editor.viewportScreenCenter.y,
-          props: {
-            pdf: url,
-            w: 500,
-            h: 300,
-          },
-        });
+        const data = await f.text();
+        const json = JSON.parse(data);
+        if (!json) return;
+        editor.createShapes(json.shapes);
+        editor.createAssets(json.assets);
       });
       input.value = "";
     }
