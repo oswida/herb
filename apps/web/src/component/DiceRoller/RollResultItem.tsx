@@ -15,6 +15,8 @@ type RollValue = {
   dice: string;
   value: number;
   color: string;
+  isMax: boolean;
+  isMin: boolean;
 };
 
 export const RollResultItem = (props: Props) => {
@@ -37,18 +39,33 @@ export const RollResultItem = (props: Props) => {
       if (faces[i].toLowerCase().includes("d")) {
         if (typeof tr[i] === "object") {
           const a: RollValue[] = [];
+          let min = Number.MAX_SAFE_INTEGER;
+          let max = 0;
           (tr[i] as any).rolls.forEach((e: any) => {
             a.push({
               dice: faces[i].toLowerCase(),
               value: e.value,
             } as RollValue);
+            if (e.value > max) max = e.value;
+            if (e.value < min) min = e.value;
+          });
+          a.forEach((it) => {
+            it.isMax = it.value === max;
+            it.isMin = it.value === min;
           });
           rslt.push(a);
         }
       }
     }
+
     return rslt;
   }, [props.roll]);
+
+  const minmaxBorder = (it: RollValue) => {
+    if (it.isMax) return "solid 1px var(--color-primary)";
+    if (it.isMin) return "solid 1px var(--color-accent)";
+    return "solid 1px var(--color-text)";
+  };
 
   return (
     <div className={flexColumnStyle({})}>
@@ -89,7 +106,7 @@ export const RollResultItem = (props: Props) => {
                   className={diceValueStyle}
                   style={{
                     backgroundColor: `${theme.text}22`,
-                    border: `dotted 1px var(--color-text-3)`,
+                    borderBottom: `${minmaxBorder(r)}`,
                   }}
                   key={`r${idx}-${ridx}`}
                 >
