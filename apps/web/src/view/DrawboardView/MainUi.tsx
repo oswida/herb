@@ -110,7 +110,7 @@ export const MainUI = track(() => {
               addDialog({
                 component: ({ onClose }) => <Settings onClose={onClose} />,
                 onClose: () => {
-                  void null;
+                  editor.setCurrentTool("select");
                 },
               });
             }}

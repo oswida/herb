@@ -13,6 +13,7 @@ import {
   getDefaultColorTheme,
   resizeBox,
   useDialogs,
+  useEditor,
   useIsEditing,
   useKeyboardShortcuts,
 } from "@tldraw/tldraw";
@@ -78,6 +79,7 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
     const theme = getDefaultColorTheme({
       isDarkMode: this.editor.user.isDarkMode,
     });
+    
 
     const getData = useCallback(() => {
       const result = [];
@@ -168,7 +170,7 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
                     <RpgClockSettings onClose={onClose} shape={shape} />
                   ),
                   onClose: () => {
-                    void null;
+                    this.editor.setCurrentTool("select");
                   },
                 });
               }}

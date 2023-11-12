@@ -103,7 +103,7 @@ export const DiceRollerSelector = () => {
           />
         ),
         onClose: () => {
-          void null;
+          editor.setCurrentTool("select");
         },
       });
       return;
@@ -179,7 +179,7 @@ export const DiceRollerSelector = () => {
   };
 
   return (
-    <div className={flexColumnStyle()}>
+    <div className={flexColumnStyle()} style={{ gap: "2px" }}>
       {/* Dice */}
       <div className={flexRowStyle({ justify: "center" })}>
         {currentFace &&
@@ -210,8 +210,13 @@ export const DiceRollerSelector = () => {
           padding: "0px 10px",
         }}
       >
-        <Button title="Roll" type="normal" onClick={roll}>
-          <FaDiceD20 size={20} fill={"var(--color-primary)"} />
+        <Button
+          title="Roll"
+          type="normal"
+          onClick={roll}
+          disabled={notation.trim() === ""}
+        >
+          <FaDiceD20 size={20} fill={"var(--color-accent)"} />
           <div
             style={{
               fontSize: 14,
