@@ -1,116 +1,104 @@
 import { getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
-import React from "react";
+import React, { ReactNode } from "react";
 import { diceMarkerStyle } from "./style.css";
 import { BsDice5Fill } from "react-icons/bs";
+import { GiCardAceHearts } from "react-icons/gi";
 import { D10Icon, D12Icon, D20Icon, D4Icon, D6Icon, D8Icon } from "../Icons";
-import { PiPercentFill, PiPlusMinusFill } from "react-icons/pi";
+import { PiPercentFill, PiPlusMinusFill, PiCoinFill } from "react-icons/pi";
 
-export const RollMarker = ({ id }: { id?: string }) => {
+const Ms = ({ title, children }: { title: string; children: ReactNode }) => {
   const editor = useEditor();
   const theme = getDefaultColorTheme({
     isDarkMode: editor.user.isDarkMode,
   });
+  return (
+    <div
+      title={title}
+      className={diceMarkerStyle}
+      style={{
+        backgroundColor: `${theme.text}22`,
+        color: "var(--color-primary)",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const RollMarker = ({ id }: { id?: string }) => {
   if (!id || id === "") return null;
   switch (id) {
     case "trophy_dark":
       return (
-        <div
-          title="Trophy Light"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="Trophy light">
           <BsDice5Fill fill="black" />
-        </div>
+        </Ms>
       );
     case "trophy_light":
       return (
-        <div
-          title="Trophy Dark"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="Trophy Dark">
           <BsDice5Fill fill="white" />
-        </div>
+        </Ms>
       );
     case "fate":
       return (
-        <div
-          title="FATE"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="FATE">
           <PiPlusMinusFill size="1.2rem" />
-        </div>
+        </Ms>
+      );
+    case "d2":
+      return (
+        <Ms title="d2/coin">
+          <PiCoinFill size="1.2rem" />
+        </Ms>
       );
     case "d4":
       return (
-        <div
-          title="d4"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d4">
           <D4Icon />
-        </div>
+        </Ms>
       );
     case "d6":
       return (
-        <div
-          title="d6"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d6">
           <D6Icon />
-        </div>
+        </Ms>
       );
     case "d8":
       return (
-        <div
-          title="d8"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d8">
           <D8Icon />
-        </div>
+        </Ms>
       );
     case "d10":
       return (
-        <div
-          title="d10"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d10">
           <D10Icon />
-        </div>
+        </Ms>
       );
     case "d12":
       return (
-        <div
-          title="d12"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d12">
           <D12Icon />
-        </div>
+        </Ms>
       );
     case "d20":
       return (
-        <div
-          title="d20"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d20">
           <D20Icon />
-        </div>
+        </Ms>
       );
     case "d100":
       return (
-        <div
-          title="d100"
-          className={diceMarkerStyle}
-          style={{ backgroundColor: `${theme.text}22` }}
-        >
+        <Ms title="d100">
           <PiPercentFill size="1.2rem" />
-        </div>
+        </Ms>
+      );
+    case "card":
+      return (
+        <Ms title="card">
+          <GiCardAceHearts size="1.2rem" />
+        </Ms>
       );
     default:
       return <></>;

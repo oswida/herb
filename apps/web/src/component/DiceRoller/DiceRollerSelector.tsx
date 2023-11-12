@@ -9,16 +9,11 @@ import {
   FaDice,
   FaDiceD20,
   FaDiceD6,
-  FaDiceFour,
-  FaDiceThree,
   FaReply,
-  FaSwift,
   FaTrashAlt,
   FaUserSecret,
 } from "react-icons/fa";
-import { MdDashboardCustomize } from "react-icons/md";
 import { VscRequestChanges } from "react-icons/vsc";
-import { RxReset } from "react-icons/rx";
 import {
   Button,
   getDefaultColorTheme,
@@ -31,6 +26,26 @@ import { useChat, useRoll } from "../../hooks";
 import React from "react";
 import { DiceDialog } from "./DiceDialog";
 import { Confirmation } from "../Confirmation";
+import { PiCoinFill, PiPlusMinusFill } from "react-icons/pi";
+import { BsDice5Fill } from "react-icons/bs";
+import { GiCardAceHearts } from "react-icons/gi";
+
+const Face = ({ faceType }: { faceType: string }) => {
+  switch (faceType) {
+    case "2":
+      return <PiCoinFill size="1.2rem" />;
+    case "F":
+      return <PiPlusMinusFill size="1.2rem" />;
+    case "Td":
+      return <BsDice5Fill fill="black" />;
+    case "Tl":
+      return <BsDice5Fill fill="white" />;
+    case "PC":
+      return <GiCardAceHearts size="1.2rem" />;
+    default:
+      return <span>{faceType}</span>;
+  }
+};
 
 export const DiceRollerSelector = () => {
   const MAX_DICE_POOL = 99;
@@ -45,10 +60,11 @@ export const DiceRollerSelector = () => {
     "100": "d100",
   };
   const faces2 = {
-    F: "Fate",
+    F: "FATE",
     Td: "Trophy dark",
     Tl: "Trophy light",
-    "2": "d2",
+    "2": "d2/coin",
+    PC: "Playing cards",
   };
   const [currentFace, setCurrentFace] = useState<Record<string, string>>(faces);
   const [mPrivate, setMPrivate] = useState(false);
@@ -191,7 +207,8 @@ export const DiceRollerSelector = () => {
                 title={`${currentFace[it]}\nClick to increase.\nShift+click to decrease.`}
                 onClick={(e) => inc(e, it)}
               >
-                <span>{it}</span>
+                {/* <span>{it}</span> */}
+                <Face faceType={it} />
                 {selectedDice[it] > 0 && (
                   <div className={diceRollerSelectorValueStyle}>
                     {selectedDice[it]}

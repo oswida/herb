@@ -17,8 +17,11 @@ export const useRoll = (
   generator.engine = engines.browserCrypto;
   const roller = new DiceRoller();
 
-  const filterTrophy = (notation: string) => {
-    return notation.replaceAll("Td", "6").replaceAll("Tl", "6");
+  const filterExt = (notation: string) => {
+    return notation
+      .replaceAll("Td", "6")
+      .replaceAll("Tl", "6")
+      .replaceAll("PC", "52");
   };
 
   const makeMarkers = useCallback(
@@ -33,6 +36,7 @@ export const useRoll = (
           if (p.includes("Td")) m = "trophy_dark";
           if (p.includes("Tl")) m = "trophy_light";
           if (p.includes("dF")) m = "fate";
+          if (p.includes("dPC")) m = "card";
           const i = p.indexOf("d");
           if (i && m === "") {
             m = p.substring(i);
@@ -47,7 +51,7 @@ export const useRoll = (
 
   const rollSingleToChat = useCallback(
     (notation: string, priv: boolean, comment?: string) => {
-      const result = roller.roll(filterTrophy(notation)) as DiceRoll;
+      const result = roller.roll(filterExt(notation)) as DiceRoll;
       return {
         id: v4(),
         userId: user.id,
