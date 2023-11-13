@@ -8,6 +8,7 @@ import {
   useToasts,
 } from "@tldraw/tldraw";
 import {
+  assetListVisible,
   currentRoom,
   diceRollerVisible,
   roomPresence,
@@ -19,7 +20,8 @@ import {
   actionsPanelStyle,
   actionsRootStyle,
 } from "./style.css";
-import { FaDiceD20, FaCogs, FaUsersSlash, FaUsers } from "react-icons/fa";
+import { FaDiceD20, FaCogs, FaUsers } from "react-icons/fa";
+import { MdLibraryBooks, MdWebAsset } from "react-icons/md";
 import { Settings } from "../../component/Settings";
 import * as React from "react";
 import useClipboard from "react-use-clipboard";
@@ -30,6 +32,7 @@ export const MainUI = track(() => {
   const editor = useEditor();
   const [hu, setHu] = useAtom(uiVisible);
   const [dv, setDv] = useAtom(diceRollerVisible);
+  const [al, setAl] = useAtom(assetListVisible);
   const presence = useAtomValue(roomPresence);
 
   const { addDialog } = useDialogs();
@@ -93,6 +96,14 @@ export const MainUI = track(() => {
           title="Dice roller"
         >
           <FaDiceD20 size={16} />
+        </Button>
+        <Button
+          type="tool"
+          data-state={al ? "selected" : undefined}
+          onClick={() => setAl(!al)}
+          title="Asset list"
+        >
+          <MdLibraryBooks size={20} />
         </Button>
 
         <Button

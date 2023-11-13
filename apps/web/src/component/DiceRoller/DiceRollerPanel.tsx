@@ -2,18 +2,15 @@ import {
   getUserPreferences,
   track,
   useEditor,
-  useToasts,
 } from "@tldraw/tldraw";
 import { diceRollerVisible } from "../../common/state";
 import { useAtomValue } from "jotai";
 import {
-  diceRollerItemStyle,
   diceRollerListStyle,
   diceRollerRootStyle,
 } from "./style.css";
 import { useChat } from "../../hooks";
 import { DiceRollerSelector } from "./DiceRollerSelector";
-import { flexRowStyle } from "../../common";
 import React, { useEffect, useMemo, useRef } from "react";
 import { DiceRollerItem } from "./DiceRollerItem";
 

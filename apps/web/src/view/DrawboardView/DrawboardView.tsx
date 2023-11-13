@@ -25,6 +25,7 @@ import {
 } from "../../shapes/RpgClockShape";
 import { Presence } from "../../common";
 import { useUiOverride } from "../../hooks/useUiOverride";
+import { AssetList } from "../../component/AssetList";
 
 const HOST_URL = "ws://localhost:5001";
 
@@ -107,6 +108,7 @@ export const DrawboardView = track(() => {
         </ContextMenu>
         <MainUI />
         <DiceRollerPanel />
+        <AssetList />
         <NoteViewer />
         <CsViewer />
       </Tldraw>

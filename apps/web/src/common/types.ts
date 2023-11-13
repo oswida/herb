@@ -1,5 +1,8 @@
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 
+export const UPLOAD_URL = "http://localhost:5001/api/upload";
+export const ASSET_LIST_URL = "http://localhost:5001/api/asset-list";
+
 export type ChatMsg = {
   id: string;
   roll?: DiceRoll;
@@ -12,7 +15,7 @@ export type ChatMsg = {
   priv?: boolean;
 };
 
-export const UPLOAD_URL = "http://localhost:5001/api/upload";
+
 
 export type Presence = {
   id: string;

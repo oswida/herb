@@ -3,16 +3,19 @@ import WebSocket from "ws";
 import { useSetup } from "./useSetup";
 import { useFileUpload } from "./useFileUpload";
 import { useCors } from "./useCors";
+import { useAsset } from "./useAsset";
 
 export const useServer = () => {
   const wss = new WebSocket.Server({ noServer: true });
 
   const { processUpload } = useFileUpload();
   const { cors } = useCors();
+  const { processAsset } = useAsset();
 
   const server = createServer((request, response) => {
     if (cors(request, response)) return;
     if (processUpload(request, response)) return;
+    if (processAsset(request, response)) return;
     response.writeHead(200, { "Content-Type": "text/plain" });
     response.end("okay");
   });

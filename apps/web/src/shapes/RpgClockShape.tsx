@@ -13,9 +13,7 @@ import {
   getDefaultColorTheme,
   resizeBox,
   useDialogs,
-  useEditor,
   useIsEditing,
-  useKeyboardShortcuts,
 } from "@tldraw/tldraw";
 import React, { useCallback } from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -38,7 +36,7 @@ export class RpgClockShapeTool extends BaseBoxShapeTool {
   static override initial = "idle";
   override shapeType = "rpg-clock";
 
-  override onDoubleClick: TLClickEvent = (_info) => {};
+  override onDoubleClick: TLClickEvent = (_info) => { };
 }
 
 export const rpgClockShapeProps: ShapeProps<IRpgClockShape> = {
@@ -79,7 +77,7 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
     const theme = getDefaultColorTheme({
       isDarkMode: this.editor.user.isDarkMode,
     });
-    
+
 
     const getData = useCallback(() => {
       const result = [];

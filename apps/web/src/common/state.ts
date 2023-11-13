@@ -3,6 +3,7 @@ import { Presence } from "./types";
 
 export const uiVisible = atom(true);
 export const diceRollerVisible = atom(false);
+export const assetListVisible = atom(false);
 export const csheetVisible = atom(false);
 export const notesVisible = atom(false);
 
