@@ -10,10 +10,8 @@ import {
   uiVisible,
 } from "../../common/state";
 import { useAtom, useAtomValue } from "jotai";
-import { CsViewer } from "../../component/CsViewer";
 import { useCallback, useEffect } from "react";
 import { hideRestUi, hideStylePanel } from "../../common/utils";
-import { NoteViewer } from "../../component/NoteViewer";
 import { useParams } from "react-router-dom";
 import { drawBoardViewRoottyle } from "./style.css";
 import * as React from "react";
@@ -68,6 +66,7 @@ export const DrawboardView = track(() => {
   }, [visible]);
 
   useEffect(() => {
+    console.log("useEffect room connector")
     const states = roomConnector.awareness.getStates();
     if (!states) return;
     const ps: Record<string, Presence> = {};
@@ -103,14 +102,9 @@ export const DrawboardView = track(() => {
         shapeUtils={customShapeUtils}
         overrides={uiOverrides}
       >
-        <ContextMenu>
-          <Canvas />
-        </ContextMenu>
         <MainUI />
         <DiceRollerPanel />
         <AssetList />
-        <NoteViewer />
-        <CsViewer />
       </Tldraw>
     </div>
   );

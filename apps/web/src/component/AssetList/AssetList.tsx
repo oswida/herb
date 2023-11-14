@@ -1,5 +1,4 @@
-import { Button, Dialog, TLUiDialogProps } from "@tldraw/tldraw";
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { ASSET_LIST_URL, assetListVisible } from "../../common";
 import { assetListRootStyle, assetListStyle } from "./style.css";
 import { useAtomValue } from "jotai";
@@ -14,7 +13,6 @@ export const AssetList = () => {
             method: "GET",
         });
         const json = await result.json();
-        console.log(json);
         setData(json);
     };
 

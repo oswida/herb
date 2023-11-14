@@ -7,7 +7,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint",
     "test": "turbo test",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "bundle": "turbo build && cp apps/server/dist/index.js apps/server/bundle && cp apps/server/bundle.json apps/server/bundle/package.json && mkdir apps/server/bundle/static && cp -R apps/web/dist/* apps/server/bundle/static"
   },
   "devDependencies": {
     "@types/jest": "^29.5.4",

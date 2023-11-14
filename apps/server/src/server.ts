@@ -4,6 +4,7 @@ import { useSetup } from "./useSetup";
 import { useFileUpload } from "./useFileUpload";
 import { useCors } from "./useCors";
 import { useAsset } from "./useAsset";
+import serveStatic from "serve-static";
 
 export const useServer = () => {
   const wss = new WebSocket.Server({ noServer: true });
@@ -11,13 +12,13 @@ export const useServer = () => {
   const { processUpload } = useFileUpload();
   const { cors } = useCors();
   const { processAsset } = useAsset();
+  const serve = serveStatic("static");
 
   const server = createServer((request, response) => {
     if (cors(request, response)) return;
     if (processUpload(request, response)) return;
     if (processAsset(request, response)) return;
-    response.writeHead(200, { "Content-Type": "text/plain" });
-    response.end("okay");
+    serve(request, response, (err) => console.log(err));
   });
 
   const { setupWSConnection } = useSetup();
