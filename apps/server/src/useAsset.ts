@@ -10,6 +10,8 @@ import {
 } from "fs";
 import mime from "mime";
 
+
+
 export const useAsset = () => {
   if (!existsSync("upload")) {
     mkdirSync("upload");
@@ -28,19 +30,6 @@ export const useAsset = () => {
     if (parts.length < 2) return false;
     const action = parts[2];
 
-
-    // if (request.method.toLowerCase() === "post") {
-    //   const file = openSync(`upload/${filename}`, "w");
-    //   request.on("data", (chunk) => {
-    //     writeSync(file, chunk);
-    //   });
-    //   request.on("end", () => {
-    //     closeSync(file);
-    //   });
-    //   response.end();
-    //   return true;
-    // }
-
     if (request.method.toLowerCase() === "get") {
       switch (action) {
         case "asset-list":
@@ -48,8 +37,8 @@ export const useAsset = () => {
           response.writeHead(200, {
             "Content-Type": "application/json",
           });
-          console.log(files);
-          response.write(JSON.stringify(files.filter((it) => it.isFile()).map((it) => it.name)));
+          const resp = files.filter((it) => it.isFile()).map((it) => ({ filename: it.name, mime: mime.getType(it.name) }));
+          response.write(JSON.stringify(resp));
           response.end();
           return true;
         default: return false;

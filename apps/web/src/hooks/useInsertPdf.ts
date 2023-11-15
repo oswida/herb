@@ -29,8 +29,8 @@ export const useInsertPdf = (editor: Editor | undefined) => {
 
         editor.createShape<IPdfShape>({
           type: "pdf",
-          x: editor.viewportScreenCenter.x,
-          y: editor.viewportScreenCenter.y,
+          x: editor.getViewportPageCenter().x,
+          y: editor.getViewportPageCenter().y,
           props: {
             pdf: url,
             w: 500,

@@ -52,20 +52,6 @@ export const useFileUpload = () => {
       return true;
     }
 
-    // const form = formidable({});
-    // let fields;
-    // let files;
-    // try {
-    //   [fields, files] = await form.parse(request);
-    // } catch (err: any) {
-    //   if (err.code === formidableErrors.maxFieldsExceeded) {
-    //   }
-    //   console.error(err);
-    //   response.writeHead(err.httpCode || 400, { "Content-Type": "text/plain" });
-    //   response.end(String(err));
-    //   return false;
-    // }
-    // response.writeHead(200, { "Content-Type": "application/json" });
 
     return false;
   };
