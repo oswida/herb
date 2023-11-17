@@ -28,7 +28,11 @@ export const Confirmation = (props: Props) => {
         <Dialog.Title>{props.title}</Dialog.Title>
         <Dialog.CloseButton />
       </Dialog.Header>
-      <Dialog.Body>{props.message}</Dialog.Body>
+      <Dialog.Body>
+        {props.message.split("\n").map((it) => (
+          <div>{it}</div>
+        ))}
+      </Dialog.Body>
       <Dialog.Footer>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={activate} type="normal">

@@ -7,10 +7,9 @@ import {
   closeSync,
   readFileSync,
   readdirSync,
+  rmSync,
 } from "fs";
 import mime from "mime";
-
-
 
 export const useAsset = () => {
   if (!existsSync("upload")) {
@@ -27,21 +26,33 @@ export const useAsset = () => {
       return false;
 
     const parts = request.url.split("/");
-    if (parts.length < 2) return false;
-    const action = parts[2];
+    if (parts.length < 5) return false;
+    const assetType = parts[4];
+    const action = parts[3];
 
     if (request.method.toLowerCase() === "get") {
       switch (action) {
         case "asset-list":
-          const files = readdirSync("upload", { withFileTypes: true });
+          const files = readdirSync(`upload/${assetType}`, {
+            withFileTypes: true,
+          });
           response.writeHead(200, {
             "Content-Type": "application/json",
           });
-          const resp = files.filter((it) => it.isFile()).map((it) => ({ filename: it.name, mime: mime.getType(it.name) }));
+          const resp = files
+            .filter((it) => it.isFile())
+            .map((it) => ({ filename: it.name, mime: mime.getType(it.name) }));
           response.write(JSON.stringify(resp));
           response.end();
           return true;
-        default: return false;
+        default:
+          return false;
+      }
+    } else if (request.method.toLowerCase() === "delete") {
+      const path = `upload/${assetType}/${action}`;
+      if (existsSync(path)) {
+        rmSync(path);
+        return true;
       }
     }
     return false;

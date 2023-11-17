@@ -1,6 +1,6 @@
 import { Editor, uniqueId, useEditor } from "@tldraw/tldraw";
 import { useCallback, useEffect, useRef } from "react";
-import { UPLOAD_URL } from "../common";
+import { UPLOAD_BASE_URL } from "../common";
 import { IPdfShape } from "../shapes";
 
 export const useInsertPdf = (editor: Editor | undefined) => {
@@ -21,7 +21,7 @@ export const useInsertPdf = (editor: Editor | undefined) => {
         if (!editor) return;
         const id = uniqueId();
         const objectName = `${id}-${f.name}`.replaceAll(/[^a-zA-Z0-9.]/g, "-");
-        const url = `${UPLOAD_URL}/${objectName}`;
+        const url = `${UPLOAD_BASE_URL}/pdf/${objectName}`;
         await fetch(url, {
           method: "POST",
           body: f,
@@ -29,8 +29,8 @@ export const useInsertPdf = (editor: Editor | undefined) => {
 
         editor.createShape<IPdfShape>({
           type: "pdf",
-          x: editor.getViewportPageCenter().x,
-          y: editor.getViewportPageCenter().y,
+          x: 200,
+          y: 200,
           props: {
             pdf: url,
             w: 500,

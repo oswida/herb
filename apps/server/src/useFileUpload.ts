@@ -9,10 +9,20 @@ import {
 } from "fs";
 import mime from "mime";
 
-export const useFileUpload = () => {
+const makeDirs = () => {
   if (!existsSync("upload")) {
     mkdirSync("upload");
   }
+  const subs = ["image", "pdf", "handout"];
+  for (let i in subs) {
+    if (!existsSync(`upload/${subs[i]}`)) {
+      mkdirSync(`upload/${subs[i]}`);
+    }
+  }
+};
+
+export const useFileUpload = () => {
+  makeDirs();
 
   const processUpload = (
     request: IncomingMessage,
@@ -24,11 +34,12 @@ export const useFileUpload = () => {
       return false;
 
     const parts = request.url.split("/");
-    if (parts.length < 3) return false;
-    const filename = parts[3];
+    if (parts.length < 5) return false;
+    const fileType = parts[3];
+    const filename = parts[4];
 
     if (request.method.toLowerCase() === "post") {
-      const file = openSync(`upload/${filename}`, "w");
+      const file = openSync(`upload/${fileType}/${filename}`, "w");
       request.on("data", (chunk) => {
         writeSync(file, chunk);
       });
@@ -40,7 +51,9 @@ export const useFileUpload = () => {
     }
 
     if (request.method.toLowerCase() === "get") {
-      const buff = readFileSync(`upload/${filename}`);
+      const fname = `upload/${fileType}/${filename}`;
+      if (!existsSync(fname)) return false;
+      const buff = readFileSync(fname);
       const mt = mime.getType(filename);
       response.writeHead(200, {
         "Content-Type": mt ? mt : "application/octet-stream",
@@ -51,7 +64,6 @@ export const useFileUpload = () => {
 
       return true;
     }
-
 
     return false;
   };

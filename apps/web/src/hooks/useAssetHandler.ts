@@ -8,7 +8,7 @@ import {
   isGifAnimated,
   uniqueId,
 } from "@tldraw/tldraw";
-import { UPLOAD_URL } from "../common";
+import { UPLOAD_BASE_URL } from "../common";
 
 export const useAssetHandler = () => {
   const registerHostedImages = (editor: Editor) => {
@@ -21,7 +21,7 @@ export const useAssetHandler = () => {
           /[^a-zA-Z0-9.]/g,
           "-"
         );
-        const url = `${UPLOAD_URL}/${objectName}`;
+        const url = `${UPLOAD_BASE_URL}/image/${objectName}`;
 
         await fetch(url, {
           method: "POST",
