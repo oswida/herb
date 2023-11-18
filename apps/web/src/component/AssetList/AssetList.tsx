@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ASSET_BASE_URL,
   ASSET_LIST_BASE_URL,
@@ -22,6 +28,7 @@ import {
 import { FaBackspace, FaReply } from "react-icons/fa";
 import { IPdfShape } from "../../shapes";
 import { Confirmation } from "../Confirmation";
+import { useQuery } from "@tanstack/react-query";
 
 type AssetDesc = {
   filename: string;
@@ -31,7 +38,6 @@ type AssetDesc = {
 type TabType = "Image" | "PDF" | "Handout";
 
 export const AssetList = () => {
-  const [data, setData] = useState<AssetDesc[]>([]);
   const visible = useAtomValue(assetListVisible);
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>();
@@ -40,26 +46,35 @@ export const AssetList = () => {
   const [tab, setTab] = useState<TabType>("Image");
   const tabs: TabType[] = ["Image", "PDF", "Handout"];
   const { addDialog } = useDialogs();
-  const [refreshTrigger, setRefreshTrigger] = useState(false);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["assetList"],
+    queryFn: () =>
+      fetch(`${ASSET_LIST_BASE_URL}/${tab.toLowerCase()}`, {
+        method: "GET",
+      }).then((res) => res.json()),
+    networkMode: "online",
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+
+  const items = useMemo(() => {
+    if (!data) return [];
+    console.log("new items");
+    return (data as AssetDesc[]).filter(
+      (it) => filter === "" || it.filename.includes(filter)
+    );
+  }, [data, filter]);
+
+  useEffect(() => {
+    if (!visible) return;
+    refetch();
+  }, [tab, filter, visible]);
 
   const filterChange = async (value: string) => {
     setFilter(value);
+    refetch();
   };
-
-  useEffect(() => {
-    fetch(`${ASSET_LIST_BASE_URL}/${tab.toLowerCase()}`, {
-      method: "GET",
-    }).then((res) => {
-      res.json().then((j) => {
-        const json = j as AssetDesc[];
-        setData(
-          json.filter(
-            (it) => filter.trim() == "" || it.filename.includes(filter)
-          )
-        );
-      });
-    });
-  }, [tab, filter, refreshTrigger]);
 
   const clearFilter = async () => {
     setFilter("");
@@ -137,10 +152,8 @@ export const AssetList = () => {
           callback={() => {
             fetch(`${ASSET_BASE_URL}/${asset.filename}/${tab.toLowerCase()}`, {
               method: "DELETE",
-            }).then((r) => {
-              console.log("Set tab");
-              setTab("PDF");
-            });
+            }).then((r) => {});
+            refetch();
             onClose();
           }}
         />
@@ -149,10 +162,6 @@ export const AssetList = () => {
         void null;
       },
     });
-  };
-
-  const refresh = () => {
-    setRefreshTrigger(!refreshTrigger);
   };
 
   if (!visible) return null;
@@ -190,7 +199,7 @@ export const AssetList = () => {
         </Button>
       </div>
       <div className={assetListStyle}>
-        {data.map((it, idx) => (
+        {items.map((it, idx) => (
           <AssetItem
             key={`${it.filename}-${idx}`}
             filename={it.filename}
@@ -212,9 +221,9 @@ export const AssetList = () => {
         <Button type="normal" onClick={async () => await deleteAsset(sel)}>
           Delete
         </Button>
-        <Button type="icon" onClick={refresh}>
+        {/* <Button type="icon" onClick={refresh}>
           <FaReply />
-        </Button>
+        </Button> */}
 
         {/* <div style={{ paddingRight: "10px" }}>
                 {sel && isImage(sel.mime) && (

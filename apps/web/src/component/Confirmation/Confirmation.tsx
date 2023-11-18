@@ -30,7 +30,7 @@ export const Confirmation = (props: Props) => {
       </Dialog.Header>
       <Dialog.Body>
         {props.message.split("\n").map((it) => (
-          <div>{it}</div>
+          <div key={it}>{it}</div>
         ))}
       </Dialog.Body>
       <Dialog.Footer>
