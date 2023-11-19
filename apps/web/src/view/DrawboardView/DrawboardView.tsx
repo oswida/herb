@@ -1,4 +1,4 @@
-import { Canvas, ContextMenu, Editor, Tldraw, track } from "@tldraw/tldraw";
+import { Editor, Tldraw, track } from "@tldraw/tldraw";
 import { useYjsStore } from "../../hooks/useYjsStore";
 import "@tldraw/tldraw/tldraw.css";
 import { MainUI } from "./MainUi";
@@ -24,10 +24,11 @@ import {
 import { Presence } from "../../common";
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
+import { MarkdownShapeUtil } from "../../shapes";
 
 const HOST_URL = "ws://localhost:5001";
 
-const customShapeUtils = [PdfShapeUtil, RpgClockShapeUtil];
+const customShapeUtils = [PdfShapeUtil, RpgClockShapeUtil, MarkdownShapeUtil];
 const customTools = [RpgClockShapeTool];
 
 export const DrawboardView = track(() => {
@@ -66,7 +67,6 @@ export const DrawboardView = track(() => {
   }, [visible]);
 
   useEffect(() => {
-    console.log("useEffect room connector")
     const states = roomConnector.awareness.getStates();
     if (!states) return;
     const ps: Record<string, Presence> = {};

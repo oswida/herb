@@ -107,3 +107,14 @@ export const cardSymbol = [
   "Q♣",
   "K♣",
 ];
+
+export const generateSerialKeys = (length: number, separator: string) => {
+  separator = separator || "-";
+  var license = new Array(length + 1)
+    .join((Math.random().toString(36) + "00000000000000000").slice(2, 18))
+    .slice(0, length);
+  return license
+    .toUpperCase()
+    .replace(/(\w{4})/g, "$1" + separator)
+    .substring(0, length + Math.round(length / 4) - 1);
+};

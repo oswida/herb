@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import {
   ASSET_BASE_URL,
-  ASSET_LIST_BASE_URL,
   UPLOAD_BASE_URL,
   assetListVisible,
   flexRowStyle,
@@ -26,7 +25,7 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import { FaBackspace, FaReply } from "react-icons/fa";
-import { IPdfShape } from "../../shapes";
+import { IMarkdownShape, IPdfShape } from "../../shapes";
 import { Confirmation } from "../Confirmation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -50,26 +49,27 @@ export const AssetList = () => {
   const { data, refetch } = useQuery({
     queryKey: ["assetList"],
     queryFn: () =>
-      fetch(`${ASSET_LIST_BASE_URL}/${tab.toLowerCase()}`, {
+      fetch(`${ASSET_BASE_URL}/${tab.toLowerCase()}/asset-list`, {
         method: "GET",
       }).then((res) => res.json()),
     networkMode: "online",
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
     staleTime: 0,
   });
-
-  const items = useMemo(() => {
-    if (!data) return [];
-    console.log("new items");
-    return (data as AssetDesc[]).filter(
-      (it) => filter === "" || it.filename.includes(filter)
-    );
-  }, [data, filter]);
 
   useEffect(() => {
     if (!visible) return;
     refetch();
   }, [tab, filter, visible]);
+
+  const items = useMemo(() => {
+    if (!data) return [];
+    return (data as AssetDesc[]).filter(
+      (it) => filter === "" || it.filename.includes(filter)
+    );
+  }, [data, filter]);
 
   const filterChange = async (value: string) => {
     setFilter(value);
@@ -91,17 +91,22 @@ export const AssetList = () => {
     return ["application/pdf"].includes(mime);
   };
 
+  const isMarkdown = (mime: string) => {
+    return ["text/markdown"].includes(mime);
+  };
+
   const insertAsset = useCallback(
     async (asset: AssetDesc) => {
       if (!editor) {
         return;
       }
-      if (!isImage(asset.mime) && !isPdf(asset.mime)) return;
+      if (!isImage(asset.mime) && !isPdf(asset.mime) && !isMarkdown(asset.mime))
+        return;
       const atype = isImage(asset.mime)
         ? "image"
         : isPdf(asset.mime)
         ? "pdf"
-        : "undefined";
+        : "handout";
       const url = `${UPLOAD_BASE_URL}/${atype}/${asset.filename}`;
       const aid = AssetRecordType.createId(getHashForString(url));
       const center = { x: 800, y: 500 };
@@ -136,6 +141,18 @@ export const AssetList = () => {
             },
           });
           break;
+        case "handout":
+          editor.createShape<IMarkdownShape>({
+            type: "markdown",
+            x: center.x - 250,
+            y: center.y - 150,
+            props: {
+              url: url,
+              w: 500,
+              h: 300,
+            },
+          });
+          break;
       }
     },
     [editor]
@@ -149,11 +166,14 @@ export const AssetList = () => {
           onClose={onClose}
           title="Delete asset"
           message={`Delete ${asset.filename}? \nPlease be aware, that all objects\npointing to this asset will be broken.`}
-          callback={() => {
-            fetch(`${ASSET_BASE_URL}/${asset.filename}/${tab.toLowerCase()}`, {
-              method: "DELETE",
-            }).then((r) => {});
-            refetch();
+          callback={async () => {
+            await fetch(
+              `${ASSET_BASE_URL}/${tab.toLowerCase()}/${asset.filename}`,
+              {
+                method: "DELETE",
+              }
+            );
+            setFilter("");
             onClose();
           }}
         />
@@ -221,15 +241,6 @@ export const AssetList = () => {
         <Button type="normal" onClick={async () => await deleteAsset(sel)}>
           Delete
         </Button>
-        {/* <Button type="icon" onClick={refresh}>
-          <FaReply />
-        </Button> */}
-
-        {/* <div style={{ paddingRight: "10px" }}>
-                {sel && isImage(sel.mime) && (
-                    <img src={`${UPLOAD_URL}/${sel?.filename}`} style={{ height: "100px" }} />
-                )}
-            </div> */}
       </div>
     </div>
   );

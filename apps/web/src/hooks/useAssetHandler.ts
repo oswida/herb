@@ -8,14 +8,14 @@ import {
   isGifAnimated,
   uniqueId,
 } from "@tldraw/tldraw";
-import { UPLOAD_BASE_URL } from "../common";
+import { UPLOAD_BASE_URL, generateSerialKeys } from "../common";
 
 export const useAssetHandler = () => {
   const registerHostedImages = (editor: Editor) => {
     editor.registerExternalAssetHandler(
       "file",
       async ({ file }: { type: "file"; file: File }) => {
-        const id = uniqueId();
+        const id = generateSerialKeys(6, "-");
 
         const objectName = `${id}-${file.name}`.replaceAll(
           /[^a-zA-Z0-9.]/g,

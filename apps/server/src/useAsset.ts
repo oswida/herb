@@ -27,8 +27,8 @@ export const useAsset = () => {
 
     const parts = request.url.split("/");
     if (parts.length < 5) return false;
-    const assetType = parts[4];
-    const action = parts[3];
+    const assetType = parts[3];
+    const action = parts[4];
 
     if (request.method.toLowerCase() === "get") {
       switch (action) {
