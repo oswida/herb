@@ -27,7 +27,7 @@ export const actionsPanelStyle = style([
 
 export const actionsInfoStyle = style({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   gap: 2,
   padding: 2,
   paddingRight: 5,

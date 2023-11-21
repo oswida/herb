@@ -1,4 +1,4 @@
-import { Editor, Tldraw, track } from "@tldraw/tldraw";
+import { Editor, TLRecord, Tldraw, createShapeId, track } from "@tldraw/tldraw";
 import { useYjsStore } from "../../hooks/useYjsStore";
 import "@tldraw/tldraw/tldraw.css";
 import { MainUI } from "./MainUi";
@@ -10,25 +10,31 @@ import {
   uiVisible,
 } from "../../common/state";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { hideRestUi, hideStylePanel } from "../../common/utils";
 import { useParams } from "react-router-dom";
 import { drawBoardViewRoottyle } from "./style.css";
 import * as React from "react";
-import { useAssetHandler } from "../../hooks";
+import { useAssetHandler, useGlobalInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
   RpgClockShapeUtil,
 } from "../../shapes/RpgClockShape";
-import { Presence } from "../../common";
+import { GLOBAL_INFO_SHAPE, Presence, appPanelStyle } from "../../common";
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
 import { MarkdownShapeUtil } from "../../shapes";
+import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 
 const HOST_URL = "ws://localhost:5001";
 
-const customShapeUtils = [PdfShapeUtil, RpgClockShapeUtil, MarkdownShapeUtil];
+const customShapeUtils = [
+  PdfShapeUtil,
+  RpgClockShapeUtil,
+  MarkdownShapeUtil,
+  HiddenShapeUtil,
+];
 const customTools = [RpgClockShapeTool];
 
 export const DrawboardView = track(() => {
@@ -40,6 +46,7 @@ export const DrawboardView = track(() => {
   const [rp, setRp] = useAtom(roomPresence);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
   const { uiOverrides } = useUiOverride(ed);
+  const { isBlocked, consumeChanges } = useGlobalInfo(ed);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -89,7 +96,27 @@ export const DrawboardView = track(() => {
     editor.user.updateUserPreferences({ locale: "en" });
     registerHostedImages(editor);
     setEd(editor);
+    let s = store.store;
+    if (!s) return;
+    s.onAfterChange = (
+      prev: TLRecord,
+      next: TLRecord,
+      source: "remote" | "user"
+    ) => {
+      const id = createShapeId(GLOBAL_INFO_SHAPE);
+      if (next.id === id || prev.id === id) {
+        // TODO: update banned
+        let banlist = next.meta.banned as string[];
+        if (banlist && banlist.includes(editor.user.getId()))
+          window.location.reload();
+      }
+    };
   }, []);
+
+  const blocked = useMemo(() => {
+    if (!ed) return;
+    return isBlocked(ed.user.getId());
+  }, [ed]);
 
   return (
     <div className={drawBoardViewRoottyle}>
@@ -101,10 +128,28 @@ export const DrawboardView = track(() => {
         tools={customTools}
         shapeUtils={customShapeUtils}
         overrides={uiOverrides}
+        hideUi={blocked}
       >
-        <MainUI />
-        <DiceRollerPanel />
-        <AssetList />
+        {!blocked && (
+          <>
+            <MainUI />
+            <DiceRollerPanel />
+            <AssetList />
+          </>
+        )}
+        {blocked && (
+          <div
+            className={appPanelStyle}
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              padding: "20px",
+            }}
+          >
+            User blocked
+          </div>
+        )}
       </Tldraw>
     </div>
   );

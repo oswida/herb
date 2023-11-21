@@ -119,7 +119,7 @@ export const DiceRollerSelector = () => {
           />
         ),
         onClose: () => {
-          editor.setCurrentTool("select");
+          void null;
         },
       });
       return;

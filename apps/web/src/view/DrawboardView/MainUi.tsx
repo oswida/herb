@@ -20,13 +20,21 @@ import {
   actionsPanelStyle,
   actionsRootStyle,
 } from "./style.css";
-import { FaDiceD20, FaCogs, FaUsers } from "react-icons/fa";
+import {
+  FaDiceD20,
+  FaCogs,
+  FaUsers,
+  FaTable,
+  FaChalkboard,
+} from "react-icons/fa";
 import { MdLibraryBooks, MdWebAsset } from "react-icons/md";
 import { Settings } from "../../component/Settings";
 import * as React from "react";
 import useClipboard from "react-use-clipboard";
 import { flexRowStyle } from "../../common";
 import { useMemo } from "react";
+import { Users } from "../../component/Users";
+import { useGlobalInfo } from "../../hooks";
 
 export const MainUI = track(() => {
   const editor = useEditor();
@@ -41,6 +49,7 @@ export const MainUI = track(() => {
   const room = useAtomValue(currentRoom);
   const [copyUser, setCopyUser] = useClipboard(user.id);
   const [copyRoom, setCopyRoom] = useClipboard(room ? room : "");
+  const { isOwner, ownerName } = useGlobalInfo(editor);
 
   const userCopy = () => {
     setCopyUser();
@@ -63,6 +72,16 @@ export const MainUI = track(() => {
   const roomInfo = useMemo(() => {
     const lines: string[] = [];
     lines.push(`ID: ${room}`);
+    const owner = ownerName;
+    if (owner) {
+      lines.push(`Owner: ${owner}`);
+    }
+    return lines.join("\n");
+  }, [room, presence]);
+
+  const usersInfo = useMemo(() => {
+    const lines: string[] = [];
+    lines.push(`Connected users`);
     Object.values(presence).forEach((it) => {
       lines.push(it.name);
     });
@@ -124,10 +143,28 @@ export const MainUI = track(() => {
         <div className={actionsInfoStyle}>
           <Button type="normal" title={roomInfo} onClick={roomCopy}>
             <div className={flexRowStyle({})}>
-              <FaUsers size={20} />
-              {Object.keys(presence).length}
+              <FaChalkboard size={20} />
             </div>
           </Button>
+          {isOwner && (
+            <Button
+              type="normal"
+              title={usersInfo}
+              onClick={() =>
+                addDialog({
+                  component: ({ onClose }) => <Users onClose={onClose} />,
+                  onClose: () => {
+                    void null;
+                  },
+                })
+              }
+            >
+              <div className={flexRowStyle({})}>
+                <FaUsers size={20} />
+                {Object.keys(presence).length}
+              </div>
+            </Button>
+          )}
         </div>
       </div>
     </div>
