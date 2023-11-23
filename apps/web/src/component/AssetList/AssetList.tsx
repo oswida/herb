@@ -36,7 +36,7 @@ type AssetDesc = {
 
 type TabType = "Image" | "PDF" | "Handout";
 
-export const AssetList = () => {
+export const AssetList = ({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>();
@@ -49,7 +49,7 @@ export const AssetList = () => {
   const { data, refetch } = useQuery({
     queryKey: ["assetList"],
     queryFn: () =>
-      fetch(`${ASSET_BASE_URL}/${tab.toLowerCase()}/asset-list`, {
+      fetch(`${ASSET_BASE_URL}/${tab.toLowerCase()}/${roomId}/asset-list`, {
         method: "GET",
       }).then((res) => res.json()),
     networkMode: "online",
@@ -107,7 +107,7 @@ export const AssetList = () => {
         : isPdf(asset.mime)
         ? "pdf"
         : "handout";
-      const url = `${UPLOAD_BASE_URL}/${atype}/${asset.filename}`;
+      const url = `${UPLOAD_BASE_URL}/${atype}/${roomId}/${asset.filename}`;
       const aid = AssetRecordType.createId(getHashForString(url));
       const center = { x: 800, y: 500 };
 
@@ -168,7 +168,9 @@ export const AssetList = () => {
           message={`Delete ${asset.filename}? \nPlease be aware, that all objects\npointing to this asset will be broken.`}
           callback={async () => {
             await fetch(
-              `${ASSET_BASE_URL}/${tab.toLowerCase()}/${asset.filename}`,
+              `${ASSET_BASE_URL}/${tab.toLowerCase()}/${roomId}/${
+                asset.filename
+              }`,
               {
                 method: "DELETE",
               }

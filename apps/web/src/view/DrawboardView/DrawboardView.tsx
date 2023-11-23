@@ -44,11 +44,11 @@ export const DrawboardView = track(() => {
   const [visible] = useAtom(uiVisible);
   const cs = useAtomValue(csheetVisible);
   const params = useParams();
-  const { registerHostedImages } = useAssetHandler();
-  const [, setRoom] = useAtom(currentRoom);
+  const { registerHostedImages } = useAssetHandler(params.roomId ?? "unknown");
+  const [room, setRoom] = useAtom(currentRoom);
   const [, setRp] = useAtom(roomPresence);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
-  const { uiOverrides } = useUiOverride(ed);
+  const { uiOverrides } = useUiOverride(ed, params.roomId ?? "unknown");
   const { isBlocked } = useGlobalInfo(ed);
 
   if (!params.roomId) {
@@ -136,7 +136,7 @@ export const DrawboardView = track(() => {
           <>
             <MainUI />
             <DiceRollerPanel />
-            <AssetList />
+            <AssetList roomId={room ?? ""} />
           </>
         )}
         {blocked ? (

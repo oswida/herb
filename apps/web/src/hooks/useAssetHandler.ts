@@ -1,16 +1,14 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
+import type { Editor, TLAsset, TLAssetId } from "@tldraw/tldraw";
 import {
   AssetRecordType,
-  Editor,
   MediaHelpers,
-  TLAsset,
-  TLAssetId,
   getHashForString,
   isGifAnimated,
-  uniqueId,
 } from "@tldraw/tldraw";
 import { UPLOAD_BASE_URL, generateSerialKeys } from "../common";
 
-export const useAssetHandler = () => {
+export const useAssetHandler = (roomId: string) => {
   const registerHostedImages = (editor: Editor) => {
     editor.registerExternalAssetHandler(
       "file",
@@ -21,7 +19,7 @@ export const useAssetHandler = () => {
           /[^a-zA-Z0-9.]/g,
           "-"
         );
-        const url = `${UPLOAD_BASE_URL}/image/${objectName}`;
+        const url = `${UPLOAD_BASE_URL}/image/${roomId}/${objectName}`;
 
         await fetch(url, {
           method: "POST",

@@ -10,9 +10,9 @@ import { useInsertJson } from "./useInsertJson";
 import { useInsertFile } from "./useInsertFile";
 
 // // In order to see select our custom shape tool, we need to add it to the ui.
-export const useUiOverride = (editor: Editor | undefined) => {
-  const insertPdf = useInsertFile(editor, "pdf");
-  const insertHandout = useInsertFile(editor, "handout");
+export const useUiOverride = (editor: Editor | undefined, roomId: string) => {
+  const insertPdf = useInsertFile(editor, "pdf", roomId);
+  const insertHandout = useInsertFile(editor, "handout", roomId);
   const insertJson = useInsertJson(editor);
 
   const uiOverrides: TLUiOverrides = {

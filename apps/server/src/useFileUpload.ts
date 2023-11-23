@@ -1,4 +1,5 @@
-import { IncomingMessage, ServerResponse } from "http";
+/* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
+import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   existsSync,
   mkdirSync,
@@ -6,7 +7,7 @@ import {
   writeSync,
   closeSync,
   readFileSync,
-} from "fs";
+} from "node:fs";
 import mime from "mime";
 
 const makeDirs = () => {
@@ -14,11 +15,11 @@ const makeDirs = () => {
     mkdirSync("upload");
   }
   const subs = ["image", "pdf", "handout"];
-  for (let i in subs) {
+  subs.forEach((v, i) => {
     if (!existsSync(`upload/${subs[i]}`)) {
       mkdirSync(`upload/${subs[i]}`);
     }
-  }
+  });
 };
 
 export const useFileUpload = () => {
@@ -26,7 +27,7 @@ export const useFileUpload = () => {
 
   const processUpload = (
     request: IncomingMessage,
-    response: ServerResponse<IncomingMessage> & {
+    response: ServerResponse & {
       req: IncomingMessage;
     }
   ) => {
@@ -34,12 +35,17 @@ export const useFileUpload = () => {
       return false;
 
     const parts = request.url.split("/");
-    if (parts.length < 5) return false;
+    if (parts.length < 6) return false;
     const fileType = parts[3];
-    const filename = parts[4];
+    const roomId = parts[4];
+    const filename = parts[5];
+
+    if (!existsSync(`upload/${fileType}/${roomId}`)) {
+      mkdirSync(`upload/${fileType}/${roomId}`);
+    }
 
     if (request.method.toLowerCase() === "post") {
-      const file = openSync(`upload/${fileType}/${filename}`, "w");
+      const file = openSync(`upload/${fileType}/${roomId}/${filename}`, "w");
       request.on("data", (chunk) => {
         writeSync(file, chunk);
       });
@@ -51,7 +57,7 @@ export const useFileUpload = () => {
     }
 
     if (request.method.toLowerCase() === "get") {
-      const fname = `upload/${fileType}/${filename}`;
+      const fname = `upload/${fileType}/${roomId}/${filename}`;
       if (!existsSync(fname)) return false;
       const buff = readFileSync(fname);
       const mt = mime.getType(filename);

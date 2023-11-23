@@ -1,14 +1,6 @@
-import { IncomingMessage, ServerResponse } from "http";
-import {
-  existsSync,
-  mkdirSync,
-  openSync,
-  writeSync,
-  closeSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-} from "fs";
+/* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import mime from "mime";
 
 export const useAsset = () => {
@@ -18,7 +10,7 @@ export const useAsset = () => {
 
   const processAsset = (
     request: IncomingMessage,
-    response: ServerResponse<IncomingMessage> & {
+    response: ServerResponse & {
       req: IncomingMessage;
     }
   ) => {
@@ -26,14 +18,18 @@ export const useAsset = () => {
       return false;
 
     const parts = request.url.split("/");
-    if (parts.length < 5) return false;
+    if (parts.length < 6) return false;
     const assetType = parts[3];
-    const action = parts[4];
+    const roomId = parts[4];
+    const action = parts[5];
 
     if (request.method.toLowerCase() === "get") {
       switch (action) {
-        case "asset-list":
-          const files = readdirSync(`upload/${assetType}`, {
+        case "asset-list": {
+          if (!existsSync(`upload/${assetType}/${roomId}`)) {
+            mkdirSync(`upload/${assetType}/${roomId}`);
+          }
+          const files = readdirSync(`upload/${assetType}/${roomId}`, {
             withFileTypes: true,
           });
           response.writeHead(200, {
@@ -45,11 +41,12 @@ export const useAsset = () => {
           response.write(JSON.stringify(resp));
           response.end();
           return true;
+        }
         default:
           return false;
       }
     } else if (request.method.toLowerCase() === "delete") {
-      const path = `upload/${assetType}/${action}`;
+      const path = `upload/${assetType}/${roomId}/${action}`;
       if (existsSync(path)) {
         rmSync(path);
         return true;
