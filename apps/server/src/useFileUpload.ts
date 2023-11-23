@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   existsSync,

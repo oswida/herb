@@ -44,6 +44,10 @@ module.exports = {
     "import/no-default-export": "off",
     "no-console": "off",
     "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
     "unicorn/filename-case": [
       "error",
       {

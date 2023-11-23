@@ -1,12 +1,9 @@
-import { IncomingMessage, ServerResponse } from "http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 
 export const useCors = () => {
   const origin = "*";
   const maxAge = 60 * 60 * 24;
-  const cors = (
-    request: IncomingMessage,
-    response: ServerResponse<IncomingMessage>
-  ) => {
+  const cors = (request: IncomingMessage, response: ServerResponse) => {
     const reqOrigin = request.headers.origin;
     const reqHeaders = request.headers["access-control-request-headers"];
     const reqMethod = request.headers["access-control-request-method"];
