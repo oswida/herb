@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { existsSync, readFileSync } from "node:fs";
 import WebSocket from "ws";
 import serveStatic from "serve-static";
 import { useSetup } from "./useSetup";
@@ -18,8 +19,22 @@ export const useServer = () => {
     if (cors(request, response)) return;
     if (processUpload(request, response)) return;
     if (processAsset(request, response)) return;
+
     serve(request, response, (err) => {
-      console.error(err);
+      console.error("Static serve error: ", err);
+      const fname = "static/index.html";
+      if (!existsSync(fname)) {
+        response.writeHead(404);
+        response.end();
+        return;
+      }
+      const buff = readFileSync(fname);
+      response.writeHead(200, {
+        "Content-Type": "text/html",
+        "Content-length": buff.length,
+      });
+      response.write(buff);
+      response.end();
     });
   });
 

@@ -71,7 +71,7 @@ export const useInsertFile = (
             }
           })
           .catch((err) => {
-            console.error(err);
+            console.error(`${url} fetch error`, err);
           });
       });
       input.value = "";

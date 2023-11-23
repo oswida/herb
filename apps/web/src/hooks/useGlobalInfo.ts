@@ -93,7 +93,6 @@ export const useGlobalInfo = (editor: Editor | undefined) => {
   const consumeChanges = useCallback(
     (changes: HistoryEntry<TLRecord>) => {
       if (!editor) return;
-      console.log("changes");
       const id = createShapeId(GLOBAL_INFO_SHAPE);
       const update = changes.changes.updated[id];
       if (!update) return;

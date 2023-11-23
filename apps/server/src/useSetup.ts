@@ -183,7 +183,7 @@ export const useSetup = () => {
         }
       }
     } catch (err) {
-      console.error(err);
+      console.error("messageListener error: ", err);
       doc.emit("error", [err]);
     }
   };
