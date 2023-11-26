@@ -30,7 +30,10 @@ import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
 
-const HOST_URL = "ws://localhost:5001";
+const port = import.meta.env.DEV ? 5001 : window.location.port;
+const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
+const HOST_URL = `${websockSchema}://${window.location.hostname}:${port}`;
+const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
 
 const customShapeUtils = [
   PdfShapeUtil,
@@ -44,11 +47,18 @@ export const DrawboardView = track(() => {
   const [visible] = useAtom(uiVisible);
   const cs = useAtomValue(csheetVisible);
   const params = useParams();
-  const { registerHostedImages } = useAssetHandler(params.roomId ?? "unknown");
+  const { registerHostedImages } = useAssetHandler(
+    params.roomId ?? "unknown",
+    UPLOAD_BASE_URL
+  );
   const [room, setRoom] = useAtom(currentRoom);
   const [, setRp] = useAtom(roomPresence);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
-  const { uiOverrides } = useUiOverride(ed, params.roomId ?? "unknown");
+  const { uiOverrides } = useUiOverride(
+    ed,
+    params.roomId ?? "unknown",
+    UPLOAD_BASE_URL
+  );
   const { isBlocked } = useGlobalInfo(ed);
 
   if (!params.roomId) {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type -- because */
 import type { Editor } from "@tldraw/tldraw";
 import { useCallback, useEffect, useRef } from "react";
-import { UPLOAD_BASE_URL, generateSerialKeys } from "../common";
+import { generateSerialKeys } from "../common";
 import type { IMarkdownShape, IPdfShape } from "../shapes";
 
 export type UploadCategory = "pdf" | "handout";
@@ -13,7 +13,8 @@ export const UploadCategoryMime: Record<UploadCategory, string> = {
 export const useInsertFile = (
   editor: Editor | undefined,
   category: UploadCategory,
-  roomId: string
+  roomId: string,
+  baseUrl: string
 ) => {
   const inputRef = useRef<HTMLInputElement>();
 
@@ -34,7 +35,7 @@ export const useInsertFile = (
           category !== "handout"
             ? `${id}-${f.name}`.replaceAll(/[^a-zA-Z0-9.]/g, "-")
             : f.name;
-        const url = `${UPLOAD_BASE_URL}/${category}/${roomId}/${objectName}`;
+        const url = `${baseUrl}/${category}/${roomId}/${objectName}`;
 
         fetch(url, {
           method: "POST",

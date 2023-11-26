@@ -1,8 +1,5 @@
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 
-export const UPLOAD_BASE_URL = "http://localhost:5001/api/upload";
-export const ASSET_BASE_URL = "http://localhost:5001/api/asset";
-
 export const GLOBAL_INFO_SHAPE = "global:info:shape";
 
 export type ChatMsg = {

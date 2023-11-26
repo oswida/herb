@@ -22,7 +22,7 @@ import { DEFAULT_STORE } from "./default_store";
 
 export function useYjsStore({
   roomId = "example",
-  hostUrl = "ws://localhost:5001",
+  hostUrl = "",
   shapeUtils = [],
 }: Partial<{
   hostUrl: string;
@@ -267,5 +267,5 @@ export function useYjsStore({
     };
   }, [room, yDoc, store, yStore]);
 
-  return {storeWithStatus, room};
+  return { storeWithStatus, room };
 }

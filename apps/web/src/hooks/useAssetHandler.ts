@@ -6,9 +6,9 @@ import {
   getHashForString,
   isGifAnimated,
 } from "@tldraw/tldraw";
-import { UPLOAD_BASE_URL, generateSerialKeys } from "../common";
+import { generateSerialKeys } from "../common";
 
-export const useAssetHandler = (roomId: string) => {
+export const useAssetHandler = (roomId: string, baseUrl: string) => {
   const registerHostedImages = (editor: Editor) => {
     editor.registerExternalAssetHandler(
       "file",
@@ -19,7 +19,7 @@ export const useAssetHandler = (roomId: string) => {
           /[^a-zA-Z0-9.]/g,
           "-"
         );
-        const url = `${UPLOAD_BASE_URL}/image/${roomId}/${objectName}`;
+        const url = `${baseUrl}/image/${roomId}/${objectName}`;
 
         await fetch(url, {
           method: "POST",

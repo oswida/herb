@@ -15,6 +15,7 @@
     "@radix-ui/react-icons": "^1.3.0",
     "@tanstack/react-query": "^5.8.4",
     "@tldraw/tldraw": "2.0.0-canary.d683cc094321",
+    "@types/node": "^20.10.0",
     "@uiw/react-color": "^2.0.1",
     "@uiw/react-color-compact": "^2.0.1",
     "@vanilla-extract/css": "^1.13.0",

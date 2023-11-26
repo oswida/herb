@@ -5,12 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  ASSET_BASE_URL,
-  UPLOAD_BASE_URL,
-  assetListVisible,
-  flexRowStyle,
-} from "../../common";
+import { assetListVisible, flexRowStyle } from "../../common";
 import { assetListRootStyle, assetListStyle } from "./style.css";
 import { useAtomValue } from "jotai";
 import { AssetItem } from "./AssetItem";
@@ -35,6 +30,9 @@ type AssetDesc = {
 };
 
 type TabType = "Image" | "PDF" | "Handout";
+const port = import.meta.env.DEV ? 5001 : window.location.port;
+const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
+const ASSET_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/asset`;
 
 export const AssetList = ({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);

@@ -19,7 +19,6 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FaHome, FaTools } from "react-icons/fa";
 import { MarkdownSettings } from "./MarkdownSettings";
-import { UPLOAD_BASE_URL } from "../common";
 
 export type IMarkdownShape = TLBaseShape<
   "markdown",
@@ -33,15 +32,19 @@ export type IMarkdownShape = TLBaseShape<
   }
 >;
 
+interface MarkdownComponentProps {
+  origin: IMarkdownShape;
+  isEditing: boolean;
+  bounds: Box2d;
+  baseUrl: string;
+}
+
 export const MarkdownComponent = ({
   origin,
   isEditing,
   bounds,
-}: {
-  origin: IMarkdownShape;
-  isEditing: boolean;
-  bounds: Box2d;
-}) => {
+  baseUrl,
+}: MarkdownComponentProps) => {
   const editor = useEditor();
   // Using local state for change propagation
   const [shape, setShape] = useState<IMarkdownShape>(origin);
@@ -71,7 +74,7 @@ export const MarkdownComponent = ({
 
   const open = (name: string | undefined) => {
     if (!name) return;
-    const newUrl = `${UPLOAD_BASE_URL}/handout/${name}`;
+    const newUrl = `${baseUrl}/handout/${name}`;
     const shapeUpdate: TLShapePartial<IMarkdownShape> = {
       id: shape.id,
       type: "markdown",
@@ -205,8 +208,14 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
   override component(shape: IMarkdownShape) {
     const isEditing = useIsEditing(shape.id);
     const bounds = this.editor.getShapeGeometry(shape).bounds;
+    const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:5001/api/upload`;
     return (
-      <MarkdownComponent origin={shape} isEditing={isEditing} bounds={bounds} />
+      <MarkdownComponent
+        origin={shape}
+        isEditing={isEditing}
+        bounds={bounds}
+        baseUrl={UPLOAD_BASE_URL}
+      />
     );
   }
 
