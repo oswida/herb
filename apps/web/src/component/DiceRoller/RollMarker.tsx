@@ -16,8 +16,6 @@ const Ms = ({ title, children }: { title: string; children: ReactNode }) => {
       title={title}
       className={diceMarkerStyle}
       style={{
-        // backgroundColor: `${theme.text}22`,
-        //color: "var(--color-primary)",
         backgroundColor: "var(--color-primary)",
         color: "#ddd",
       }}

@@ -10,12 +10,13 @@ import { hideRestUi, hideStylePanel } from "../../common/utils";
 import {
   csheetVisible,
   currentRoom,
+  roomData,
   roomPresence,
   uiVisible,
 } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
-import { useAssetHandler, useGlobalInfo } from "../../hooks";
+import { useAssetHandler, useRoomInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
@@ -29,11 +30,13 @@ import { MarkdownShapeUtil } from "../../shapes";
 import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
+import { useQuery } from "@tanstack/react-query";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
 const HOST_URL = `${websockSchema}://${window.location.hostname}:${port}`;
 const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
+const ROOM_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/room`;
 
 const customShapeUtils = [
   PdfShapeUtil,
@@ -59,7 +62,16 @@ export const DrawboardView = track(() => {
     params.roomId ?? "unknown",
     UPLOAD_BASE_URL
   );
-  const { isBlocked } = useGlobalInfo(ed);
+  const [rdata, setRdata] = useAtom(roomData);
+  const {
+    isBlocked,
+    iamBlocked,
+    blockUser,
+    blockedList,
+    isOwner,
+    ownerId,
+    ownerName,
+  } = useRoomInfo(ed, ROOM_BASE_URL);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -86,21 +98,32 @@ export const DrawboardView = track(() => {
     hideRestUi(true);
   }, [cs, visible]);
 
-  useEffect(() => {
-    const states = roomConnector.awareness.getStates();
-    const ps: Record<string, Presence> = {};
-    for (const [k] of states) {
-      const obj = states.get(k);
-      if (obj && obj.presence !== undefined) {
-        const p: Presence = {
-          id: obj.presence.userId as string,
-          name: obj.presence.userName as string,
-          color: obj.presence.color as string,
-        };
-        ps[p.id] = p;
+  const updatePresence = useCallback(
+    (e: any) => {
+      if (e.added.length <= 0 && e.removed.length <= 0) return;
+      const states = roomConnector.awareness.getStates();
+      const ps: Record<string, Presence> = {};
+      for (const [k] of states) {
+        const obj = states.get(k);
+        if (obj && obj.presence !== undefined) {
+          const p: Presence = {
+            id: obj.presence.userId as string,
+            name: obj.presence.userName as string,
+            color: obj.presence.color as string,
+          };
+          ps[p.id] = p;
+        }
       }
-    }
-    setRp(ps);
+      if (Object.keys(ps).length === 0) return;
+      console.log("sync presence", ps);
+      setRp(ps);
+    },
+    [roomConnector.awareness, roomConnector.synced, roomConnector, setRp]
+  );
+
+  useEffect(() => {
+    roomConnector.awareness.off("change", updatePresence);
+    roomConnector.awareness.on("change", updatePresence);
   }, [roomConnector.awareness, roomConnector.synced, roomConnector, setRp]);
 
   const mount = useCallback(
@@ -109,32 +132,28 @@ export const DrawboardView = track(() => {
       editor.user.updateUserPreferences({ locale: "en" });
       registerHostedImages(editor);
       setEd(editor);
-      const s = store.store;
-      if (!s) return;
-      s.onAfterChange = (
-        prev: TLRecord,
-        next: TLRecord,
-        _source: "remote" | "user"
-      ) => {
-        const id = createShapeId(GLOBAL_INFO_SHAPE);
-        if (next.id === id || prev.id === id) {
-          const banlist = next.meta.banned as string[];
-          if (banlist.includes(editor.user.getId())) window.location.reload();
-        }
-      };
-    },
-    [registerHostedImages, store.store]
-  );
 
-  const blocked = useMemo(() => {
-    if (!ed) return;
-    return isBlocked(ed.user.getId());
-  }, [ed, isBlocked]);
+      // const s = store.store;
+      // if (!s) return;
+      // s.onAfterChange = (
+      //   prev: TLRecord,
+      //   next: TLRecord,
+      //   _source: "remote" | "user"
+      // ) => {
+      //   const id = createShapeId(GLOBAL_INFO_SHAPE);
+      //   if (next.id === id || prev.id === id) {
+      //     const banlist = next.meta.banned as string[];
+      //     if (banlist.includes(editor.user.getId())) window.location.reload();
+      //   }
+      // };
+    },
+    [registerHostedImages]
+  );
 
   return (
     <div className={drawBoardViewRoottyle}>
       <Tldraw
-        hideUi={blocked}
+        hideUi={iamBlocked}
         inferDarkMode
         onMount={mount}
         overrides={uiOverrides}
@@ -142,14 +161,21 @@ export const DrawboardView = track(() => {
         store={store}
         tools={customTools}
       >
-        {!blocked && (
+        {!iamBlocked && (
           <>
-            <MainUI />
-            <DiceRollerPanel />
+            <MainUI
+              ownerName={ownerName}
+              isOwner={isOwner}
+              blockUser={blockUser}
+              blockedList={blockedList}
+              isBlocked={isBlocked}
+              ownerId={ownerId}
+            />
+            <DiceRollerPanel isOwner={isOwner} />
             <AssetList roomId={room ?? ""} />
           </>
         )}
-        {blocked ? (
+        {iamBlocked ? (
           <div
             className={appPanelStyle}
             style={{

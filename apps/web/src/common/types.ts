@@ -19,3 +19,11 @@ export type Presence = {
   name: string;
   color: string;
 };
+
+export interface RoomData {
+  owner: string;
+  id: string;
+  secure: boolean;
+  allowedUsers: string[];
+  blockedUsers: string[];
+}

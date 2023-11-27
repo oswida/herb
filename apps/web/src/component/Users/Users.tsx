@@ -1,38 +1,24 @@
-import {
-  Button,
-  Dialog,
-  Input,
-  TLUiDialogProps,
-  getUserPreferences,
-  setUserPreferences,
-  useEditor,
-} from "@tldraw/tldraw";
+import { Button, Dialog, TLUiDialogProps } from "@tldraw/tldraw";
 import {
   Presence,
-  currentRoom,
   flexColumnStyle,
   flexRowStyle,
   roomPresence,
 } from "../../common";
-import React, { useMemo, useState } from "react";
-import Compact from "@uiw/react-color-compact";
+import React, { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import {
-  FaUserCheck,
-  FaUserLock,
-  FaUserMinus,
-  FaUserSlash,
-} from "react-icons/fa";
-import { useGlobalInfo } from "../../hooks";
+import { FaUserCheck, FaUserSlash } from "react-icons/fa";
 
-export const Users = (props: TLUiDialogProps) => {
+type Props = TLUiDialogProps & {
+  isOwner: boolean;
+  blockUser: (id: string, block: boolean) => void;
+  blockedList: string[];
+  isBlocked: (id: string) => boolean;
+  ownerId: string;
+};
+
+export const Users = ({ isOwner, isBlocked, blockUser, ownerId }: Props) => {
   const presence = useAtomValue(roomPresence);
-  const editor = useEditor();
-  const { getGlobalInfo, updateGlobalInfo, isOwner, isBlocked, owner } =
-    useGlobalInfo(editor);
-  const [bannedUsers, setBannedUsers] = useState<string[] | undefined>(
-    getGlobalInfo()?.banned as string[]
-  );
 
   const list = useMemo(() => {
     const lines: Presence[] = [];
@@ -44,25 +30,12 @@ export const Users = (props: TLUiDialogProps) => {
 
   const ban = (id: string) => {
     if (!isOwner) return;
-    let banlist = bannedUsers ? [...bannedUsers] : ([] as string[]);
-    banlist.push(id);
-    updateGlobalInfo({
-      banned: banlist,
-    });
-    setBannedUsers(banlist);
+    blockUser(id, true);
   };
 
   const unban = (id: string) => {
     if (!isOwner) return;
-    let banlist = bannedUsers;
-    if (!banlist) return;
-    if (banlist.includes(id)) {
-      banlist = banlist.filter((it) => it !== id);
-      updateGlobalInfo({
-        banned: banlist,
-      });
-      setBannedUsers(banlist);
-    }
+    blockUser(id, false);
   };
 
   return (
@@ -76,9 +49,9 @@ export const Users = (props: TLUiDialogProps) => {
           {list.map((it) => (
             <div className={flexRowStyle({ justify: "space" })} key={it.id}>
               <div>
-                {it.name} {bannedUsers?.includes(it.id) ? "(blocked)" : ""}
+                {it.name} {isBlocked(it.id) ? "(blocked)" : ""}
               </div>
-              {owner !== it.id && isOwner && (
+              {ownerId !== it.id && isOwner && (
                 <>
                   {!isBlocked(it.id) && (
                     <Button

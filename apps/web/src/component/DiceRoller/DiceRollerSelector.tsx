@@ -47,7 +47,7 @@ const Face = ({ faceType }: { faceType: string }) => {
   }
 };
 
-export const DiceRollerSelector = () => {
+export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
   const MAX_DICE_POOL = 99;
   const [selectedDice, setSelectedDice] = useState<Record<string, number>>({});
   const faces = {
@@ -293,9 +293,11 @@ export const DiceRollerSelector = () => {
           <Button type="normal" title="Reset pool" onClick={reset}>
             <FaReply size={16} />
           </Button>
-          <Button title="Clear list" onClick={clear} type="normal">
-            <FaTrashAlt size={16} />
-          </Button>
+          {isOwner && (
+            <Button title="Clear list" onClick={clear} type="normal">
+              <FaTrashAlt size={16} />
+            </Button>
+          )}
         </div>
       </div>
     </div>

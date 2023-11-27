@@ -1,20 +1,13 @@
-import {
-  getUserPreferences,
-  track,
-  useEditor,
-} from "@tldraw/tldraw";
+import { getUserPreferences, track, useEditor } from "@tldraw/tldraw";
 import { diceRollerVisible } from "../../common/state";
 import { useAtomValue } from "jotai";
-import {
-  diceRollerListStyle,
-  diceRollerRootStyle,
-} from "./style.css";
+import { diceRollerListStyle, diceRollerRootStyle } from "./style.css";
 import { useChat } from "../../hooks";
 import { DiceRollerSelector } from "./DiceRollerSelector";
 import React, { useEffect, useMemo, useRef } from "react";
 import { DiceRollerItem } from "./DiceRollerItem";
 
-export const DiceRollerPanel = track(() => {
+export const DiceRollerPanel = track(({ isOwner }: { isOwner: boolean }) => {
   const visible = useAtomValue(diceRollerVisible);
   const editor = useEditor();
   const { chatList } = useChat(editor);
@@ -42,7 +35,7 @@ export const DiceRollerPanel = track(() => {
             ))}
             <div ref={ref}></div>
           </div>
-          <DiceRollerSelector />
+          <DiceRollerSelector isOwner={isOwner} />
         </div>
       )}
     </>
