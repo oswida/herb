@@ -53,7 +53,7 @@ export const DrawboardView = track(() => {
     UPLOAD_BASE_URL
   );
   const [room, setRoom] = useAtom(currentRoom);
-  const [, setRp] = useAtom(roomPresence);
+  const [, setRoomPresence] = useAtom(roomPresence);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
   const { uiOverrides } = useUiOverride(
     ed,
@@ -115,7 +115,7 @@ export const DrawboardView = track(() => {
         ps[p.id] = p;
       }
     }
-    setRp(ps);
+    setRoomPresence(ps);
   };
 
   const updatePresence = useCallback(
@@ -124,7 +124,7 @@ export const DrawboardView = track(() => {
       const states = roomConnector.awareness.getStates();
       updatePresenceStates(states);
     },
-    [roomConnector.awareness, roomConnector.synced, roomConnector, setRp]
+    [roomConnector.awareness, setRoomPresence]
   );
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export const DrawboardView = track(() => {
     roomConnector.awareness.on("change", updatePresence);
     const states = roomConnector.awareness.getStates();
     updatePresenceStates(states);
-  }, [roomConnector.awareness, roomConnector.synced, roomConnector, setRp]);
+  }, [roomConnector.awareness, roomConnector.synced, setRoomPresence]);
 
   const mount = useCallback(
     (editor: Editor) => {

@@ -23,7 +23,9 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
 
   useEffect(() => {
     if (!roomId || !editor) return;
-    refetch().then(() => {});
+    refetch().then((res) => {
+      // console.log("refetch", res);
+    });
   }, [roomId, editor, roomApiUrl]);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
 
   const ownerName = useMemo(() => {
     if (!rdata || !presence[rdata.owner]) return "";
+    console.log("owner name", presence[rdata.owner].name);
     return presence[rdata.owner].name;
   }, [editor, rdata, presence, roomId]);
 

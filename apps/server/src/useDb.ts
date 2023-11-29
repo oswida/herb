@@ -39,7 +39,7 @@ export const useDb = () => {
     const roomId = parts[3];
     const user = parts[4];
 
-    if (!roomId || !user) {
+    if (!roomId || !user || user.trim() === "undefined") {
       return false;
     }
 
