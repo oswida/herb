@@ -26,7 +26,7 @@ export const useDb = () => {
       console.error(err);
     });
 
-  const processRoomConnect = async (
+  const processRoom = async (
     request: IncomingMessage,
     response: ServerResponse & {
       req: IncomingMessage;
@@ -80,20 +80,15 @@ export const useDb = () => {
           database
             .put(`room_${roomId}`, inf)
             .then(() => {
-              response.writeHead(200, {
-                "Content-Type": "application/json",
-              });
-              response.write(JSON.stringify(inf));
-              response.end();
-              return true;
+              console.log("room info updated");
             })
             .catch((err) => {
               console.error(err);
-              return true;
             });
-
-          return true;
         });
+        response.writeHead(204);
+        response.end();
+        return true;
       } catch {
         return false;
       }
@@ -113,5 +108,5 @@ export const useDb = () => {
       });
   };
 
-  return { processRoomConnect, dbClose };
+  return { processRoomConnect: processRoom, dbClose };
 };

@@ -17,7 +17,13 @@ type Props = TLUiDialogProps & {
   ownerId: string;
 };
 
-export const Users = ({ isOwner, isBlocked, blockUser, ownerId }: Props) => {
+export const Users = ({
+  isOwner,
+  isBlocked,
+  blockUser,
+  ownerId,
+  onClose,
+}: Props) => {
   const presence = useAtomValue(roomPresence);
 
   const list = useMemo(() => {
@@ -28,14 +34,16 @@ export const Users = ({ isOwner, isBlocked, blockUser, ownerId }: Props) => {
     return lines;
   }, [presence]);
 
-  const ban = (id: string) => {
+  const ban = async (id: string) => {
     if (!isOwner) return;
-    blockUser(id, true);
+    await blockUser(id, true);
+    onClose();
   };
 
-  const unban = (id: string) => {
+  const unban = async (id: string) => {
     if (!isOwner) return;
-    blockUser(id, false);
+    await blockUser(id, false);
+    onClose();
   };
 
   return (

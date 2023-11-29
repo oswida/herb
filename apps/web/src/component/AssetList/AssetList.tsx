@@ -59,7 +59,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
 
   useEffect(() => {
     if (!visible) return;
-    refetch();
+    refetch().then(() => {});
   }, [tab, filter, visible]);
 
   const items = useMemo(() => {
@@ -71,7 +71,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
 
   const filterChange = async (value: string) => {
     setFilter(value);
-    refetch();
+    await refetch();
   };
 
   const clearFilter = async () => {

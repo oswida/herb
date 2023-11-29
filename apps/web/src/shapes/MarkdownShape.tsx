@@ -99,7 +99,7 @@ export const MarkdownComponent = ({
   };
 
   useEffect(() => {
-    refetch();
+    refetch().then(() => {});
   }, [shape]);
 
   return (

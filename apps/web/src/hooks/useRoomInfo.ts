@@ -23,22 +23,22 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
 
   useEffect(() => {
     if (!roomId || !editor) return;
-    refetch();
-  }, [roomId, editor]);
+    refetch().then(() => {});
+  }, [roomId, editor, roomApiUrl]);
 
   useEffect(() => {
     setRdata(data);
-  }, [data]);
+  }, [data, roomId]);
 
   const isOwner = useMemo(() => {
     if (!editor || !rdata) return false;
     return editor.user.getId() === rdata.owner;
-  }, [editor, rdata]);
+  }, [editor, rdata, roomId]);
 
   const ownerName = useMemo(() => {
     if (!rdata || !presence[rdata.owner]) return "";
     return presence[rdata.owner].name;
-  }, [editor, rdata]);
+  }, [editor, rdata, presence, roomId]);
 
   const ownerId = useMemo(() => {
     if (!rdata) return "";
@@ -64,20 +64,22 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
   }, [editor, rdata]);
 
   const blockUser = useCallback(
-    (id: string, blocked: boolean) => {
+    async (id: string, blocked: boolean) => {
       if (!rdata || rdata.owner === id) return;
       const newData = blocked
         ? [...rdata.blockedUsers, id]
         : rdata.blockedUsers.filter((u) => u !== id);
-      fetch(`${roomApiUrl}/${rdata.id}/${editor?.user.getId()}`, {
+      await fetch(`${roomApiUrl}/${rdata.id}/${editor?.user.getId()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ blockedUsers: newData }),
       });
+      const result = await refetch();
+      console.log("refetch result ", result);
     },
-    [editor, rdata]
+    [editor, rdata, roomApiUrl, editor?.user]
   );
 
   return {

@@ -18,12 +18,18 @@ export const useServer = () => {
   const { processRoomConnect, dbClose } = useDb();
 
   const server = createServer((request, response) => {
-    if (cors(request, response)) return;
-    if (processUpload(request, response)) return;
-    if (processAsset(request, response)) return;
+    if (
+      cors(request, response) ||
+      processUpload(request, response) ||
+      processAsset(request, response)
+    ) {
+      return;
+    }
     processRoomConnect(request, response)
       .then((resp) => {
-        if (resp) return;
+        if (resp) {
+          return;
+        }
         serve(request, response, (err) => {
           console.error("Static serve error: ", err);
           const fname = "static/index.html";

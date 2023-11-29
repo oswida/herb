@@ -81,6 +81,7 @@ export const MainUI = track(
     const roomInfo = useMemo(() => {
       const lines: string[] = [];
       lines.push(`ID: ${room}`);
+      console.log(ownerName);
       if (ownerName) {
         lines.push(`Owner: ${ownerName}`);
       }
