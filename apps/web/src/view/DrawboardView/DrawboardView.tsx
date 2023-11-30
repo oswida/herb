@@ -25,10 +25,15 @@ import type { Presence } from "../../common";
 import { appPanelStyle } from "../../common";
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
-import { MarkdownShapeUtil } from "../../shapes";
+import { IMarkdownShape, MarkdownShapeUtil } from "../../shapes";
 import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
+import {
+  ITimerShape,
+  TimerShapeTool,
+  TimerShapeUtil,
+} from "../../shapes/TimerShape";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -41,8 +46,9 @@ const customShapeUtils = [
   RpgClockShapeUtil,
   MarkdownShapeUtil,
   HiddenShapeUtil,
+  TimerShapeUtil,
 ];
-const customTools = [RpgClockShapeTool];
+const customTools = [RpgClockShapeTool, TimerShapeTool];
 
 export const DrawboardView = track(() => {
   const [visible] = useAtom(uiVisible);
@@ -140,6 +146,34 @@ export const DrawboardView = track(() => {
       editor.user.updateUserPreferences({ locale: "en" });
       registerHostedImages(editor);
       setEd(editor);
+      let s = store.store;
+      if (!s) return;
+      s.onAfterChange = (prev, next, source) => {
+        if (next.typeName !== "shape" || source !== "remote") return;
+        console.log(next.type);
+        switch (next.type) {
+          case "timer":
+            {
+              const shape = editor.getShape(next.id) as ITimerShape;
+              if (!shape) return;
+              const util = editor.getShapeUtil<ITimerShape>(
+                shape
+              ) as TimerShapeUtil;
+              util.updateProps(shape, true);
+            }
+            break;
+          case "markdown":
+            {
+              const shape = editor.getShape(next.id) as IMarkdownShape;
+              if (!shape) return;
+              const util = editor.getShapeUtil<IMarkdownShape>(
+                shape
+              ) as MarkdownShapeUtil;
+              util.updateProps(shape);
+            }
+            break;
+        }
+      };
     },
     [registerHostedImages]
   );

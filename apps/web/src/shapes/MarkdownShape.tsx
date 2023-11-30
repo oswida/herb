@@ -5,6 +5,8 @@ import {
   Button,
   Rectangle2d,
   TLBaseShape,
+  TLOnBeforeUpdateHandler,
+  TLOnEditEndHandler,
   TLOnResizeHandler,
   TLShapePartial,
   TLShapeUtilFlag,
@@ -14,7 +16,7 @@ import {
   useEditor,
   useIsEditing,
 } from "@tldraw/tldraw";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FaHome, FaTools } from "react-icons/fa";
@@ -28,7 +30,7 @@ export type IMarkdownShape = TLBaseShape<
     url: string | undefined;
     currentUrl: string | undefined;
     color: string;
-    background: string;
+    fill: string;
   }
 >;
 
@@ -39,12 +41,10 @@ interface MarkdownComponentProps {
   baseUrl: string;
 }
 
-export const MarkdownComponent = ({
-  origin,
-  isEditing,
-  bounds,
-  baseUrl,
-}: MarkdownComponentProps) => {
+export const MarkdownComponent = forwardRef<
+  HTMLDivElement,
+  MarkdownComponentProps
+>(({ origin, isEditing, bounds, baseUrl }: MarkdownComponentProps, ref) => {
   const editor = useEditor();
   // Using local state for change propagation
   const [shape, setShape] = useState<IMarkdownShape>(origin);
@@ -104,12 +104,13 @@ export const MarkdownComponent = ({
 
   return (
     <div
+      ref={ref}
       style={{
         width: bounds.width,
         height: bounds.height,
         overflow: "hidden",
         padding: "10px",
-        backgroundColor: shape.props.background,
+        backgroundColor: shape.props.fill,
         color: shape.props.color,
         borderRadius: "5px",
       }}
@@ -177,7 +178,7 @@ export const MarkdownComponent = ({
       )}
     </div>
   );
-};
+});
 
 export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
   static override type = "markdown" as const;
@@ -185,6 +186,8 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
   override canEditInReadOnly = () => true;
   override canEdit: TLShapeUtilFlag<IMarkdownShape> = () => true;
   override canResize = (_shape: IMarkdownShape) => true;
+
+  componentRef = React.createRef<HTMLDivElement>();
 
   override getDefaultProps(): any {
     return {
@@ -209,12 +212,14 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
     const isEditing = useIsEditing(shape.id);
     const bounds = this.editor.getShapeGeometry(shape).bounds;
     const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:5001/api/upload`;
+
     return (
       <MarkdownComponent
         origin={shape}
         isEditing={isEditing}
         bounds={bounds}
         baseUrl={UPLOAD_BASE_URL}
+        ref={this.componentRef}
       />
     );
   }
@@ -230,7 +235,17 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
     );
   }
 
+  updateProps(shape: IMarkdownShape) {
+    if (!this.componentRef.current) return;
+    this.componentRef.current.style.backgroundColor = shape.props.fill;
+    this.componentRef.current.style.color = shape.props.color;
+  }
+
   override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {
     return resizeBox(shape, info);
+  };
+
+  override onEditEnd: TLOnEditEndHandler<IMarkdownShape> = (shape) => {
+    this.updateProps(shape);
   };
 }

@@ -372,6 +372,88 @@ var useAsset = () => {
   return { processAsset };
 };
 
+// src/useDb.ts
+var import_level = require("level");
+var useDb = () => {
+  const DB_PATH = "./hdata";
+  const database = new import_level.Level(DB_PATH, {
+    valueEncoding: "json"
+  });
+  database.open().then(() => {
+    console.log("Database opened");
+  }).catch((err) => {
+    console.error(err);
+  });
+  const processRoom = async (request, response) => {
+    var _a;
+    if (!((_a = request.url) == null ? void 0 : _a.startsWith("/api/room")) || request.method === void 0)
+      return false;
+    const parts = request.url.split("/");
+    if (parts.length < 5)
+      return false;
+    const roomId = parts[3];
+    const user = parts[4];
+    if (!roomId || !user || user.trim() === "undefined") {
+      return false;
+    }
+    if (request.method.toLowerCase() === "get") {
+      try {
+        const value = await database.get(`room_${roomId}`);
+        response.writeHead(200, {
+          "Content-Type": "application/json"
+        });
+        response.write(JSON.stringify(value));
+        response.end();
+        return true;
+      } catch {
+        const info = {
+          id: roomId,
+          allowedUsers: [],
+          blockedUsers: [],
+          owner: user,
+          secure: false
+        };
+        await database.put(`room_${roomId}`, info);
+        response.writeHead(200, {
+          "Content-Type": "application/json"
+        });
+        response.write(JSON.stringify(info));
+        response.end();
+        return true;
+      }
+    } else if (request.method.toLowerCase() === "post") {
+      try {
+        const inf = await database.get(`room_${roomId}`);
+        request.on("data", (chunk) => {
+          const data = JSON.parse(chunk);
+          if (data.blockedUsers) {
+            inf.blockedUsers = data.blockedUsers;
+          }
+          database.put(`room_${roomId}`, inf).then(() => {
+            console.log("room info updated");
+          }).catch((err) => {
+            console.error(err);
+          });
+        });
+        response.writeHead(204);
+        response.end();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  };
+  const dbClose = () => {
+    database.close().then(() => {
+      console.log("Database closed");
+    }).catch((err) => {
+      console.error(err);
+    });
+  };
+  return { processRoomConnect: processRoom, dbClose };
+};
+
 // src/server.ts
 var useServer = () => {
   const wss = new import_ws.default.Server({ noServer: true });
@@ -379,28 +461,33 @@ var useServer = () => {
   const { cors } = useCors();
   const { processAsset } = useAsset();
   const serve = (0, import_serve_static.default)("static");
+  const { processRoomConnect, dbClose } = useDb();
   const server2 = (0, import_node_http.createServer)((request, response) => {
-    if (cors(request, response))
+    if (cors(request, response) || processUpload(request, response) || processAsset(request, response)) {
       return;
-    if (processUpload(request, response))
-      return;
-    if (processAsset(request, response))
-      return;
-    serve(request, response, (err) => {
-      console.error("Static serve error: ", err);
-      const fname = "static/index.html";
-      if (!(0, import_node_fs3.existsSync)(fname)) {
-        response.writeHead(404);
-        response.end();
+    }
+    processRoomConnect(request, response).then((resp) => {
+      if (resp) {
         return;
       }
-      const buff = (0, import_node_fs3.readFileSync)(fname);
-      response.writeHead(200, {
-        "Content-Type": "text/html",
-        "Content-length": buff.length
+      serve(request, response, (err) => {
+        console.error("Static serve error: ", err);
+        const fname = "static/index.html";
+        if (!(0, import_node_fs3.existsSync)(fname)) {
+          response.writeHead(404);
+          response.end();
+          return;
+        }
+        const buff = (0, import_node_fs3.readFileSync)(fname);
+        response.writeHead(200, {
+          "Content-Type": "text/html",
+          "Content-length": buff.length
+        });
+        response.write(buff);
+        response.end();
       });
-      response.write(buff);
-      response.end();
+    }).catch((err) => {
+      console.error(err);
     });
   });
   const { setupWSConnection } = useSetup();
@@ -410,6 +497,9 @@ var useServer = () => {
       wss.emit("connection", ws, request);
     };
     wss.handleUpgrade(request, socket, head, handleAuth);
+  });
+  server2.on("close", () => {
+    dbClose();
   });
   return { server: server2 };
 };

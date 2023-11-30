@@ -67,11 +67,21 @@ export const useUiOverride = (
         },
       };
 
+      tools.timer = {
+        id: "timer",
+        icon: "question-mark-circle",
+        label: "Timer" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("timer");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
       toolbar.push(toolbarItem(tools.rpgClock));
-
+      toolbar.push(toolbarItem(tools.timer));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

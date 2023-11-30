@@ -39,7 +39,6 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
 
   const ownerName = useMemo(() => {
     if (!rdata || !presence[rdata.owner]) return "";
-    console.log("owner name", presence[rdata.owner].name);
     return presence[rdata.owner].name;
   }, [editor, rdata, presence, roomId]);
 
@@ -79,8 +78,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
         },
         body: JSON.stringify({ blockedUsers: newData }),
       });
-      const result = await refetch();
-      console.log("refetch result ", result);
+      await refetch();
     },
     [editor, rdata, roomApiUrl, editor?.user]
   );

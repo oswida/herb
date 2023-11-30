@@ -8,15 +8,15 @@ import {
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
 import { flexColumnStyle } from "../common";
-import { IRpgClockShape } from "./RpgClockShape";
 import { IMarkdownShape } from "./MarkdownShape";
 import Compact from "@uiw/react-color-compact";
+import { ITimerShape } from "./TimerShape";
 
 type Props = TLUiDialogProps & {
-  shape: IMarkdownShape;
+  shape: ITimerShape;
 };
 
-export const MarkdownSettings = (props: Props) => {
+export const TimerSettings = (props: Props) => {
   const editor = useEditor();
   const [color, setColor] = useState(
     props.shape.props.color ? props.shape.props.color : "var(--color-text)"
@@ -26,9 +26,9 @@ export const MarkdownSettings = (props: Props) => {
   );
 
   const update = () => {
-    const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+    const shapeUpdate: TLShapePartial<ITimerShape> = {
       id: props.shape.id,
-      type: "markdown",
+      type: "timer",
       props: {
         color: color,
         fill: bkg,
@@ -41,7 +41,7 @@ export const MarkdownSettings = (props: Props) => {
   return (
     <>
       <Dialog.Header>
-        <Dialog.Title>Markdown settings</Dialog.Title>
+        <Dialog.Title>Timer settings</Dialog.Title>
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>

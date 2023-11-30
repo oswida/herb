@@ -175,6 +175,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
             );
             setFilter("");
             onClose();
+            await refetch();
           }}
         />
       ),
