@@ -8,12 +8,13 @@ import {
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
 import { flexColumnStyle } from "../common";
-import { IMarkdownShape } from "./MarkdownShape";
 import Compact from "@uiw/react-color-compact";
 import { ITimerShape } from "./TimerShape";
 
 type Props = TLUiDialogProps & {
   shape: ITimerShape;
+  updateProps: (shape: ITimerShape, remote: boolean) => void;
+  getMaxValue: (shape: ITimerShape) => number;
 };
 
 export const TimerSettings = (props: Props) => {
@@ -24,18 +25,24 @@ export const TimerSettings = (props: Props) => {
   const [bkg, setBkg] = useState(
     props.shape.props.fill ? props.shape.props.fill : "transparent"
   );
+  const [max, setMax] = useState(props.getMaxValue(props.shape).toString());
 
   const update = () => {
+    let m = Number.parseInt(max);
+    if (Number.isNaN(m)) m = 0;
     const shapeUpdate: TLShapePartial<ITimerShape> = {
       id: props.shape.id,
       type: "timer",
       props: {
         color: color,
         fill: bkg,
+        max: m,
       },
     };
     editor.updateShapes([shapeUpdate]);
     props.onClose();
+    const shape = editor.getShape(props.shape.id) as ITimerShape;
+    if (shape) props.updateProps(shape, false);
   };
 
   return (
@@ -62,6 +69,15 @@ export const TimerSettings = (props: Props) => {
             data-color-mode="dark"
             color={color}
             onChange={(color) => setColor(color.hex)}
+          />
+          <div>Maximum value</div>
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="Max"
+            defaultValue={max}
+            onValueChange={(value) => {
+              setMax(value);
+            }}
           />
         </div>
       </Dialog.Body>

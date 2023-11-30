@@ -30,8 +30,7 @@ export const useServer = () => {
         if (resp) {
           return;
         }
-        serve(request, response, (err) => {
-          console.error("Static serve error: ", err);
+        serve(request, response, () => {
           const fname = "static/index.html";
           if (!existsSync(fname)) {
             response.writeHead(404);

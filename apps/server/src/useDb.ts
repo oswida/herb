@@ -80,7 +80,7 @@ export const useDb = () => {
           database
             .put(`room_${roomId}`, inf)
             .then(() => {
-              console.log("room info updated");
+              // console.log("room info updated");
             })
             .catch((err) => {
               console.error(err);
@@ -101,7 +101,7 @@ export const useDb = () => {
     database
       .close()
       .then(() => {
-        console.log("Database closed");
+        // console.log("Database closed");
       })
       .catch((err) => {
         console.error(err);

@@ -15,7 +15,7 @@ import {
 } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
-import { useAssetHandler, useRoomInfo } from "../../hooks";
+import { useAssetHandler, useCustomUpdates, useRoomInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
@@ -75,6 +75,7 @@ export const DrawboardView = track(() => {
     ownerId,
     ownerName,
   } = useRoomInfo(ed, ROOM_BASE_URL);
+  const { updateCustomShapes } = useCustomUpdates(ed);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -146,37 +147,15 @@ export const DrawboardView = track(() => {
       editor.user.updateUserPreferences({ locale: "en" });
       registerHostedImages(editor);
       setEd(editor);
-      let s = store.store;
-      if (!s) return;
-      s.onAfterChange = (prev, next, source) => {
-        if (next.typeName !== "shape" || source !== "remote") return;
-        console.log(next.type);
-        switch (next.type) {
-          case "timer":
-            {
-              const shape = editor.getShape(next.id) as ITimerShape;
-              if (!shape) return;
-              const util = editor.getShapeUtil<ITimerShape>(
-                shape
-              ) as TimerShapeUtil;
-              util.updateProps(shape, true);
-            }
-            break;
-          case "markdown":
-            {
-              const shape = editor.getShape(next.id) as IMarkdownShape;
-              if (!shape) return;
-              const util = editor.getShapeUtil<IMarkdownShape>(
-                shape
-              ) as MarkdownShapeUtil;
-              util.updateProps(shape);
-            }
-            break;
-        }
-      };
     },
     [registerHostedImages]
   );
+
+  useEffect(() => {
+    let s = store.store;
+    if (!s) return;
+    s.onAfterChange = updateCustomShapes;
+  }, [store.store, updateCustomShapes]);
 
   return (
     <div className={drawBoardViewRoottyle}>

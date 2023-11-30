@@ -25,8 +25,15 @@ import {
   useIsEditing,
 } from "@tldraw/tldraw";
 import React, { forwardRef, useCallback, useEffect, useState } from "react";
-import { FaPlayCircle, FaTools } from "react-icons/fa";
+import {
+  FaPauseCircle,
+  FaPlayCircle,
+  FaReplyAll,
+  FaStopCircle,
+  FaTools,
+} from "react-icons/fa";
 import { TimerSettings } from "./TimerSettings";
+import { flexRowStyle } from "../common";
 
 export type ITimerShape = TLBaseShape<
   "timer",
@@ -44,12 +51,13 @@ export type ITimerShape = TLBaseShape<
 
 type TimerComponentProps = {
   origin: ITimerShape;
-  isEditing: boolean;
   bounds: Box2d;
+  updateProps: (shape: ITimerShape, remote: boolean) => void;
+  getMaxValue: (shape: ITimerShape) => number;
 };
 
 export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
-  ({ origin, isEditing, bounds }: TimerComponentProps, ref) => {
+  ({ origin, bounds, updateProps, getMaxValue }: TimerComponentProps, ref) => {
     const editor = useEditor();
     // Using local state for change propagation
     const [shape, setShape] = useState<ITimerShape>(origin);
@@ -65,6 +73,8 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
         return;
       }
       let cnt = 0;
+      let maxVal = getMaxValue(shape);
+
       if (shape.props.down) {
         cnt = shape.props.value - 1;
         if (cnt < 0) {
@@ -72,8 +82,8 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
         }
       } else {
         cnt = shape.props.value + 1;
-        if (cnt > shape.props.max) {
-          cnt = shape.props.max;
+        if (cnt > maxVal) {
+          cnt = maxVal;
         }
       }
       const shapeUpdate: TLShapePartial<ITimerShape> = {
@@ -92,8 +102,17 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
       setTimeout(tick, 1000);
     }, [tick, ticking]);
 
-    const startTick = () => {
-      const cnt = shape.props.down ? shape.props.max : 0;
+    const toggleTick = () => {
+      if (ticking) {
+        setTicking(false);
+        return;
+      }
+      setTicking(true);
+    };
+
+    const resetTick = () => {
+      if (ticking) return;
+      const cnt = shape.props.down ? getMaxValue(shape) : 0;
       const shapeUpdate: TLShapePartial<ITimerShape> = {
         id: shape.id,
         type: "timer",
@@ -103,7 +122,6 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
       };
       editor.updateShapes([shapeUpdate]);
       setShape({ ...shape, props: { ...shape.props, value: cnt } });
-      setTicking(true);
     };
 
     const { addDialog } = useDialogs();
@@ -117,6 +135,7 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
           height: bounds.height,
           overflow: "hidden",
           padding: "10px",
+          paddingBottom: "20px",
           backgroundColor: shape.props.fill,
           color: shape.props.color,
           borderRadius: "5px",
@@ -138,7 +157,7 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
           style={{
             display: "flex",
             width: "100%",
-            height: `calc(${bounds.height}px - 10px )`,
+            height: `calc(${bounds.height}px - 50px )`,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -153,52 +172,65 @@ export const TimerComponent = forwardRef<HTMLDivElement, TimerComponentProps>(
             {shape.props.value}
           </div>
         </div>
-        {isEditing && (
-          <>
-            <Button
-              type="icon"
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-              }}
-              onPointerDown={() => startTick()}
-            >
-              <FaPlayCircle />
-            </Button>
-            {/* <Button
+
+        <div
+          className={flexRowStyle({ justify: "space" })}
+          style={{
+            gap: "5px",
+            width: "100%",
+          }}
+        >
+          <Button type="icon" onPointerDown={() => toggleTick()}>
+            {!ticking && (
+              <FaPlayCircle
+                className="ticker-buttons"
+                size={16}
+                fill={shape.props.color}
+              />
+            )}
+            {ticking && (
+              <FaPauseCircle
+                className="ticker-buttons"
+                size={16}
+                fill={shape.props.color}
+              />
+            )}
+          </Button>
+          <Button type="icon" onPointerDown={() => resetTick()}>
+            <FaReplyAll
+              opacity={ticking ? 0.5 : undefined}
+              className="ticker-buttons"
+              size={16}
+              fill={shape.props.color}
+            />
+          </Button>
+          <Button
             type="icon"
-            style={{
-              position: "absolute",
-              right: 0,
-              bottom: 0,
+            onPointerDown={() => {
+              if (ticking) return;
+              addDialog({
+                component: ({ onClose }) => (
+                  <TimerSettings
+                    onClose={onClose}
+                    shape={shape}
+                    updateProps={updateProps}
+                    getMaxValue={getMaxValue}
+                  />
+                ),
+                onClose: () => {
+                  void null;
+                },
+              });
             }}
-            onPointerDown={() => mod(1)}
           >
-            <FaPlusCircle />
-          </Button> */}
-            <Button
-              type="icon"
-              style={{
-                position: "absolute",
-                right: 0,
-                top: 0,
-              }}
-              onPointerDown={() => {
-                addDialog({
-                  component: ({ onClose }) => (
-                    <TimerSettings onClose={onClose} shape={shape} />
-                  ),
-                  onClose: () => {
-                    void null;
-                  },
-                });
-              }}
-            >
-              <FaTools />
-            </Button>
-          </>
-        )}
+            <FaTools
+              className="ticker-buttons"
+              size={16}
+              fill={shape.props.color}
+              opacity={ticking ? 0.5 : undefined}
+            />
+          </Button>
+        </div>
       </div>
     );
   }
@@ -229,14 +261,14 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
 
   override canResize = (_shape: ITimerShape) => true;
   override canEditInReadOnly = () => true;
-  override canEdit: TLShapeUtilFlag<ITimerShape> = () => true;
+  override canEdit: TLShapeUtilFlag<ITimerShape> = () => false;
 
   componentRef = React.createRef<HTMLDivElement>();
 
   getDefaultProps(): ITimerShape["props"] {
     return {
-      w: 100,
-      h: 100,
+      w: 150,
+      h: 150,
       max: 10,
       value: 10,
       down: true,
@@ -265,8 +297,11 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
       <TimerComponent
         ref={this.componentRef}
         bounds={bounds}
-        isEditing={isEditing}
         origin={shape}
+        updateProps={(shape: ITimerShape, remote: boolean) =>
+          this.updateProps(shape, remote)
+        }
+        getMaxValue={(shape) => this.getMaxValue(shape)}
         key={shape.id}
       />
     );
@@ -285,6 +320,16 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
     if (!this.componentRef.current) return;
     this.componentRef.current.style.backgroundColor = shape.props.fill;
     this.componentRef.current.style.color = shape.props.color;
+    const buttons =
+      this.componentRef.current.getElementsByClassName("ticker-buttons");
+    for (let i = 0; i < buttons.length; i++) {
+      buttons.item(i)?.setAttribute("fill", shape.props.color);
+    }
+    this.componentRef.current.setAttribute(
+      "data-max",
+      shape.props.max.toString()
+    );
+
     if (!remote) return;
     const value =
       this.componentRef.current.getElementsByClassName("ticker-value");
@@ -293,10 +338,22 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
   }
 
   override onResize: TLOnResizeHandler<ITimerShape> = (shape, info) => {
+    if (info.scaleX < 1.0 || info.scaleY < 1.0) {
+      return;
+    }
     return resizeBox(shape, info);
   };
 
   override onEditEnd: TLOnEditEndHandler<ITimerShape> = (shape) => {
     this.updateProps(shape, false);
   };
+
+  getMaxValue(shape: ITimerShape) {
+    if (!this.componentRef.current) return shape.props.max;
+    const ma = this.componentRef.current.getAttribute("data-max");
+    if (!ma) return shape.props.max;
+    const num = Number.parseInt(ma);
+    if (Number.isNaN(num)) return shape.props.max;
+    return num;
+  }
 }
