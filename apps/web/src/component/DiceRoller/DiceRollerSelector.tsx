@@ -133,7 +133,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
       component: ({ onClose }) => (
         <DiceDialog
           onClose={onClose}
-          notation={notation}
+          notation="custom"
           private={mPrivate}
           hasComment={mComment}
           hasMod={mMod}

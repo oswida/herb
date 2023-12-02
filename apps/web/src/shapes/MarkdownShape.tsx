@@ -39,146 +39,164 @@ interface MarkdownComponentProps {
   isEditing: boolean;
   bounds: Box2d;
   baseUrl: string;
+  updateProps: (shape: IMarkdownShape) => void;
 }
 
 export const MarkdownComponent = forwardRef<
   HTMLDivElement,
   MarkdownComponentProps
->(({ origin, isEditing, bounds, baseUrl }: MarkdownComponentProps, ref) => {
-  const editor = useEditor();
-  // Using local state for change propagation
-  const [shape, setShape] = useState<IMarkdownShape>(origin);
-  if (!shape) return <>No shape</>;
+>(
+  (
+    { origin, isEditing, bounds, baseUrl, updateProps }: MarkdownComponentProps,
+    ref
+  ) => {
+    const editor = useEditor();
+    // Using local state for change propagation
+    const [shape, setShape] = useState<IMarkdownShape>(origin);
+    if (!shape) return <>No shape</>;
 
-  let url = shape.props.url;
-  if (!url) return <div>No url defined</div>;
-  if (shape.props.currentUrl && shape.props.currentUrl.trim() !== "")
-    url = shape.props.currentUrl;
+    let url = shape.props.url;
+    if (!url) return <div>No url defined</div>;
+    if (shape.props.currentUrl && shape.props.currentUrl.trim() !== "")
+      url = shape.props.currentUrl;
 
-  const { data, refetch } = useQuery({
-    queryKey: [shape.id],
-    queryFn: async () => {
-      const res = await fetch(url!!, {
-        method: "GET",
-      });
-      return await res.text();
-    },
-    networkMode: "online",
-    refetchOnMount: true,
-    staleTime: 0,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    structuralSharing: true,
-  });
-  const { addDialog } = useDialogs();
-
-  const open = (name: string | undefined) => {
-    if (!name) return;
-    const newUrl = `${baseUrl}/handout/${name}`;
-    const shapeUpdate: TLShapePartial<IMarkdownShape> = {
-      id: shape.id,
-      type: "markdown",
-      props: {
-        currentUrl: newUrl,
+    const { data, refetch } = useQuery({
+      queryKey: [shape.id],
+      queryFn: async () => {
+        const res = await fetch(url!!, {
+          method: "GET",
+        });
+        return await res.text();
       },
+      networkMode: "online",
+      refetchOnMount: true,
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      structuralSharing: true,
+    });
+    const { addDialog } = useDialogs();
+
+    const open = (name: string | undefined) => {
+      if (!name) return;
+      const newUrl = `${baseUrl}/handout/${name}`;
+      const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+        id: shape.id,
+        type: "markdown",
+        props: {
+          currentUrl: newUrl,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      setShape({ ...shape, props: { ...shape.props, currentUrl: newUrl } });
     };
-    editor.updateShapes([shapeUpdate]);
-    setShape({ ...shape, props: { ...shape.props, currentUrl: newUrl } });
-  };
 
-  const home = () => {
-    const shapeUpdate: TLShapePartial<IMarkdownShape> = {
-      id: shape.id,
-      type: "markdown",
-      props: {
-        currentUrl: "",
-      },
+    const home = () => {
+      const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+        id: shape.id,
+        type: "markdown",
+        props: {
+          currentUrl: "",
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      setShape({ ...shape, props: { ...shape.props, currentUrl: "" } });
     };
-    editor.updateShapes([shapeUpdate]);
-    setShape({ ...shape, props: { ...shape.props, currentUrl: "" } });
-  };
 
-  useEffect(() => {
-    refetch().then(() => {});
-  }, [shape]);
+    useEffect(() => {
+      refetch().then(() => {});
+    }, [shape]);
 
-  return (
-    <div
-      ref={ref}
-      style={{
-        width: bounds.width,
-        height: bounds.height,
-        overflow: "hidden",
-        padding: "10px",
-        backgroundColor: shape.props.fill,
-        color: shape.props.color,
-        borderRadius: "5px",
-      }}
-    >
-      <Markdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          a: (url) => {
-            return (
-              <Button
-                type="normal"
-                style={{
-                  color: "var(--color-accent)",
-                  margin: 0,
-                  display: "inline-block",
-                }}
-                onPointerDown={() => open(url.href)}
-              >
-                {url.children}
-              </Button>
-            );
-          },
+    return (
+      <div
+        ref={ref}
+        style={{
+          width: bounds.width,
+          height: bounds.height,
+          overflow: "auto",
+          padding: "10px",
+          backgroundColor: shape.props.fill,
+          color: shape.props.color,
+          borderRadius: "5px",
         }}
       >
-        {data}
-      </Markdown>
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            a: (url) => {
+              return (
+                <Button
+                  type="normal"
+                  style={{
+                    color: "var(--color-accent)",
+                    margin: 0,
+                    display: "inline-block",
+                  }}
+                  onPointerDown={() => open(url.href)}
+                >
+                  {url.children}
+                </Button>
+              );
+            },
+          }}
+        >
+          {data}
+        </Markdown>
 
-      {isEditing && (
-        <>
-          <Button
-            type="icon"
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-            }}
-            onPointerDown={() => {
-              addDialog({
-                component: ({ onClose }) => (
-                  <MarkdownSettings onClose={onClose} shape={shape} />
-                ),
-                onClose: () => {
-                  void null;
-                },
-              });
-            }}
-          >
-            <FaTools />
-          </Button>
-          {shape.props.currentUrl &&
-            shape.props.currentUrl !== shape.props.url && (
-              <Button
-                type="icon"
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  bottom: 0,
-                }}
-                onPointerDown={home}
-              >
-                <FaHome />
-              </Button>
-            )}
-        </>
-      )}
-    </div>
-  );
-});
+        {isEditing && (
+          <>
+            <Button
+              type="icon"
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+              }}
+              onPointerDown={() => {
+                addDialog({
+                  component: ({ onClose }) => (
+                    <MarkdownSettings
+                      onClose={onClose}
+                      shape={shape}
+                      updateProps={updateProps}
+                    />
+                  ),
+                  onClose: () => {
+                    void null;
+                  },
+                });
+              }}
+            >
+              <FaTools
+                className="markdown-buttons"
+                size={16}
+                fill={shape.props.color}
+              />
+            </Button>
+            {shape.props.currentUrl &&
+              shape.props.currentUrl !== shape.props.url && (
+                <Button
+                  type="icon"
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                  }}
+                  onPointerDown={home}
+                >
+                  <FaHome
+                    className="markdown-buttons"
+                    size={16}
+                    fill={shape.props.color}
+                  />
+                </Button>
+              )}
+          </>
+        )}
+      </div>
+    );
+  }
+);
 
 export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
   static override type = "markdown" as const;
@@ -220,6 +238,7 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
         bounds={bounds}
         baseUrl={UPLOAD_BASE_URL}
         ref={this.componentRef}
+        updateProps={(shape) => this.updateProps(shape)}
       />
     );
   }
@@ -239,6 +258,11 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
     if (!this.componentRef.current) return;
     this.componentRef.current.style.backgroundColor = shape.props.fill;
     this.componentRef.current.style.color = shape.props.color;
+    const buttons =
+      this.componentRef.current.getElementsByClassName("markdown-buttons");
+    for (let i = 0; i < buttons.length; i++) {
+      buttons.item(i)?.setAttribute("fill", shape.props.color);
+    }
   }
 
   override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {

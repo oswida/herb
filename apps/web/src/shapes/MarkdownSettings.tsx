@@ -14,6 +14,7 @@ import Compact from "@uiw/react-color-compact";
 
 type Props = TLUiDialogProps & {
   shape: IMarkdownShape;
+  updateProps: (shape: IMarkdownShape) => void;
 };
 
 export const MarkdownSettings = (props: Props) => {
@@ -35,6 +36,7 @@ export const MarkdownSettings = (props: Props) => {
       },
     };
     editor.updateShapes([shapeUpdate]);
+    props.updateProps(props.shape);
     props.onClose();
   };
 
