@@ -8,6 +8,7 @@ import {
 } from "@tldraw/tldraw";
 import { useInsertJson } from "./useInsertJson";
 import { useInsertFile } from "./useInsertFile";
+import { useBackup } from "./useBackup";
 
 // // In order to see select our custom shape tool, we need to add it to the ui.
 export const useUiOverride = (
@@ -18,6 +19,7 @@ export const useUiOverride = (
   const insertPdf = useInsertFile(editor, "pdf", roomId, baseUrl);
   const insertHandout = useInsertFile(editor, "handout", roomId, baseUrl);
   const insertJson = useInsertJson(editor);
+  const { backupPage } = useBackup(editor);
 
   const uiOverrides: TLUiOverrides = {
     menu(editor, menu) {
@@ -38,9 +40,26 @@ export const useUiOverride = (
             insertHandout();
           },
         }),
+      ];
+
+      const sub = menuSubmenu("upload-other-sub", "Upload" as any, ...items);
+      const grp = menuGroup("upload-other", sub);
+      if (grp) {
+        menu.push(grp);
+      }
+
+      const bkpItems = [
+        menuItem({
+          id: "backup-page",
+          label: "Backup page" as any,
+          readonlyOk: false,
+          onSelect: () => {
+            backupPage();
+          },
+        }),
         menuItem({
           id: "upload-json",
-          label: "JSON shapes" as any,
+          label: "Restore JSON" as any,
           readonlyOk: false,
           onSelect: () => {
             insertJson();
@@ -48,10 +67,10 @@ export const useUiOverride = (
         }),
       ];
 
-      const sub = menuSubmenu("upload-other-sub", "Upload" as any, ...items);
-      const grp = menuGroup("upload-other", sub);
-      if (grp) {
-        menu.push(grp);
+      const bsub = menuSubmenu("backup-sub", "Backup" as any, ...bkpItems);
+      const bgrp = menuGroup("backup-restore", bsub);
+      if (bgrp) {
+        menu.push(bgrp);
       }
 
       return menu;

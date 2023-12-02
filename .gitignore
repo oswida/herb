@@ -16,3 +16,4 @@ static
 bundle
 *.zip
 hdata
+deploy/index.js

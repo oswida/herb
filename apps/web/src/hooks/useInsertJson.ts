@@ -18,11 +18,16 @@ export const useInsertJson = (editor: Editor | undefined) => {
 
       Array.from(fileList).forEach(async (f) => {
         if (!editor) return;
-        const id = uniqueId();
         const data = await f.text();
         const json = JSON.parse(data);
         if (!json) return;
+        const pageId = editor.getCurrentPageId();
+        json.shapes.forEach((s: any) => {
+          s.id = `shape:${uniqueId()}`;
+          s.parentId = pageId;
+        });
         editor.createShapes(json.shapes);
+        // do not map assets because we have to have them uploaded anyway
         editor.createAssets(json.assets);
       });
       input.value = "";
