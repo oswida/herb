@@ -15,7 +15,7 @@ import {
 } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
-import { useAssetHandler, useCustomUpdates, useRoomInfo } from "../../hooks";
+import { useAssetHandler, useRoomInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
@@ -75,7 +75,6 @@ export const DrawboardView = track(() => {
     ownerId,
     ownerName,
   } = useRoomInfo(ed, ROOM_BASE_URL);
-  const { updateCustomShapes } = useCustomUpdates(ed);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -150,12 +149,6 @@ export const DrawboardView = track(() => {
     },
     [registerHostedImages]
   );
-
-  useEffect(() => {
-    let s = store.store;
-    if (!s) return;
-    s.onAfterChange = updateCustomShapes;
-  }, [store.store, updateCustomShapes]);
 
   return (
     <div className={drawBoardViewRoottyle}>

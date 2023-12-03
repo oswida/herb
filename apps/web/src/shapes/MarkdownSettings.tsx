@@ -1,20 +1,17 @@
 import {
   Button,
   Dialog,
-  Input,
   TLShapePartial,
   TLUiDialogProps,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
 import { flexColumnStyle } from "../common";
-import { IRpgClockShape } from "./RpgClockShape";
 import { IMarkdownShape } from "./MarkdownShape";
 import Compact from "@uiw/react-color-compact";
 
 type Props = TLUiDialogProps & {
   shape: IMarkdownShape;
-  updateProps: (shape: IMarkdownShape) => void;
 };
 
 export const MarkdownSettings = (props: Props) => {
@@ -36,7 +33,6 @@ export const MarkdownSettings = (props: Props) => {
       },
     };
     editor.updateShapes([shapeUpdate]);
-    props.updateProps(props.shape);
     props.onClose();
   };
 
@@ -65,6 +61,8 @@ export const MarkdownSettings = (props: Props) => {
             color={color}
             onChange={(color) => setColor(color.hex)}
           />
+          <div>Private</div>
+          <Button type="icon"></Button>
         </div>
       </Dialog.Body>
       <Dialog.Footer>

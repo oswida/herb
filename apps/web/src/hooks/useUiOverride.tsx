@@ -9,8 +9,17 @@ import {
 import { useInsertJson } from "./useInsertJson";
 import { useInsertFile } from "./useInsertFile";
 import { useBackup } from "./useBackup";
+import { IMarkdownShape, MarkdownSettings } from "../shapes";
+import React from "react";
+import { TimerSettings } from "../shapes/TimerSettings";
+import { ITimerShape } from "../shapes/TimerShape";
 
-// // In order to see select our custom shape tool, we need to add it to the ui.
+const hasSettings = (editor: Editor) => {
+  const shapes = editor.getSelectedShapes();
+  if (shapes.length !== 1) return false;
+  return ["markdown", "timer"].includes(shapes[0].type);
+};
+
 export const useUiOverride = (
   editor: Editor | undefined,
   roomId: string,
@@ -22,6 +31,48 @@ export const useUiOverride = (
   const { backupPage } = useBackup(editor);
 
   const uiOverrides: TLUiOverrides = {
+    contextMenu(editor, schema, helpers) {
+      if (hasSettings(editor)) {
+        schema.push(
+          menuItem({
+            id: "custom-settings",
+            label: "Settings" as any,
+            readonlyOk: false,
+            onSelect: () => {
+              const shp = editor.getSelectedShapes();
+              if (shp.length !== 1) return;
+              switch (shp[0].type) {
+                case "markdown":
+                  helpers.addDialog({
+                    id: "markdown-settings",
+                    component: ({ onClose }) => (
+                      <MarkdownSettings
+                        onClose={onClose}
+                        shape={shp[0] as IMarkdownShape}
+                      />
+                    ),
+                    onClose: () => {},
+                  });
+                  break;
+                case "timer":
+                  helpers.addDialog({
+                    id: "timer-settings",
+                    component: ({ onClose }) => (
+                      <TimerSettings
+                        onClose={onClose}
+                        shape={shp[0] as ITimerShape}
+                      />
+                    ),
+                    onClose: () => {},
+                  });
+                  break;
+              }
+            },
+          })
+        );
+      }
+      return schema;
+    },
     menu(editor, menu) {
       const items = [
         menuItem({

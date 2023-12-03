@@ -13,36 +13,32 @@ import { ITimerShape } from "./TimerShape";
 
 type Props = TLUiDialogProps & {
   shape: ITimerShape;
-  updateProps: (shape: ITimerShape, remote: boolean) => void;
-  getMaxValue: (shape: ITimerShape) => number;
 };
 
-export const TimerSettings = (props: Props) => {
+export const TimerSettings = ({ shape, onClose }: Props) => {
   const editor = useEditor();
   const [color, setColor] = useState(
-    props.shape.props.color ? props.shape.props.color : "var(--color-text)"
+    shape.props.color ? shape.props.color : "var(--color-text)"
   );
   const [bkg, setBkg] = useState(
-    props.shape.props.fill ? props.shape.props.fill : "transparent"
+    shape.props.fill ? shape.props.fill : "transparent"
   );
-  const [max, setMax] = useState(props.getMaxValue(props.shape).toString());
+  const [max, setMax] = useState(shape.props.max);
+  const [lbl, setLbl] = useState(shape.props.label);
 
   const update = () => {
-    let m = Number.parseInt(max);
-    if (Number.isNaN(m)) m = 0;
     const shapeUpdate: TLShapePartial<ITimerShape> = {
-      id: props.shape.id,
+      id: shape.id,
       type: "timer",
       props: {
         color: color,
         fill: bkg,
-        max: m,
+        max: max,
+        label: lbl,
       },
     };
     editor.updateShapes([shapeUpdate]);
-    props.onClose();
-    const shape = editor.getShape(props.shape.id) as ITimerShape;
-    if (shape) props.updateProps(shape, false);
+    onClose();
   };
 
   return (
@@ -70,14 +66,22 @@ export const TimerSettings = (props: Props) => {
             color={color}
             onChange={(color) => setColor(color.hex)}
           />
-          <div>Maximum value</div>
           <Input
             className="tlui-embed-dialog__input"
             placeholder="Max"
-            defaultValue={max}
+            label={"Maximum value" as any}
+            defaultValue={max.toString()}
             onValueChange={(value) => {
-              setMax(value);
+              const m = Number.parseInt(value);
+              if (!Number.isNaN(m)) setMax(m);
             }}
+          />
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="Label"
+            label={"Label" as any}
+            defaultValue={lbl}
+            onValueChange={(value) => setLbl(value)}
           />
         </div>
       </Dialog.Body>
