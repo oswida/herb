@@ -3,37 +3,41 @@ import {
   Dialog,
   TLShapePartial,
   TLUiDialogProps,
+  shapeIdValidator,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
-import { flexColumnStyle } from "../common";
+import { flexColumnStyle, flexRowStyle } from "../common";
 import { IMarkdownShape } from "./MarkdownShape";
 import Compact from "@uiw/react-color-compact";
+import { FaUserFriends, FaUserSecret } from "react-icons/fa";
 
 type Props = TLUiDialogProps & {
   shape: IMarkdownShape;
 };
 
-export const MarkdownSettings = (props: Props) => {
+export const MarkdownSettings = ({ shape, onClose }: Props) => {
   const editor = useEditor();
   const [color, setColor] = useState(
-    props.shape.props.color ? props.shape.props.color : "var(--color-text)"
+    shape.props.color ? shape.props.color : "var(--color-text)"
   );
   const [bkg, setBkg] = useState(
-    props.shape.props.fill ? props.shape.props.fill : "transparent"
+    shape.props.fill ? shape.props.fill : "transparent"
   );
+  const [priv, setPriv] = useState(shape.props.private);
 
   const update = () => {
     const shapeUpdate: TLShapePartial<IMarkdownShape> = {
-      id: props.shape.id,
+      id: shape.id,
       type: "markdown",
       props: {
         color: color,
         fill: bkg,
+        private: priv,
       },
     };
     editor.updateShapes([shapeUpdate]);
-    props.onClose();
+    onClose();
   };
 
   return (
@@ -61,8 +65,20 @@ export const MarkdownSettings = (props: Props) => {
             color={color}
             onChange={(color) => setColor(color.hex)}
           />
-          <div>Private</div>
-          <Button type="icon"></Button>
+          <Button type="normal" onClick={() => setPriv(!priv)}>
+            {priv && (
+              <div className={flexRowStyle({ justify: "center" })}>
+                <FaUserFriends size={16} fill="var(--color-primary)" />
+                <span>Set as public</span>
+              </div>
+            )}
+            {!priv && (
+              <div className={flexRowStyle({ justify: "center" })}>
+                <FaUserSecret size={16} fill="var(--color-accent)" />
+                <span>Set as private</span>
+              </div>
+            )}
+          </Button>
         </div>
       </Dialog.Body>
       <Dialog.Footer>

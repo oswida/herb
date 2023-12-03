@@ -5,6 +5,7 @@ import {
   Button,
   Rectangle2d,
   TLBaseShape,
+  TLOnBeforeCreateHandler,
   TLOnResizeHandler,
   TLShapePartial,
   TLShapeUtilFlag,
@@ -17,7 +18,7 @@ import {
 import React, { useEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaUserSecret } from "react-icons/fa";
 
 export type IMarkdownShape = TLBaseShape<
   "markdown",
@@ -29,6 +30,7 @@ export type IMarkdownShape = TLBaseShape<
     color: string;
     fill: string;
     private: boolean;
+    owner: string;
   }
 >;
 
@@ -42,7 +44,6 @@ interface MarkdownComponentProps {
 export const MarkdownComponent = track(
   ({ shape, isEditing, bounds, baseUrl }: MarkdownComponentProps) => {
     const editor = useEditor();
-    if (!shape) return <>No shape</>;
 
     let url = shape.props.url;
     if (!url) return <div>No url defined</div>;
@@ -93,6 +94,10 @@ export const MarkdownComponent = track(
       refetch().then(() => {});
     }, [shape]);
 
+    if (!shape) return <></>;
+    if (shape.props.private && shape.props.owner !== editor.user.getId())
+      return <></>;
+
     return (
       <div
         id={shape.id}
@@ -128,6 +133,11 @@ export const MarkdownComponent = track(
         >
           {data}
         </Markdown>
+        {shape.props.private && (
+          <div style={{ position: "absolute", top: 5, right: 5 }}>
+            <FaUserSecret size={16} fill="var(--color-accent)" />
+          </div>
+        )}
 
         {isEditing && (
           <>
@@ -211,5 +221,12 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
 
   override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {
     return resizeBox(shape, info);
+  };
+
+  override onBeforeCreate: TLOnBeforeCreateHandler<IMarkdownShape> = (next) => {
+    return {
+      ...next,
+      props: { ...next.props, owner: this.editor.user.getId() },
+    };
   };
 }

@@ -28,6 +28,7 @@ import useClipboard from "react-use-clipboard";
 import { flexRowStyle } from "../../common";
 import { useMemo } from "react";
 import { Users } from "../../component/Users";
+import { useRoomInfo } from "../../hooks";
 
 interface Props {
   ownerName: string;
@@ -124,14 +125,16 @@ export const MainUI = track(
           >
             <FaDiceD20 size={16} />
           </Button>
-          <Button
-            type="tool"
-            data-state={al ? "selected" : undefined}
-            onClick={() => setAl(!al)}
-            title="Asset list"
-          >
-            <MdLibraryBooks size={20} />
-          </Button>
+          {isOwner && (
+            <Button
+              type="tool"
+              data-state={al ? "selected" : undefined}
+              onClick={() => setAl(!al)}
+              title="Asset list"
+            >
+              <MdLibraryBooks size={20} />
+            </Button>
+          )}
 
           <Button
             type="tool"

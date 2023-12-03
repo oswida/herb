@@ -124,7 +124,7 @@ export const TimerComponent = track(
       >
         {isOwner && (
           <div
-            className={flexRowStyle({ justify: "center" })}
+            className={flexRowStyle({ justify: "space" })}
             style={{
               gap: "3px",
               width: "100%",
