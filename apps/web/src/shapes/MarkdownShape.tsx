@@ -134,7 +134,7 @@ export const MarkdownComponent = track(
           {data}
         </Markdown>
         {shape.props.private && (
-          <div style={{ position: "absolute", top: 5, right: 5 }}>
+          <div style={{ position: "absolute", top: 5, right: 5, opacity: 0.5 }}>
             <FaUserSecret size={16} fill="var(--color-accent)" />
           </div>
         )}

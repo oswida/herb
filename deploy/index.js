@@ -430,7 +430,6 @@ var useDb = () => {
             inf.blockedUsers = data.blockedUsers;
           }
           database.put(`room_${roomId}`, inf).then(() => {
-            console.log("room info updated");
           }).catch((err) => {
             console.error(err);
           });
@@ -446,7 +445,6 @@ var useDb = () => {
   };
   const dbClose = () => {
     database.close().then(() => {
-      console.log("Database closed");
     }).catch((err) => {
       console.error(err);
     });
@@ -470,8 +468,7 @@ var useServer = () => {
       if (resp) {
         return;
       }
-      serve(request, response, (err) => {
-        console.error("Static serve error: ", err);
+      serve(request, response, () => {
         const fname = "static/index.html";
         if (!(0, import_node_fs3.existsSync)(fname)) {
           response.writeHead(404);

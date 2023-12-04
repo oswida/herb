@@ -13,11 +13,13 @@ import { IMarkdownShape, MarkdownSettings } from "../shapes";
 import React from "react";
 import { TimerSettings } from "../shapes/TimerSettings";
 import { ITimerShape } from "../shapes/TimerShape";
+import { RpgResourceSettings } from "../shapes/RpgResourceSettings";
+import { IRpgResourceShape } from "../shapes/RpgResourceShape";
 
 const hasSettings = (editor: Editor) => {
   const shapes = editor.getSelectedShapes();
   if (shapes.length !== 1) return false;
-  return ["markdown", "timer"].includes(shapes[0].type);
+  return ["markdown", "timer", "rpg-resource"].includes(shapes[0].type);
 };
 
 export const useUiOverride = (
@@ -61,6 +63,18 @@ export const useUiOverride = (
                       <TimerSettings
                         onClose={onClose}
                         shape={shp[0] as ITimerShape}
+                      />
+                    ),
+                    onClose: () => {},
+                  });
+                  break;
+                case "rpg-resource":
+                  helpers.addDialog({
+                    id: "rpg-res-settings",
+                    component: ({ onClose }) => (
+                      <RpgResourceSettings
+                        onClose={onClose}
+                        shape={shp[0] as IRpgResourceShape}
                       />
                     ),
                     onClose: () => {},
@@ -147,11 +161,22 @@ export const useUiOverride = (
         },
       };
 
+      tools.rpgRes = {
+        id: "rpg-resource",
+        icon: "question-mark-circle",
+        label: "RPG Resource" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-resource");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
       toolbar.push(toolbarItem(tools.rpgClock));
       toolbar.push(toolbarItem(tools.timer));
+      toolbar.push(toolbarItem(tools.rpgRes));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

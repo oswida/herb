@@ -34,6 +34,10 @@ import {
   TimerShapeTool,
   TimerShapeUtil,
 } from "../../shapes/TimerShape";
+import {
+  RpgResourceShapeTool,
+  RpgResourceShapeUtil,
+} from "../../shapes/RpgResourceShape";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -47,8 +51,9 @@ const customShapeUtils = [
   MarkdownShapeUtil,
   HiddenShapeUtil,
   TimerShapeUtil,
+  RpgResourceShapeUtil,
 ];
-const customTools = [RpgClockShapeTool, TimerShapeTool];
+const customTools = [RpgClockShapeTool, TimerShapeTool, RpgResourceShapeTool];
 
 export const DrawboardView = track(() => {
   const [visible] = useAtom(uiVisible);
