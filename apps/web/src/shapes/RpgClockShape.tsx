@@ -57,8 +57,8 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
 
   getDefaultProps(): IRpgClockShape["props"] {
     return {
-      w: 300,
-      h: 300,
+      w: 150,
+      h: 150,
       parts: 6,
       count: 1,
       label: "clock",
