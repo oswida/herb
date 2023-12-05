@@ -53,7 +53,14 @@ const customShapeUtils = [
   TimerShapeUtil,
   RpgResourceShapeUtil,
 ];
+
 const customTools = [RpgClockShapeTool, TimerShapeTool, RpgResourceShapeTool];
+
+const customIcons = {
+  timer: "/icons/timer.svg",
+  "rpg-clock": "/icons/rpg-clock.svg",
+  "rpg-resource": "/icons/rpg-resource.svg",
+};
 
 export const DrawboardView = track(() => {
   const [visible] = useAtom(uiVisible);
@@ -165,6 +172,7 @@ export const DrawboardView = track(() => {
         shapeUtils={customShapeUtils}
         store={store}
         tools={customTools}
+        assetUrls={{ icons: customIcons }}
       >
         {!iamBlocked && (
           <>

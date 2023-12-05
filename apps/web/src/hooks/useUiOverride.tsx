@@ -143,7 +143,7 @@ export const useUiOverride = (
     tools(editor, tools) {
       tools.rpgClock = {
         id: "rpg-clock",
-        icon: "question-mark-circle",
+        icon: "rpg-clock",
         label: "RPG clock" as any,
         readonlyOk: false,
         onSelect: () => {
@@ -153,7 +153,7 @@ export const useUiOverride = (
 
       tools.timer = {
         id: "timer",
-        icon: "question-mark-circle",
+        icon: "timer",
         label: "Timer" as any,
         readonlyOk: false,
         onSelect: () => {
@@ -163,7 +163,7 @@ export const useUiOverride = (
 
       tools.rpgRes = {
         id: "rpg-resource",
-        icon: "question-mark-circle",
+        icon: "rpg-resource",
         label: "RPG Resource" as any,
         readonlyOk: false,
         onSelect: () => {
