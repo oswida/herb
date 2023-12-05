@@ -63,6 +63,7 @@ export const useFileUpload = () => {
       response.writeHead(200, {
         "Content-Type": mt ? mt : "application/octet-stream",
         "Content-length": buff.length,
+        "Cache-Control": "public, max-age=31536000",
       });
       response.write(buff);
       response.end();
