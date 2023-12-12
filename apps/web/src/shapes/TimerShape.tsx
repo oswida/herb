@@ -54,8 +54,6 @@ export const TimerComponent = track(
     const [ticking, setTicking] = useState(false);
     const { addDialog } = useDialogs();
 
-    if (!shape) return <>No shape</>;
-
     const tick = useCallback(() => {
       if (
         (shape.props.down && shape.props.value == 0) ||
@@ -126,6 +124,8 @@ export const TimerComponent = track(
         onClose: () => {},
       });
     }, [shape]);
+
+    if (!shape) return <></>;
 
     return (
       <div

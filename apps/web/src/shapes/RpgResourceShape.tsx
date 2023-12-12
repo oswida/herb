@@ -53,8 +53,6 @@ export const RpgResComponent = track(
     const isEditing = useIsEditing(shape.id);
     const { addDialog } = useDialogs();
 
-    if (!shape) return <></>;
-
     const isOwner = useMemo(() => {
       return shape.props.owner === editor.user.getId();
     }, []);
@@ -103,6 +101,8 @@ export const RpgResComponent = track(
         onClose: () => {},
       });
     }, [shape]);
+
+    if (!shape) return <></>;
 
     return (
       <div

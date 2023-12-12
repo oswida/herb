@@ -74,7 +74,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
   const { addChatMessage, clearChat } = useChat(editor);
   const user = getUserPreferences();
   const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.isDarkMode,
+    isDarkMode: editor.user.getIsDarkMode(),
   });
   const { rollSingleToChat } = useRoll(user, theme);
   const { addDialog, dialogs } = useDialogs();
