@@ -10,3 +10,6 @@ export const notesVisible = atom(false);
 export const currentRoom = atom<string | undefined>(undefined);
 export const roomPresence = atom<Record<string, Presence>>({});
 export const roomData = atom<RoomData | undefined>(undefined);
+
+export const urlUpload = atom<string>("");
+export const urlRoom = atom<string>("");

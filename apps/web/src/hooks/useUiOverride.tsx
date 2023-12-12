@@ -33,60 +33,6 @@ export const useUiOverride = (
   const { backupPage } = useBackup(editor);
 
   const uiOverrides: TLUiOverrides = {
-    contextMenu(editor, schema, helpers) {
-      if (hasSettings(editor)) {
-        schema.push(
-          menuItem({
-            id: "custom-settings",
-            label: "Settings" as any,
-            readonlyOk: false,
-            onSelect: () => {
-              const shp = editor.getSelectedShapes();
-              if (shp.length !== 1) return;
-              switch (shp[0].type) {
-                case "markdown":
-                  helpers.addDialog({
-                    id: "markdown-settings",
-                    component: ({ onClose }) => (
-                      <MarkdownSettings
-                        onClose={onClose}
-                        shape={shp[0] as IMarkdownShape}
-                      />
-                    ),
-                    onClose: () => {},
-                  });
-                  break;
-                case "timer":
-                  helpers.addDialog({
-                    id: "timer-settings",
-                    component: ({ onClose }) => (
-                      <TimerSettings
-                        onClose={onClose}
-                        shape={shp[0] as ITimerShape}
-                      />
-                    ),
-                    onClose: () => {},
-                  });
-                  break;
-                case "rpg-resource":
-                  helpers.addDialog({
-                    id: "rpg-res-settings",
-                    component: ({ onClose }) => (
-                      <RpgResourceSettings
-                        onClose={onClose}
-                        shape={shp[0] as IRpgResourceShape}
-                      />
-                    ),
-                    onClose: () => {},
-                  });
-                  break;
-              }
-            },
-          })
-        );
-      }
-      return schema;
-    },
     menu(editor, menu) {
       const items = [
         menuItem({

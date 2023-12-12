@@ -12,14 +12,20 @@ import {
   TLOnResizeHandler,
   TLShapeUtilFlag,
   resizeBox,
-  toDomPrecision,
   track,
+  useDialogs,
   useEditor,
   useIsEditing,
 } from "@tldraw/tldraw";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { flexRowStyle } from "../common";
-import { FaMinusCircle, FaPlusCircle, FaUserSecret } from "react-icons/fa";
+import {
+  FaMinusCircle,
+  FaPlusCircle,
+  FaTools,
+  FaUserSecret,
+} from "react-icons/fa";
+import { RpgResourceSettings } from "./RpgResourceSettings";
 
 export type IRpgResourceShape = TLBaseShape<
   "rpg-resource",
@@ -45,6 +51,8 @@ export const RpgResComponent = track(
   ({ shape, bounds }: RpgResComponentProps) => {
     const editor = useEditor();
     const isEditing = useIsEditing(shape.id);
+    const { addDialog } = useDialogs();
+
     if (!shape) return <></>;
 
     const isOwner = useMemo(() => {
@@ -85,6 +93,16 @@ export const RpgResComponent = track(
       if (!shape.props.private) return true;
       return isOwner;
     }, [shape, isEditing, isOwner]);
+
+    const settings = useCallback(() => {
+      addDialog({
+        id: "rpg-res-settings",
+        component: ({ onClose }) => (
+          <RpgResourceSettings onClose={onClose} shape={shape} />
+        ),
+        onClose: () => {},
+      });
+    }, [shape]);
 
     return (
       <div
@@ -140,9 +158,18 @@ export const RpgResComponent = track(
           )}
           <div>{shape.props.label}</div>
           {canMod && (
-            <Button type="icon" onPointerDown={() => mod(1)}>
-              <FaPlusCircle size={16} fill="var(--color-text)" />
-            </Button>
+            <>
+              <Button type="icon" onPointerDown={() => mod(1)}>
+                <FaPlusCircle size={16} fill="var(--color-text)" />
+              </Button>
+              <Button
+                type="icon"
+                onPointerDown={settings}
+                style={{ position: "absolute", left: "50%", top: -40 }}
+              >
+                <FaTools size={16} fill="var(--color-text)" />
+              </Button>
+            </>
           )}
         </div>
         {shape.props.private && (

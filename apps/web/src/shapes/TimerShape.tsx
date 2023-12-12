@@ -14,11 +14,19 @@ import {
   TLShapeUtilFlag,
   resizeBox,
   track,
+  useDialogs,
   useEditor,
+  useIsEditing,
 } from "@tldraw/tldraw";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FaPauseCircle, FaPlayCircle, FaReplyAll } from "react-icons/fa";
+import {
+  FaPauseCircle,
+  FaPlayCircle,
+  FaReplyAll,
+  FaTools,
+} from "react-icons/fa";
 import { flexRowStyle } from "../common";
+import { TimerSettings } from "./TimerSettings";
 
 export type ITimerShape = TLBaseShape<
   "timer",
@@ -44,6 +52,8 @@ export const TimerComponent = track(
   ({ shape, bounds }: TimerComponentProps) => {
     const editor = useEditor();
     const [ticking, setTicking] = useState(false);
+    const { addDialog } = useDialogs();
+
     if (!shape) return <>No shape</>;
 
     const tick = useCallback(() => {
@@ -90,7 +100,7 @@ export const TimerComponent = track(
       setTicking(true);
     };
 
-    const resetTick = () => {
+    const resetTick = useCallback(() => {
       if (ticking) return;
       const cnt = shape.props.down ? shape.props.max : 0;
       const shapeUpdate: TLShapePartial<ITimerShape> = {
@@ -101,11 +111,21 @@ export const TimerComponent = track(
         },
       };
       editor.updateShapes([shapeUpdate]);
-    };
+    }, [shape]);
 
     const isOwner = useMemo(() => {
       return shape.props.owner === editor.user.getId();
-    }, []);
+    }, [shape]);
+
+    const settings = useCallback(() => {
+      addDialog({
+        id: "timer-settings",
+        component: ({ onClose }) => (
+          <TimerSettings onClose={onClose} shape={shape} />
+        ),
+        onClose: () => {},
+      });
+    }, [shape]);
 
     return (
       <div
@@ -133,6 +153,9 @@ export const TimerComponent = track(
             <Button type="icon" onPointerDown={() => toggleTick()}>
               {!ticking && <FaPlayCircle size={16} fill={shape.props.color} />}
               {ticking && <FaPauseCircle size={16} fill={shape.props.color} />}
+            </Button>
+            <Button type="icon" onPointerDown={settings}>
+              <FaTools size={16} fill={shape.props.color} />
             </Button>
             <Button type="icon" onPointerDown={() => resetTick()}>
               <FaReplyAll
@@ -193,7 +216,7 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
 
   override canResize = (_shape: ITimerShape) => true;
   override canEditInReadOnly = () => false;
-  override canEdit: TLShapeUtilFlag<ITimerShape> = () => false;
+  override canEdit: TLShapeUtilFlag<ITimerShape> = () => true;
 
   getDefaultProps(): ITimerShape["props"] {
     return {
@@ -219,6 +242,7 @@ export class TimerShapeUtil extends BaseBoxShapeUtil<ITimerShape> {
 
   component(shape: ITimerShape) {
     const bounds = this.editor.getShapeGeometry(shape).bounds;
+    const isEditing = useIsEditing(shape.id);
     return <TimerComponent bounds={bounds} shape={shape} key={shape.id} />;
   }
 

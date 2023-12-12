@@ -12,13 +12,18 @@ import {
   resizeBox,
   toDomPrecision,
   track,
+  useDialogs,
   useEditor,
   useIsEditing,
 } from "@tldraw/tldraw";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FaHome, FaUserSecret } from "react-icons/fa";
+import { FaHome, FaTools, FaUserSecret } from "react-icons/fa";
+import { useRoomInfo } from "../hooks";
+import { useAtomValue } from "jotai";
+import { urlRoom, urlUpload } from "../common";
+import { MarkdownSettings } from "./MarkdownSettings";
 
 export type IMarkdownShape = TLBaseShape<
   "markdown",
@@ -38,12 +43,17 @@ interface MarkdownComponentProps {
   shape: IMarkdownShape;
   isEditing: boolean;
   bounds: Box2d;
-  baseUrl: string;
 }
 
 export const MarkdownComponent = track(
-  ({ shape, isEditing, bounds, baseUrl }: MarkdownComponentProps) => {
+  ({ shape, isEditing, bounds }: MarkdownComponentProps) => {
     const editor = useEditor();
+    const baseUrl = useAtomValue(urlUpload);
+    const { addDialog } = useDialogs();
+
+    const isOwner = useMemo(() => {
+      return shape.props.owner === editor.user.getId();
+    }, [shape, editor]);
 
     let url = shape.props.url;
     if (!url) return <div>No url defined</div>;
@@ -66,18 +76,21 @@ export const MarkdownComponent = track(
       structuralSharing: true,
     });
 
-    const open = (name: string | undefined) => {
-      if (!name) return;
-      const newUrl = `${baseUrl}/handout/${name}`;
-      const shapeUpdate: TLShapePartial<IMarkdownShape> = {
-        id: shape.id,
-        type: "markdown",
-        props: {
-          currentUrl: newUrl,
-        },
-      };
-      editor.updateShapes([shapeUpdate]);
-    };
+    const open = useCallback(
+      (name: string | undefined) => {
+        if (!name) return;
+        const newUrl = `${baseUrl}/handout/${name}`;
+        const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+          id: shape.id,
+          type: "markdown",
+          props: {
+            currentUrl: newUrl,
+          },
+        };
+        editor.updateShapes([shapeUpdate]);
+      },
+      [baseUrl]
+    );
 
     const home = () => {
       const shapeUpdate: TLShapePartial<IMarkdownShape> = {
@@ -89,6 +102,16 @@ export const MarkdownComponent = track(
       };
       editor.updateShapes([shapeUpdate]);
     };
+
+    const settings = useCallback(() => {
+      addDialog({
+        id: "markdown-settings",
+        component: ({ onClose }) => (
+          <MarkdownSettings onClose={onClose} shape={shape} />
+        ),
+        onClose: () => {},
+      });
+    }, [shape]);
 
     useEffect(() => {
       refetch().then(() => {});
@@ -134,7 +157,7 @@ export const MarkdownComponent = track(
           {data}
         </Markdown>
         {shape.props.private && (
-          <div style={{ position: "absolute", top: 5, right: 5, opacity: 0.5 }}>
+          <div style={{ position: "absolute", top: 5, left: 5, opacity: 0.5 }}>
             <FaUserSecret size={16} fill="var(--color-accent)" />
           </div>
         )}
@@ -159,6 +182,23 @@ export const MarkdownComponent = track(
                   />
                 </Button>
               )}
+            {isOwner && (
+              <Button
+                type="icon"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                }}
+                onPointerDown={settings}
+              >
+                <FaTools
+                  className="markdown-buttons"
+                  size={16}
+                  fill={shape.props.color}
+                />
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -196,15 +236,9 @@ export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
   override component(shape: IMarkdownShape) {
     const isEditing = useIsEditing(shape.id);
     const bounds = this.editor.getShapeGeometry(shape).bounds;
-    const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:5001/api/upload`;
 
     return (
-      <MarkdownComponent
-        shape={shape}
-        isEditing={isEditing}
-        bounds={bounds}
-        baseUrl={UPLOAD_BASE_URL}
-      />
+      <MarkdownComponent shape={shape} isEditing={isEditing} bounds={bounds} />
     );
   }
 

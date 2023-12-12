@@ -2,7 +2,7 @@
 import type { Editor } from "@tldraw/tldraw";
 import { Tldraw, track } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import * as React from "react";
@@ -12,6 +12,8 @@ import {
   currentRoom,
   roomPresence,
   uiVisible,
+  urlRoom,
+  urlUpload,
 } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
@@ -42,6 +44,7 @@ import {
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
 const HOST_URL = `${websockSchema}://${window.location.hostname}:${port}`;
+
 const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
 const ROOM_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/room`;
 
@@ -87,6 +90,8 @@ export const DrawboardView = track(() => {
     ownerId,
     ownerName,
   } = useRoomInfo(ed, ROOM_BASE_URL);
+  const setUrlRoom = useSetAtom(urlRoom);
+  const setUrlUpload = useSetAtom(urlUpload);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -157,6 +162,8 @@ export const DrawboardView = track(() => {
       editor.updateInstanceState({ isDebugMode: false, isChatting: true });
       editor.user.updateUserPreferences({ locale: "en" });
       registerHostedImages(editor);
+      setUrlRoom(ROOM_BASE_URL);
+      setUrlUpload(UPLOAD_BASE_URL);
       setEd(editor);
     },
     [registerHostedImages]
