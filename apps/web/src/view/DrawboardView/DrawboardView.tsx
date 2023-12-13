@@ -118,14 +118,8 @@ export const DrawboardView = track(() => {
     hideRestUi(true);
   }, [cs, visible]);
 
-  const updatePresenceStates = (
-    states: Map<
-      number,
-      {
-        [x: string]: any;
-      }
-    >
-  ) => {
+  const extractPresenceStates = () => {
+    const states = roomConnector.awareness.getStates();
     const ps: Record<string, Presence> = {};
     for (const [k] of states) {
       const obj = states.get(k);
@@ -138,24 +132,18 @@ export const DrawboardView = track(() => {
         ps[p.id] = p;
       }
     }
-    setRoomPresence(ps);
+    return ps;
+    // setRoomPresence(ps);
   };
 
-  const updatePresence = useCallback(
-    (e: any) => {
-      if (e.added.length <= 0 && e.removed.length <= 0) return;
-      const states = roomConnector.awareness.getStates();
-      updatePresenceStates(states);
-    },
-    [roomConnector.awareness, setRoomPresence]
-  );
-
   useEffect(() => {
-    roomConnector.awareness.off("change", updatePresence);
-    roomConnector.awareness.on("change", updatePresence);
-    const states = roomConnector.awareness.getStates();
-    updatePresenceStates(states);
-  }, [roomConnector.awareness, roomConnector.synced, setRoomPresence]);
+    roomConnector.awareness.on("change", (changes: any) => {
+      if (changes.added.length <= 0 && changes.removed.length <= 0) return;
+      const states = extractPresenceStates();
+
+      //setRoomPresence();
+    });
+  }, [roomConnector.awareness]);
 
   const mount = useCallback(
     (editor: Editor) => {
