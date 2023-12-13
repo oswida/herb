@@ -239,7 +239,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
         >
           Insert
         </Button>
-        <Button type="normal" onClick={async () => await deleteAsset(sel)}>
+        <Button type="normal" onClick={() => deleteAsset(sel)}>
           Delete
         </Button>
       </div>

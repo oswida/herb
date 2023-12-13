@@ -65,7 +65,7 @@ const customIcons = {
   "rpg-resource": "/icons/rpg-resource.svg",
 };
 
-export const DrawboardView = track(() => {
+export const DrawboardView = () => {
   const [visible] = useAtom(uiVisible);
   const cs = useAtomValue(csheetVisible);
   const params = useParams();
@@ -133,15 +133,13 @@ export const DrawboardView = track(() => {
       }
     }
     return ps;
-    // setRoomPresence(ps);
   };
 
   useEffect(() => {
     roomConnector.awareness.on("change", (changes: any) => {
       if (changes.added.length <= 0 && changes.removed.length <= 0) return;
       const states = extractPresenceStates();
-
-      //setRoomPresence();
+      // setRoomPresence(states);
     });
   }, [roomConnector.awareness]);
 
@@ -199,4 +197,4 @@ export const DrawboardView = track(() => {
       </Tldraw>
     </div>
   );
-});
+};
