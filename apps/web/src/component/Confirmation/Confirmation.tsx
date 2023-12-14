@@ -35,10 +35,10 @@ export const Confirmation = (props: Props) => {
       </Dialog.Body>
       <Dialog.Footer>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button onClick={activate} type="normal">
+          <Button onPointerDown={activate} type="normal">
             Ok
           </Button>
-          <Button type="normal" onClick={props.onClose}>
+          <Button type="normal" onPointerDown={props.onClose}>
             Cancel
           </Button>
         </div>

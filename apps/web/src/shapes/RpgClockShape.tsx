@@ -75,7 +75,7 @@ export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
 
   component(shape: IRpgClockShape) {
     const theme = getDefaultColorTheme({
-      isDarkMode: this.editor.user.isDarkMode,
+      isDarkMode: this.editor.user.getIsDarkMode(),
     });
 
     const getData = useCallback(() => {

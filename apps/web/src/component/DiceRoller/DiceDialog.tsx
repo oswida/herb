@@ -27,7 +27,7 @@ export const DiceDialog = (props: Props) => {
   const editor = useEditor();
   const user = getUserPreferences();
   const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.isDarkMode,
+    isDarkMode: editor.user.getIsDarkMode(),
   });
   const { rollSingleToChat } = useRoll(user, theme);
   const { addChatMessage } = useChat(editor);
@@ -93,7 +93,7 @@ export const DiceDialog = (props: Props) => {
       </Dialog.Body>
       <Dialog.Footer>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button onClick={roll} type="normal">
+          <Button onPointerDown={roll} type="normal">
             Roll
           </Button>
         </div>

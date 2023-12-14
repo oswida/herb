@@ -9,7 +9,7 @@ interface AssetItemProps {
 
 export const AssetItem = ({ filename, onClick, selected }: AssetItemProps) => {
   return (
-    <div className={assetItemStyle({ selected })} onClick={onClick}>
+    <div className={assetItemStyle({ selected })} onPointerDown={onClick}>
       {filename}
     </div>
   );

@@ -3,10 +3,11 @@ import {
   DiceRoller,
   NumberGenerator,
 } from "@dice-roller/rpg-dice-roller";
-import { ChatMsg, prettyNow } from "../common";
+import { ChatMsg, animatedRollNotation, prettyNow } from "../common";
 import { v4 } from "uuid";
 import { TLDefaultColorTheme, TLUserPreferences } from "@tldraw/tldraw";
 import { useCallback } from "react";
+import { useSetAtom } from "jotai";
 
 export const useRoll = (
   user: TLUserPreferences,
@@ -16,6 +17,7 @@ export const useRoll = (
   const generator = NumberGenerator.generator;
   generator.engine = engines.browserCrypto;
   const roller = new DiceRoller();
+  const setAnimatedRoll = useSetAtom(animatedRollNotation);
 
   const filterExt = (notation: string) => {
     return notation

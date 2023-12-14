@@ -100,7 +100,7 @@ export const MainUI = ({
     <div className={actionsRootStyle}>
       <div className={actionsPanelStyle}>
         <div className={actionsInfoStyle}>
-          <Button type="normal" title={user.id} onClick={userCopy}>
+          <Button type="normal" title={user.id} onPointerDown={userCopy}>
             <span
               style={{ color: user.color ? user.color : "var(--color-text)" }}
             >
@@ -111,7 +111,7 @@ export const MainUI = ({
         <Button
           type="tool"
           data-state={hu ? "selected" : undefined}
-          onClick={() => setHu(!hu)}
+          onPointerDown={() => setHu(!hu)}
           title="Draw tools"
         >
           <Icon icon="tool-pencil" />
@@ -119,7 +119,7 @@ export const MainUI = ({
         <Button
           type="tool"
           data-state={dv ? "selected" : undefined}
-          onClick={() => setDv(!dv)}
+          onPointerDown={() => setDv(!dv)}
           title="Dice roller"
         >
           <FaDiceD20 size={16} />
@@ -128,7 +128,7 @@ export const MainUI = ({
           <Button
             type="tool"
             data-state={al ? "selected" : undefined}
-            onClick={() => setAl(!al)}
+            onPointerDown={() => setAl(!al)}
             title="Asset list"
           >
             <MdLibraryBooks size={20} />
@@ -138,7 +138,7 @@ export const MainUI = ({
         <Button
           type="tool"
           title="Settings"
-          onClick={() => {
+          onPointerDown={() => {
             addDialog({
               component: ({ onClose }) => <Settings onClose={onClose} />,
               onClose: () => {
@@ -151,7 +151,7 @@ export const MainUI = ({
         </Button>
 
         <div className={actionsInfoStyle}>
-          <Button type="normal" title={roomInfo} onClick={roomCopy}>
+          <Button type="normal" title={roomInfo} onPointerDown={roomCopy}>
             <div className={flexRowStyle({})}>
               <FaChalkboard size={20} />
             </div>

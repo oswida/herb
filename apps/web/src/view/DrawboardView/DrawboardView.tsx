@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
-import type { Editor } from "@tldraw/tldraw";
+import type { Editor, TLEditorComponents } from "@tldraw/tldraw";
 import { Tldraw, track } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -10,7 +10,6 @@ import { hideRestUi, hideStylePanel } from "../../common/utils";
 import {
   csheetVisible,
   currentRoom,
-  roomPresence,
   uiVisible,
   urlRoom,
   urlUpload,
@@ -40,6 +39,7 @@ import {
   RpgResourceShapeTool,
   RpgResourceShapeUtil,
 } from "../../shapes/RpgResourceShape";
+import { DiceAnimator } from "./DiceAnimator";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -59,6 +59,10 @@ const customShapeUtils = [
 
 const customTools = [RpgClockShapeTool, TimerShapeTool, RpgResourceShapeTool];
 
+const customComponents: TLEditorComponents = {
+  InFrontOfTheCanvas: DiceAnimator,
+};
+
 const customIcons = {
   timer: "/icons/timer.svg",
   "rpg-clock": "/icons/rpg-clock.svg",
@@ -74,7 +78,6 @@ export const DrawboardView = () => {
     UPLOAD_BASE_URL
   );
   const [room, setRoom] = useAtom(currentRoom);
-  const [, setRoomPresence] = useAtom(roomPresence);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
   const { uiOverrides } = useUiOverride(
     ed,
@@ -118,31 +121,6 @@ export const DrawboardView = () => {
     hideRestUi(true);
   }, [cs, visible]);
 
-  const extractPresenceStates = () => {
-    const states = roomConnector.awareness.getStates();
-    const ps: Record<string, Presence> = {};
-    for (const [k] of states) {
-      const obj = states.get(k);
-      if (obj && obj.presence !== undefined) {
-        const p: Presence = {
-          id: obj.presence.userId as string,
-          name: obj.presence.userName as string,
-          color: obj.presence.color as string,
-        };
-        ps[p.id] = p;
-      }
-    }
-    return ps;
-  };
-
-  useEffect(() => {
-    roomConnector.awareness.on("change", (changes: any) => {
-      if (changes.added.length <= 0 && changes.removed.length <= 0) return;
-      const states = extractPresenceStates();
-      // setRoomPresence(states);
-    });
-  }, [roomConnector.awareness]);
-
   const mount = useCallback(
     (editor: Editor) => {
       editor.updateInstanceState({ isDebugMode: false, isChatting: true });
@@ -157,44 +135,48 @@ export const DrawboardView = () => {
 
   return (
     <div className={drawBoardViewRoottyle}>
-      <Tldraw
-        hideUi={iamBlocked}
-        inferDarkMode
-        onMount={mount}
-        overrides={uiOverrides}
-        shapeUtils={customShapeUtils}
-        store={store}
-        tools={customTools}
-        assetUrls={{ icons: customIcons }}
-      >
-        {!iamBlocked && (
-          <>
-            <MainUI
-              ownerName={ownerName}
-              isOwner={isOwner}
-              blockUser={blockUser}
-              blockedList={blockedList}
-              isBlocked={isBlocked}
-              ownerId={ownerId}
-            />
-            <DiceRollerPanel isOwner={isOwner} />
-            <AssetList roomId={room ?? ""} />
-          </>
-        )}
-        {iamBlocked ? (
-          <div
-            className={appPanelStyle}
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: "50%",
-              padding: "20px",
-            }}
-          >
-            User blocked
-          </div>
-        ) : null}
-      </Tldraw>
+      {!iamBlocked && (
+        <Tldraw
+          hideUi={iamBlocked}
+          inferDarkMode
+          onMount={mount}
+          overrides={uiOverrides}
+          shapeUtils={customShapeUtils}
+          store={store}
+          tools={customTools}
+          assetUrls={{ icons: customIcons }}
+          components={{
+            InFrontOfTheCanvas: () => (
+              <>
+                <MainUI
+                  ownerName={ownerName}
+                  isOwner={isOwner}
+                  blockUser={blockUser}
+                  blockedList={blockedList}
+                  isBlocked={isBlocked}
+                  ownerId={ownerId}
+                />
+                <DiceRollerPanel isOwner={isOwner} />
+                <AssetList roomId={room ?? ""} />
+                <DiceAnimator />
+              </>
+            ),
+          }}
+        />
+      )}
+      {iamBlocked ? (
+        <div
+          className={appPanelStyle}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            padding: "20px",
+          }}
+        >
+          User blocked
+        </div>
+      ) : null}
     </div>
   );
 };

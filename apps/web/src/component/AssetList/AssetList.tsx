@@ -16,6 +16,7 @@ import {
   MediaHelpers,
   TLImageShape,
   getHashForString,
+  track,
   useDialogs,
   useEditor,
 } from "@tldraw/tldraw";
@@ -34,7 +35,7 @@ const port = import.meta.env.DEV ? 5001 : window.location.port;
 const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
 const ASSET_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/asset`;
 
-export const AssetList = ({ roomId }: { roomId: string }) => {
+export const AssetList = track(({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>();
@@ -195,7 +196,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
       >
         {tabs.map((it) => (
           <div
-            onClick={() => setTab(it)}
+            onPointerDown={() => setTab(it)}
             key={it}
             style={{
               color: it === tab ? "var(--color-accent)" : "var(--color-text)",
@@ -215,7 +216,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
           ref={filterRef as any}
           onValueChange={(value) => filterChange(value)}
         />
-        <Button type="icon" onClick={clearFilter}>
+        <Button type="icon" onPointerDown={clearFilter}>
           <FaBackspace size={16} />
         </Button>
       </div>
@@ -235,14 +236,14 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
       >
         <Button
           type="normal"
-          onClick={() => (sel ? insertAsset(sel) : undefined)}
+          onPointerDown={() => (sel ? insertAsset(sel) : undefined)}
         >
           Insert
         </Button>
-        <Button type="normal" onClick={() => deleteAsset(sel)}>
+        <Button type="normal" onPointerDown={() => deleteAsset(sel)}>
           Delete
         </Button>
       </div>
     </div>
   );
-};
+});

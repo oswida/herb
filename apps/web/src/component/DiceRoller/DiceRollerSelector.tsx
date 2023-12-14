@@ -205,7 +205,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
                 key={it}
                 className={diceRollerSelectorStyle}
                 title={`${currentFace[it]}\nClick to increase.\nShift+click to decrease.`}
-                onClick={(e) => inc(e, it)}
+                onPointerDown={(e) => inc(e, it)}
               >
                 {/* <span>{it}</span> */}
                 <Face faceType={it} />
@@ -229,7 +229,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
         <Button
           title="Roll"
           type="normal"
-          onClick={roll}
+          onPointerDown={roll}
           disabled={notation.trim() === ""}
         >
           <FaDiceD20 size={20} fill={"var(--color-accent)"} />
@@ -247,7 +247,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
           </div>
         </Button>
 
-        <Button title="Custom roll" onClick={rollCustom} type="normal">
+        <Button title="Custom roll" onPointerDown={rollCustom} type="normal">
           <FaDiceD6 size={20} />
         </Button>
       </div>
@@ -264,7 +264,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
             type="tool"
             title="Private roll"
             data-state={mPrivate ? "selected" : undefined}
-            onClick={() => setMPrivate(!mPrivate)}
+            onPointerDown={() => setMPrivate(!mPrivate)}
           >
             <FaUserSecret size={16} />
           </Button>
@@ -272,7 +272,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
             type="tool"
             title="With modifier"
             data-state={mMod ? "selected" : undefined}
-            onClick={() => setMMod(!mMod)}
+            onPointerDown={() => setMMod(!mMod)}
           >
             <VscRequestChanges size={16} />
           </Button>
@@ -280,21 +280,21 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
             type="tool"
             title="With comment"
             data-state={mComment ? "selected" : undefined}
-            onClick={() => setMComment(!mComment)}
+            onPointerDown={() => setMComment(!mComment)}
           >
             <FaCommentDots size={16} />
           </Button>
         </div>
 
         <div className={flexRowStyle({})} style={{ gap: "0px" }}>
-          <Button type="normal" title="Switch dice type" onClick={switchDice}>
+          <Button type="normal" title="Switch dice type" onPointerDown={switchDice}>
             <FaDice size={18} />
           </Button>
-          <Button type="normal" title="Reset pool" onClick={reset}>
+          <Button type="normal" title="Reset pool" onPointerDown={reset}>
             <FaReply size={16} />
           </Button>
           {isOwner && (
-            <Button title="Clear list" onClick={clear} type="normal">
+            <Button title="Clear list" onPointerDown={clear} type="normal">
               <FaTrashAlt size={16} />
             </Button>
           )}

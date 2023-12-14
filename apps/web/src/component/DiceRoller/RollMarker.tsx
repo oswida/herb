@@ -9,7 +9,7 @@ import { PiPercentFill, PiPlusMinusFill, PiCoinFill } from "react-icons/pi";
 const Ms = ({ title, children }: { title: string; children: ReactNode }) => {
   const editor = useEditor();
   const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.isDarkMode,
+    isDarkMode: editor.user.getIsDarkMode(),
   });
   return (
     <div

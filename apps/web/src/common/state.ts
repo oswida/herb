@@ -13,3 +13,5 @@ export const roomData = atom<RoomData | undefined>(undefined);
 
 export const urlUpload = atom<string>("");
 export const urlRoom = atom<string>("");
+
+export const animatedRollNotation = atom<string>("");

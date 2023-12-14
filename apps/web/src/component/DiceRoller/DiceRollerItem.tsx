@@ -16,7 +16,7 @@ export const DiceRollerItem = (props: Props) => {
   const { updateChatMessage } = useChat(editor);
   const rp = useAtomValue(roomPresence);
   const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.isDarkMode,
+    isDarkMode: editor.user.getIsDarkMode(),
   });
 
   const reveal = () => {
@@ -45,7 +45,7 @@ export const DiceRollerItem = (props: Props) => {
               <FaUserSecret
                 fill="var(--color-accent)"
                 title="Reveal private roll"
-                onClick={reveal}
+                onPointerDown={reveal}
                 style={{ cursor: "pointer" }}
               />
             </div>

@@ -65,7 +65,7 @@ export const Users = ({
                     <Button
                       type="icon"
                       title="Block user"
-                      onClick={() => ban(it.id)}
+                      onPointerDown={() => ban(it.id)}
                     >
                       <FaUserSlash size={16} fill="var(--color-accent)" />
                     </Button>
@@ -74,7 +74,7 @@ export const Users = ({
                     <Button
                       type="icon"
                       title="Unblock user"
-                      onClick={() => unban(it.id)}
+                      onPointerDown={() => unban(it.id)}
                     >
                       <FaUserCheck size={16} fill="var(--color-primary)" />
                     </Button>

@@ -23,7 +23,7 @@ type RollValue = {
 export const RollResultItem = (props: Props) => {
   const editor = useEditor();
   const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.isDarkMode,
+    isDarkMode: editor.user.getIsDarkMode(),
   });
 
   const itemRolls = useMemo(() => {
