@@ -2,6 +2,8 @@ import { Editor, JsonArray, JsonObject } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { ChatMsg, compressData64, decompressData64 } from "../common";
 
+export const MAX_ROLLS_LENGTH = 40;
+
 export const useChat = (editor: Editor | undefined) => {
   useEffect(() => {
     if (!editor) return;
@@ -41,6 +43,7 @@ export const useChat = (editor: Editor | undefined) => {
       if (!list) list = [];
       else list = decompressData64(list);
       if (!list) list = []; // bad compression ?
+      while (list.length >= MAX_ROLLS_LENGTH) list.shift();
       list.push(msg as any);
       const newMeta = {
         ...editor.getDocumentSettings().meta,

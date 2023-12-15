@@ -186,6 +186,9 @@ importers:
       sort-by:
         specifier: ^1.2.0
         version: 1.2.0
+      use-local-storage:
+        specifier: ^3.0.0
+        version: 3.0.0(react@18.2.0)
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
@@ -10264,6 +10267,14 @@ packages:
       '@types/react': 18.2.21
       react: 18.2.0
       tslib: 2.6.2
+    dev: false
+
+  /use-local-storage@3.0.0(react@18.2.0):
+    resolution: {integrity: sha512-wlPNnBCG3ULIJMr5A+dvWqLiPWCfsN1Kwijq+sAhT5yV4ex0u6XmZuNwP+RerIOfzBuz1pwSZuzhZMiluGQHfQ==}
+    peerDependencies:
+      react: '>=16.8.1'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /use-sidecar@1.1.2(@types/react@18.2.21)(react@18.2.0):

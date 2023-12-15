@@ -35,7 +35,7 @@ const port = import.meta.env.DEV ? 5001 : window.location.port;
 const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
 const ASSET_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/asset`;
 
-export const AssetList = track(({ roomId }: { roomId: string }) => {
+export const AssetList = ({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);
   const [filter, setFilter] = useState("");
   const filterRef = useRef<HTMLInputElement>();
@@ -246,4 +246,4 @@ export const AssetList = track(({ roomId }: { roomId: string }) => {
       </div>
     </div>
   );
-});
+};

@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
-import type { Editor, TLEditorComponents } from "@tldraw/tldraw";
-import { Tldraw, track } from "@tldraw/tldraw";
+import type { Editor } from "@tldraw/tldraw";
+import { Tldraw } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import * as React from "react";
-import { hideRestUi, hideStylePanel } from "../../common/utils";
-import {
-  csheetVisible,
-  currentRoom,
-  uiVisible,
-  urlRoom,
-  urlUpload,
-} from "../../common/state";
+import { currentRoom, uiVisible, urlRoom, urlUpload } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
 import { useAssetHandler, useRoomInfo } from "../../hooks";
@@ -22,19 +15,13 @@ import {
   RpgClockShapeTool,
   RpgClockShapeUtil,
 } from "../../shapes/RpgClockShape";
-import type { Presence } from "../../common";
-import { appPanelStyle } from "../../common";
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
-import { IMarkdownShape, MarkdownShapeUtil } from "../../shapes";
+import { MarkdownShapeUtil } from "../../shapes";
 import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
-import {
-  ITimerShape,
-  TimerShapeTool,
-  TimerShapeUtil,
-} from "../../shapes/TimerShape";
+import { TimerShapeTool, TimerShapeUtil } from "../../shapes/TimerShape";
 import {
   RpgResourceShapeTool,
   RpgResourceShapeUtil,
@@ -59,10 +46,6 @@ const customShapeUtils = [
 
 const customTools = [RpgClockShapeTool, TimerShapeTool, RpgResourceShapeTool];
 
-const customComponents: TLEditorComponents = {
-  InFrontOfTheCanvas: DiceAnimator,
-};
-
 const customIcons = {
   timer: "/icons/timer.svg",
   "rpg-clock": "/icons/rpg-clock.svg",
@@ -71,7 +54,6 @@ const customIcons = {
 
 export const DrawboardView = () => {
   const [visible] = useAtom(uiVisible);
-  const cs = useAtomValue(csheetVisible);
   const params = useParams();
   const { registerHostedImages } = useAssetHandler(
     params.roomId ?? "unknown",
@@ -110,16 +92,10 @@ export const DrawboardView = () => {
     shapeUtils: customShapeUtils,
   });
 
-  useEffect(() => {
-    if (visible) {
-      hideRestUi(false);
-      if (cs) hideStylePanel(true);
-      else hideStylePanel(false);
-      return;
-    }
-    hideStylePanel(true);
-    hideRestUi(true);
-  }, [cs, visible]);
+  // useEffect(() => {
+  //   console.log("ui", visible);
+  //   hideRestUi(visible);
+  // }, [visible]);
 
   const mount = useCallback(
     (editor: Editor) => {
@@ -135,48 +111,33 @@ export const DrawboardView = () => {
 
   return (
     <div className={drawBoardViewRoottyle}>
-      {!iamBlocked && (
-        <Tldraw
-          hideUi={iamBlocked}
-          inferDarkMode
-          onMount={mount}
-          overrides={uiOverrides}
-          shapeUtils={customShapeUtils}
-          store={store}
-          tools={customTools}
-          assetUrls={{ icons: customIcons }}
-          components={{
-            InFrontOfTheCanvas: () => (
-              <>
-                <MainUI
-                  ownerName={ownerName}
-                  isOwner={isOwner}
-                  blockUser={blockUser}
-                  blockedList={blockedList}
-                  isBlocked={isBlocked}
-                  ownerId={ownerId}
-                />
-                <DiceRollerPanel isOwner={isOwner} />
-                <AssetList roomId={room ?? ""} />
-                <DiceAnimator />
-              </>
-            ),
-          }}
-        />
-      )}
-      {iamBlocked ? (
-        <div
-          className={appPanelStyle}
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            padding: "20px",
-          }}
-        >
-          User blocked
-        </div>
-      ) : null}
+      <Tldraw
+        hideUi={!visible}
+        inferDarkMode
+        onMount={mount}
+        overrides={uiOverrides}
+        shapeUtils={customShapeUtils}
+        store={store}
+        tools={customTools}
+        assetUrls={{ icons: customIcons }}
+        components={{
+          InFrontOfTheCanvas: () => (
+            <>
+              <MainUI
+                ownerName={ownerName}
+                isOwner={isOwner}
+                blockUser={blockUser}
+                blockedList={blockedList}
+                isBlocked={isBlocked}
+                ownerId={ownerId}
+              />
+              <DiceRollerPanel isOwner={isOwner} />
+              <AssetList roomId={room ?? ""} />
+              <DiceAnimator />
+            </>
+          ),
+        }}
+      />
     </div>
   );
 };

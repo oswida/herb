@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { useAtom } from "jotai";
 import { animatedRollNotation } from "../../common";
+import useLocalStorage from "use-local-storage";
 
 const diceConfig = {
   framerate: 1 / 60,
@@ -13,9 +14,9 @@ const diceConfig = {
   theme_surface: "green-felt",
   sound_dieMaterial: "plastic",
   theme_customColorset: null,
-  theme_colorset: "white", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
+  theme_colorset: "none", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
   theme_texture: "none", // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-  theme_material: "none", // "none" | "metal" | "wood" | "glass" | "plastic"
+  theme_material: "plastic", // "none" | "metal" | "wood" | "glass" | "plastic"
   gravity_multiplier: 400,
   light_intensity: 0.8,
   baseScale: 100,
@@ -26,6 +27,9 @@ const diceConfig = {
 export const DiceAnimator = () => {
   const [db, setDb] = useState<any>(undefined);
   const [arn, setArn] = useAtom(animatedRollNotation);
+  const [diceColor] = useLocalStorage("herbDiceColor", "necrotic");
+  const [diceMaterial] = useLocalStorage("herbDiceMaterial", "plastic");
+  const [animateDice] = useLocalStorage("herbDiceAnimate", "true");
 
   useEffect(() => {
     if (db !== undefined) return;
@@ -33,15 +37,11 @@ export const DiceAnimator = () => {
       ...diceConfig,
       baseScale: 75,
       gravity_multiplier: 400,
+      theme_colorset: diceColor,
+      theme_material: diceMaterial,
     });
     Box.initialize()
-      .then(() => {
-        // Box.loadTheme({
-        //   colorset: loggedUser() ? loggedUser()?.settings.diceColor : "white",
-        //   texture: loggedUser() ? loggedUser()?.settings.diceMaterial : "none",
-        //   material: "none",
-        // });
-      })
+      .then(() => {})
       .catch((err: any) => {
         console.log("box initialize", err);
       });
@@ -52,7 +52,15 @@ export const DiceAnimator = () => {
   }, [db]);
 
   useEffect(() => {
-    if (!db || arn.trim() === "") return;
+    if (!db) return;
+    db.loadTheme({
+      theme_colorset: diceColor,
+      theme_material: diceMaterial,
+    });
+  }, [diceColor, diceMaterial]);
+
+  useEffect(() => {
+    if (!db || arn.trim() === "" || animateDice !== "true") return;
     try {
       db.roll(arn);
       setArn("");

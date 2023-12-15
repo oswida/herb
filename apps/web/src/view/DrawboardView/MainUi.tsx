@@ -2,7 +2,6 @@ import {
   Button,
   Icon,
   getUserPreferences,
-  track,
   useDialogs,
   useEditor,
   useToasts,
@@ -20,15 +19,13 @@ import {
   actionsPanelStyle,
   actionsRootStyle,
 } from "./style.css";
-import { FaDiceD20, FaCogs, FaUsers, FaChalkboard } from "react-icons/fa";
+import { FaDiceD20, FaCogs, FaChalkboard } from "react-icons/fa";
 import { MdLibraryBooks } from "react-icons/md";
 import { Settings } from "../../component/Settings";
 import * as React from "react";
 import useClipboard from "react-use-clipboard";
 import { flexRowStyle } from "../../common";
 import { useMemo } from "react";
-import { Users } from "../../component/Users";
-import { useRoomInfo } from "../../hooks";
 
 interface Props {
   ownerName: string;
@@ -48,7 +45,7 @@ export const MainUI = ({
   isBlocked,
 }: Props) => {
   const editor = useEditor();
-  const [hu, setHu] = useAtom(uiVisible);
+  const [uv, setUv] = useAtom(uiVisible);
   const [dv, setDv] = useAtom(diceRollerVisible);
   const [al, setAl] = useAtom(assetListVisible);
   const presence = useAtomValue(roomPresence);
@@ -87,14 +84,14 @@ export const MainUI = ({
     return lines.join("\n");
   }, [room, presence]);
 
-  const usersInfo = useMemo(() => {
-    const lines: string[] = [];
-    lines.push(`Connected users`);
-    Object.values(presence).forEach((it) => {
-      lines.push(it.name);
-    });
-    return lines.join("\n");
-  }, [room, presence]);
+  // const usersInfo = useMemo(() => {
+  //   const lines: string[] = [];
+  //   lines.push(`Connected users`);
+  //   Object.values(presence).forEach((it) => {
+  //     lines.push(it.name);
+  //   });
+  //   return lines.join("\n");
+  // }, [room, presence]);
 
   return (
     <div className={actionsRootStyle}>
@@ -110,8 +107,8 @@ export const MainUI = ({
         </div>
         <Button
           type="tool"
-          data-state={hu ? "selected" : undefined}
-          onPointerDown={() => setHu(!hu)}
+          data-state={uv ? "selected" : undefined}
+          onPointerDown={() => setUv(!uv)}
           title="Draw tools"
         >
           <Icon icon="tool-pencil" />
