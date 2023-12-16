@@ -38,9 +38,9 @@ export const actionsInfoStyle = style({
 export const diceAnimatorRootStyle = style({
   position: "absolute",
   left: 350,
-  top: "calc(60px - 100vh)",
+  top: 30,
   width: "calc(100vw - 350px)",
-  height: "calc(100vh - 30px)",
+  height: "calc(100vh - 60px)",
   backgroundColor: "transparent",
   zIndex: 0,
   pointerEvents: "none",

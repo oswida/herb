@@ -16,11 +16,12 @@ import {
   MediaHelpers,
   TLImageShape,
   getHashForString,
+  stopEventPropagation,
   track,
   useDialogs,
   useEditor,
 } from "@tldraw/tldraw";
-import { FaBackspace, FaReply } from "react-icons/fa";
+import { FaBackspace } from "react-icons/fa";
 import { IMarkdownShape, IPdfShape } from "../../shapes";
 import { Confirmation } from "../Confirmation";
 import { useQuery } from "@tanstack/react-query";
@@ -189,7 +190,12 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
   if (!visible) return null;
 
   return (
-    <div className={assetListRootStyle}>
+    <div
+      className={assetListRootStyle}
+      onWheelCapture={stopEventPropagation}
+      onPointerDown={stopEventPropagation}
+      onPointerUp={stopEventPropagation}
+    >
       <div
         style={{ padding: "2px 5px", gap: "10px" }}
         className={flexRowStyle({ justify: "center" })}

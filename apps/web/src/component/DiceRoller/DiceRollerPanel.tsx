@@ -95,7 +95,12 @@ export const DiceRollerPanel = track(({ isOwner }: { isOwner: boolean }) => {
   return (
     <>
       {visible && (
-        <div id="diceroller" className={diceRollerRootStyle}>
+        <div
+          id="diceroller"
+          className={diceRollerRootStyle}
+          onPointerDown={stopEventPropagation}
+          onPointerUp={stopEventPropagation}
+        >
           <div
             className={diceRollerListStyle}
             onWheelCapture={stopEventPropagation}

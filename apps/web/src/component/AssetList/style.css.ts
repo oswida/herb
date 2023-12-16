@@ -12,6 +12,7 @@ export const assetListRootStyle = style([
     padding: "5px",
     height: "calc(100vh - 320px)",
     flexDirection: "column",
+    pointerEvents: "all",
   },
 ]);
 
