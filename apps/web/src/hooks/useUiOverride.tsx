@@ -117,12 +117,23 @@ export const useUiOverride = (
         },
       };
 
+      tools.rpgDice = {
+        id: "rpg-dice-roller",
+        icon: "rpg-dice",
+        label: "Dice Roller" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-dice-roller");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
       toolbar.push(toolbarItem(tools.rpgClock));
       toolbar.push(toolbarItem(tools.timer));
       toolbar.push(toolbarItem(tools.rpgRes));
+      toolbar.push(toolbarItem(tools.rpgDice));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

@@ -30,13 +30,13 @@ export const RollMarker = ({ id }: { id?: string }) => {
   switch (id) {
     case "trophy_dark":
       return (
-        <Ms title="Trophy light">
+        <Ms title="Trophy Dark">
           <BsDice5Fill fill="black" />
         </Ms>
       );
     case "trophy_light":
       return (
-        <Ms title="Trophy Dark">
+        <Ms title="Trophy Light">
           <BsDice5Fill fill="white" />
         </Ms>
       );

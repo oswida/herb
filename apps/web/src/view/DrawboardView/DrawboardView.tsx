@@ -27,6 +27,11 @@ import {
   RpgResourceShapeUtil,
 } from "../../shapes/RpgResourceShape";
 import { DiceAnimator } from "./DiceAnimator";
+import {
+  DiceRollerShapeTool,
+  DiceRollerShapeUtil,
+} from "../../shapes/DiceRollerShape";
+import { DiceShapeUtil } from "../../shapes/DiceShape";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -42,14 +47,22 @@ const customShapeUtils = [
   HiddenShapeUtil,
   TimerShapeUtil,
   RpgResourceShapeUtil,
+  DiceRollerShapeUtil,
+  DiceShapeUtil,
 ];
 
-const customTools = [RpgClockShapeTool, TimerShapeTool, RpgResourceShapeTool];
+const customTools = [
+  RpgClockShapeTool,
+  TimerShapeTool,
+  RpgResourceShapeTool,
+  DiceRollerShapeTool,
+];
 
 const customIcons = {
   timer: "/icons/timer.svg",
   "rpg-clock": "/icons/rpg-clock.svg",
   "rpg-resource": "/icons/rpg-resource.svg",
+  "rpg-dice": "/icons/dice-object.svg",
 };
 
 export const DrawboardView = () => {
@@ -66,15 +79,8 @@ export const DrawboardView = () => {
     params.roomId ?? "unknown",
     UPLOAD_BASE_URL
   );
-  const {
-    isBlocked,
-    iamBlocked,
-    blockUser,
-    blockedList,
-    isOwner,
-    ownerId,
-    ownerName,
-  } = useRoomInfo(ed, ROOM_BASE_URL);
+  const { isBlocked, blockUser, blockedList, isOwner, ownerId, ownerName } =
+    useRoomInfo(ed, ROOM_BASE_URL);
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
 
@@ -86,16 +92,11 @@ export const DrawboardView = () => {
     setRoom(params.roomId);
   }, [params, setRoom]);
 
-  const { storeWithStatus: store, room: roomConnector } = useYjsStore({
+  const { storeWithStatus: store } = useYjsStore({
     roomId: params.roomId,
     hostUrl: HOST_URL,
     shapeUtils: customShapeUtils,
   });
-
-  // useEffect(() => {
-  //   console.log("ui", visible);
-  //   hideRestUi(visible);
-  // }, [visible]);
 
   const mount = useCallback(
     (editor: Editor) => {

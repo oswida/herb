@@ -96,3 +96,14 @@ export const diceMarkerStyle = style({
   alignItems: "center",
   justifyContent: "center",
 });
+
+export const diceResultTableObjectStyle = style({
+  cursor: "pointer",
+  marginRight: 5,
+  opacity: 0.5,
+  selectors: {
+    "&:hover": {
+      opacity: 1.0,
+    },
+  },
+});

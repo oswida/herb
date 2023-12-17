@@ -24,12 +24,14 @@ const diceConfig = {
   onRollComplete: () => {},
 };
 
+// metal, wood, paper, stone
+
 export const DiceAnimator = () => {
   const [db, setDb] = useState<any>(undefined);
   const [arn, setArn] = useAtom(animatedRollNotation);
   const [diceColor] = useLocalStorage("herbDiceColor", "necrotic");
   const [diceMaterial] = useLocalStorage("herbDiceMaterial", "plastic");
-  const [animateDice] = useLocalStorage("herbDiceAnimate", "true");
+  const [animateDice] = useLocalStorage("herbDiceAnimate", "false");
 
   useEffect(() => {
     if (db !== undefined) return;
