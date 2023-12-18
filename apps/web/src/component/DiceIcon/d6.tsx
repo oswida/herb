@@ -1,12 +1,7 @@
 import React from "react";
+import { DiceProps } from "./props";
 
-interface Props {
-  value: number;
-  size: number;
-  fill: string;
-}
-
-export const D6Svg = ({ value, size, fill }: Props) => {
+export const D6Svg = ({ value, size, fill }: DiceProps) => {
   if (value < 1 || value > 6)
     return <>Unproper value {value} for six-sided dice</>;
   switch (value) {

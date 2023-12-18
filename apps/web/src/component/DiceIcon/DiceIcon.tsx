@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { D6Svg } from "./d6";
 import { track } from "@tldraw/tldraw";
+import { D4Svg } from "./d4";
 
 interface DiceIconProps {
   face: number;
@@ -21,7 +22,16 @@ export const DiceIcon = track(
               size={size}
               fill={color ? color : "var(--color-text)"}
             />
-          ); // (value, size, color ? color : "var(--color-text)");
+          );
+        case 4:
+          return (
+            <D4Svg
+              value={value}
+              size={size}
+              fill={color ? color : "var(--color-text)"}
+              background={background ? background : "var(--color-background)"}
+            />
+          );
         default:
           return (
             <div>

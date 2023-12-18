@@ -72,9 +72,9 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
   static override type = "dice" as const;
   static override props = rpgDiceShapeProps;
 
-  override canResize = (_shape: IDiceShape) => true;
+  override canResize = (_shape: IDiceShape) => false;
   override canEditInReadOnly = () => false;
-  override canEdit: TLShapeUtilFlag<IDiceShape> = () => false;
+  override canEdit: TLShapeUtilFlag<IDiceShape> = () => true;
 
   getDefaultProps(): IDiceShape["props"] {
     return {
