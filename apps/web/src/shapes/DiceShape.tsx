@@ -6,9 +6,7 @@ import {
   T,
   TLBaseShape,
   TLOnBeforeCreateHandler,
-  TLOnResizeHandler,
   TLShapeUtilFlag,
-  resizeBox,
   track,
 } from "@tldraw/tldraw";
 import React from "react";
@@ -26,6 +24,8 @@ export type IDiceShape = TLBaseShape<
     owner: string;
     face: number;
     value: number;
+    isMin: boolean;
+    isMax: boolean;
   }
 >;
 
@@ -45,6 +45,7 @@ export const DiceComponent = track(({ shape, bounds }: DiceComponentProps) => {
         width: shape.props.w,
         height: shape.props.h,
         alignItems: "center",
+        position: "relative",
       }}
     >
       <DiceIcon
@@ -54,6 +55,32 @@ export const DiceComponent = track(({ shape, bounds }: DiceComponentProps) => {
         color={shape.props.fill}
         size={shape.props.w}
       />
+      {/* {shape.props.isMax && (
+        <div
+          style={{
+            width: shape.props.w,
+            height: 1,
+            backgroundColor: "var(--color-primary)",
+            borderRadius: "50%",
+            position: "absolute",
+            bottom: -2,
+            left: 0,
+          }}
+        ></div>
+      )}
+      {shape.props.isMin && (
+        <div
+          style={{
+            width: shape.props.w,
+            height: 1,
+            backgroundColor: "var(--color-accent)",
+            borderRadius: "50%",
+            position: "absolute",
+            bottom: -2,
+            left: 0,
+          }}
+        ></div>
+      )} */}
     </div>
   );
 });
@@ -66,6 +93,8 @@ export const rpgDiceShapeProps: ShapeProps<IDiceShape> = {
   owner: T.string,
   face: T.number,
   value: T.number,
+  isMin: T.boolean,
+  isMax: T.boolean,
 };
 
 export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
@@ -85,6 +114,8 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
       owner: "",
       face: 6,
       value: 6,
+      isMin: false,
+      isMax: false,
     };
   }
 

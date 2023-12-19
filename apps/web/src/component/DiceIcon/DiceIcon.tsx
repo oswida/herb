@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { D6Svg } from "./d6";
 import { track } from "@tldraw/tldraw";
 import { D4Svg } from "./d4";
+import { D8Svg } from "./d8";
+import { D10Svg } from "./d10";
 
 interface DiceIconProps {
   face: number;
@@ -32,6 +34,24 @@ export const DiceIcon = track(
               background={background ? background : "var(--color-background)"}
             />
           );
+        case 8:
+          return (
+            <D8Svg
+              value={value}
+              size={size}
+              fill={color ? color : "var(--color-text)"}
+              background={background ? background : "var(--color-background)"}
+            />
+          );
+        case 10:
+          return (
+            <D10Svg
+              value={value}
+              size={size}
+              fill={color ? color : "var(--color-text)"}
+              background={background ? background : "var(--color-background)"}
+            />
+          );
         default:
           return (
             <div>
@@ -50,7 +70,11 @@ export const DiceIcon = track(
           borderRadius: 3,
           width: size,
           height: size,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
+        title={value.toString()}
       >
         {icon}
       </div>

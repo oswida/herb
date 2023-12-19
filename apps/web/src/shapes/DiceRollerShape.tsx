@@ -3,7 +3,6 @@ import {
   BaseBoxShapeUtil,
   Box2d,
   Button,
-  DictValidator,
   Rectangle2d,
   ShapeProps,
   T,
@@ -17,28 +16,14 @@ import {
   getUserPreferences,
   resizeBox,
   track,
-  uniqueId,
   useDialogs,
   useEditor,
   useIsEditing,
 } from "@tldraw/tldraw";
 import React, { useCallback, useMemo } from "react";
 
-import dice6_3 from "../../public/icons/dice-six-faces-three.svg";
-import { DiceIcon } from "../component/DiceIcon";
-import {
-  FaDiceD6,
-  FaPlay,
-  FaPlayCircle,
-  FaReplyAll,
-  FaTools,
-} from "react-icons/fa";
-import {
-  RollValue,
-  flexColumnStyle,
-  flexRowStyle,
-  rollValues,
-} from "../common";
+import { FaDiceD6, FaPlayCircle, FaReplyAll } from "react-icons/fa";
+import { RollValue, flexColumnStyle, rollValues } from "../common";
 import { useRoll } from "../hooks";
 import { IDiceShape } from "./DiceShape";
 import { DiceRollerPool } from "./DiceRollerPool";
@@ -72,15 +57,7 @@ export const DiceRollerComponent = track(
     });
     const { addDialog } = useDialogs();
     const { rollSingleToChat } = useRoll(user, theme);
-    // const settings = useCallback(() => {
-    //   addDialog({
-    //     id: "rpg-res-settings",
-    //     component: ({ onClose }) => (
-    //       <RpgResourceSettings onClose={onClose} shape={shape} />
-    //     ),
-    //     onClose: () => {},
-    //   });
-    // }, [shape]);
+
     const notation = useMemo(() => {
       const res: string[] = [];
       Object.keys(shape.props.pool).forEach((k) => {
@@ -92,7 +69,6 @@ export const DiceRollerComponent = track(
     const shapeFromRoll = (val: RollValue, marker: string, counter: number) => {
       let clr = "var(--color-text)";
       let bkg = "transparent";
-      console.log("marker", marker);
       switch (marker) {
         case "trophy_dark":
           {
@@ -106,7 +82,7 @@ export const DiceRollerComponent = track(
             bkg = "black";
           }
           break;
-        case "d4":
+        default:
           {
             clr = "var(--color-text)";
             bkg = "var(--color-background)";
@@ -122,6 +98,8 @@ export const DiceRollerComponent = track(
           face: Number.parseInt(val.dice.replaceAll("d", "")),
           value: val.value,
           owner: editor.user.getId(),
+          isMax: val.isMax,
+          isMin: val.isMin,
         },
       } as IDiceShape;
     };

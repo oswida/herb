@@ -21,14 +21,16 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
   const [d6black, setD6Black] = useState(
     shape.props.pool["dTd"] ? shape.props.pool["dTd"] : 0
   );
+  const [d4, setD4] = useState(
+    shape.props.pool["d4"] ? shape.props.pool["d4"] : 0
+  );
+  const [d8, setD8] = useState(
+    shape.props.pool["d8"] ? shape.props.pool["d8"] : 0
+  );
+  const [d10, setD10] = useState(
+    shape.props.pool["d10"] ? shape.props.pool["d10"] : 0
+  );
   const editor = useEditor();
-  // const [color, setColor] = useState(
-  //   shape.props.color ? shape.props.color : "var(--color-text)"
-  // );
-  // const [bkg, setBkg] = useState(
-  //   shape.props.fill ? shape.props.fill : "transparent"
-  // );
-  // const [priv, setPriv] = useState(shape.props.private);
 
   const update = () => {
     const pool: Record<string, number> = {};
@@ -37,6 +39,15 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
     }
     if (!Number.isNaN(d6black) && d6black > 0) {
       pool["dTd"] = d6black;
+    }
+    if (!Number.isNaN(d4) && d4 > 0) {
+      pool["d4"] = d4;
+    }
+    if (!Number.isNaN(d8) && d8 > 0) {
+      pool["d8"] = d8;
+    }
+    if (!Number.isNaN(d10) && d10 > 0) {
+      pool["d10"] = d10;
     }
     const shapeUpdate: TLShapePartial<IDiceRollerShape> = {
       id: shape.id,
@@ -74,6 +85,27 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
             onValueChange={(value: string) =>
               setD6Black(Number.parseInt(value))
             }
+          />
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="number of d4 dice"
+            label={"d4" as any}
+            defaultValue={d4.toString()}
+            onValueChange={(value: string) => setD4(Number.parseInt(value))}
+          />
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="number of d8 dice"
+            label={"d8" as any}
+            defaultValue={d8.toString()}
+            onValueChange={(value: string) => setD8(Number.parseInt(value))}
+          />
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="number of d10 dice"
+            label={"d10" as any}
+            defaultValue={d10.toString()}
+            onValueChange={(value: string) => setD10(Number.parseInt(value))}
           />
         </div>
       </Dialog.Body>
