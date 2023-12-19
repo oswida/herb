@@ -62,7 +62,7 @@ const customIcons = {
   timer: "/icons/timer.svg",
   "rpg-clock": "/icons/rpg-clock.svg",
   "rpg-resource": "/icons/rpg-resource.svg",
-  "rpg-dice": "/icons/dice-object.svg",
+  "rpg-dice": "/icons/cubes.svg",
 };
 
 export const DrawboardView = () => {

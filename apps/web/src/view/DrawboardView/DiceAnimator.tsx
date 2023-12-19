@@ -47,9 +47,6 @@ export const DiceAnimator = () => {
       .catch((err: any) => {
         console.log("box initialize", err);
       });
-    // Box.onRollComplete = (results: any) => {
-    //   console.log("Roll complete ", results);
-    // };
     setDb(Box);
   }, [db]);
 
