@@ -17,6 +17,7 @@ export const D4Svg = ({ fill, value, background }: DiceProps) => {
           y="101.24477"
           fill={background}
           fontSize="240px"
+          fontWeight="bold"
         >
           {value}
         </text>

@@ -13,3 +13,5 @@ export const urlUpload = atom<string>("");
 export const urlRoom = atom<string>("");
 
 export const animatedRollNotation = atom<string>("");
+
+export const diceBox = atom<any>(undefined);

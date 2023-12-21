@@ -16,7 +16,13 @@ export const D8Svg = ({ fill, value, background, size }: DiceProps) => {
         <path d="m158 13.149-157.5 114.31v157.78z" />
         <path d="m17.717 323.06 166.81 121.65 167.09-121.37z" />
       </g>
-      <text x="125.22911" y="266.6474" fill={background} fontSize="200.33px">
+      <text
+        x="125.22911"
+        y="266.6474"
+        fill={background}
+        fontSize="200.33px"
+        fontWeight="bold"
+      >
         {value}
       </text>
     </svg>

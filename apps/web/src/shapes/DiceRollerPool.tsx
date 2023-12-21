@@ -30,6 +30,9 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
   const [d10, setD10] = useState(
     shape.props.pool["d10"] ? shape.props.pool["d10"] : 0
   );
+  const [d12, setD12] = useState(
+    shape.props.pool["d12"] ? shape.props.pool["d12"] : 0
+  );
   const editor = useEditor();
 
   const update = () => {
@@ -48,6 +51,9 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
     }
     if (!Number.isNaN(d10) && d10 > 0) {
       pool["d10"] = d10;
+    }
+    if (!Number.isNaN(d12) && d12 > 0) {
+      pool["d12"] = d12;
     }
     const shapeUpdate: TLShapePartial<IDiceRollerShape> = {
       id: shape.id,
@@ -106,6 +112,13 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
             label={"d10" as any}
             defaultValue={d10.toString()}
             onValueChange={(value: string) => setD10(Number.parseInt(value))}
+          />
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="number of d12 dice"
+            label={"d12" as any}
+            defaultValue={d12.toString()}
+            onValueChange={(value: string) => setD12(Number.parseInt(value))}
           />
         </div>
       </Dialog.Body>

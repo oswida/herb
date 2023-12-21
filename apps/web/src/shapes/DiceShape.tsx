@@ -141,10 +141,6 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
     );
   }
 
-  // override onResize: TLOnResizeHandler<IDiceShape> = (shape, info) => {
-  //   return resizeBox(shape, info);
-  // };
-
   override onBeforeCreate: TLOnBeforeCreateHandler<IDiceShape> = (next) => {
     return {
       ...next,

@@ -1,8 +1,8 @@
 import { diceAnimatorRootStyle } from "./style.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { useAtom } from "jotai";
-import { animatedRollNotation } from "../../common";
+import { animatedRollNotation, diceBox } from "../../common";
 import useLocalStorage from "use-local-storage";
 
 const diceConfig = {
@@ -27,14 +27,16 @@ const diceConfig = {
 // metal, wood, paper, stone
 
 export const DiceAnimator = () => {
-  const [db, setDb] = useState<any>(undefined);
+  const [db, setDb] = useAtom(diceBox);
   const [arn, setArn] = useAtom(animatedRollNotation);
   const [diceColor] = useLocalStorage("herbDiceColor", "necrotic");
   const [diceMaterial] = useLocalStorage("herbDiceMaterial", "plastic");
   const [animateDice] = useLocalStorage("herbDiceAnimate", "false");
 
+  const animate = useMemo(() => animateDice === "true", [animateDice]);
+
   useEffect(() => {
-    if (db !== undefined) return;
+    if (db !== undefined || !animate) return;
     const Box = new DiceBox("#dice-table", {
       ...diceConfig,
       baseScale: 75,
@@ -43,30 +45,26 @@ export const DiceAnimator = () => {
       theme_material: diceMaterial,
     });
     Box.initialize()
-      .then(() => {})
+      .then(() => {
+        console.log("dice box init");
+      })
       .catch((err: any) => {
         console.log("box initialize", err);
       });
     setDb(Box);
-  }, [db]);
+  }, [db, animate]);
 
   useEffect(() => {
-    if (!db) return;
-    db.loadTheme({
-      theme_colorset: diceColor,
-      theme_material: diceMaterial,
-    });
-  }, [diceColor, diceMaterial]);
-
-  useEffect(() => {
-    if (!db || arn.trim() === "" || animateDice !== "true") return;
+    if (db == undefined || arn.trim() === "" || !animate) return;
     try {
       db.roll(arn);
       setArn("");
     } catch (e) {
       // Silent skip, some dice is not supported
     }
-  }, [arn]);
+  }, [arn, animate, db]);
+
+  if (!animate) return <></>;
 
   return <div className={diceAnimatorRootStyle} id="dice-table"></div>;
 };

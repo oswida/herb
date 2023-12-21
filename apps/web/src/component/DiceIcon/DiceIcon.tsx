@@ -4,6 +4,7 @@ import { track } from "@tldraw/tldraw";
 import { D4Svg } from "./d4";
 import { D8Svg } from "./d8";
 import { D10Svg } from "./d10";
+import { D12Svg } from "./d12";
 
 interface DiceIconProps {
   face: number;
@@ -52,6 +53,15 @@ export const DiceIcon = track(
               background={background ? background : "var(--color-background)"}
             />
           );
+        case 12:
+          return (
+            <D12Svg
+              value={value}
+              size={size}
+              fill={color ? color : "var(--color-text)"}
+              background={background ? background : "var(--color-background)"}
+            />
+          );
         default:
           return (
             <div>
@@ -74,7 +84,6 @@ export const DiceIcon = track(
           alignItems: "center",
           justifyContent: "center",
         }}
-        title={value.toString()}
       >
         {icon}
       </div>
