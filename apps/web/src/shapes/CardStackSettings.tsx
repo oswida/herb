@@ -1,38 +1,37 @@
 import {
   Button,
   Dialog,
+  Input,
   TLShapePartial,
   TLUiDialogProps,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
 import { flexColumnStyle, flexRowStyle } from "../common";
-import { IMarkdownShape } from "./MarkdownShape";
 import Compact from "@uiw/react-color-compact";
 import { FaUserFriends, FaUserSecret } from "react-icons/fa";
+import { ICardStackShape } from "./CardStackShape";
 
 type Props = TLUiDialogProps & {
-  shape: IMarkdownShape;
+  shape: ICardStackShape;
 };
 
-export const MarkdownSettings = ({ shape, onClose }: Props) => {
+export const CardStackSettings = ({ shape, onClose }: Props) => {
   const editor = useEditor();
   const [color, setColor] = useState(
-    shape.props.color ? shape.props.color : "var(--color-text)"
-  );
-  const [bkg, setBkg] = useState(
-    shape.props.fill ? shape.props.fill : "transparent"
+    shape.props.fill ? shape.props.fill : "var(--color-text)"
   );
   const [priv, setPriv] = useState(shape.props.private);
+  const [label, setLabel] = useState(shape.props.label);
 
   const update = () => {
-    const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+    const shapeUpdate: TLShapePartial<ICardStackShape> = {
       id: shape.id,
-      type: "markdown",
+      type: "rpg-card-stack",
       props: {
-        color: color,
-        fill: bkg,
+        fill: color,
         private: priv,
+        label: label,
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -42,22 +41,21 @@ export const MarkdownSettings = ({ shape, onClose }: Props) => {
   return (
     <>
       <Dialog.Header>
-        <Dialog.Title>Markdown settings</Dialog.Title>
+        <Dialog.Title>Card stack settings</Dialog.Title>
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})}>
-          <div>Background color</div>
-          <Compact
-            style={{ alignSelf: "center" }}
-            data-color-mode="dark"
-            color={bkg}
-            onChange={(color) => setBkg(color.hex)}
+          <div>Label</div>
+          <Input
+            className="tlui-embed-dialog__input"
+            placeholder="Label"
+            defaultValue={label}
+            onValueChange={(value) => {
+              setLabel(value);
+            }}
           />
-          <Button type="normal" onClick={() => setBkg("transparent")}>
-            Transparent
-          </Button>
-          <div>Text color</div>
+          <div>Color</div>
           <Compact
             style={{ alignSelf: "center" }}
             data-color-mode="dark"

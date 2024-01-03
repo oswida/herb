@@ -38,9 +38,13 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
         let shapeType: "image" | "video";
 
         if (
-          ["image/jpeg", "image/png", "image/gif", "image/svg+xml"].includes(
-            file.type
-          )
+          [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+            "image/svg+xml",
+          ].includes(file.type)
         ) {
           shapeType = "image";
           size = await MediaHelpers.getImageSizeFromSrc(url);

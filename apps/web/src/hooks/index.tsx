@@ -4,3 +4,4 @@ export * from "./useAssetHandler";
 export * from "./useYjsStore";
 export * from "./useRoomInfo";
 export * from "./useBackup";
+export * from "./useAssets";

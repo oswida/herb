@@ -127,6 +127,16 @@ export const useUiOverride = (
         },
       };
 
+      tools.rpgCards = {
+        id: "rpg-card-stack",
+        icon: "rpg-cards",
+        label: "Card Stack" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-card-stack");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
@@ -134,6 +144,7 @@ export const useUiOverride = (
       toolbar.push(toolbarItem(tools.timer));
       toolbar.push(toolbarItem(tools.rpgRes));
       toolbar.push(toolbarItem(tools.rpgDice));
+      toolbar.push(toolbarItem(tools.rpgCards));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

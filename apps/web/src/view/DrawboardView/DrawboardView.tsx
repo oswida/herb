@@ -17,7 +17,11 @@ import {
 } from "../../shapes/RpgClockShape";
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
-import { MarkdownShapeUtil } from "../../shapes";
+import {
+  CardStackShapeTool,
+  CardStackShapeUtil,
+  MarkdownShapeUtil,
+} from "../../shapes";
 import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
@@ -49,6 +53,7 @@ const customShapeUtils = [
   RpgResourceShapeUtil,
   DiceRollerShapeUtil,
   DiceShapeUtil,
+  CardStackShapeUtil,
 ];
 
 const customTools = [
@@ -56,6 +61,7 @@ const customTools = [
   TimerShapeTool,
   RpgResourceShapeTool,
   DiceRollerShapeTool,
+  CardStackShapeTool,
 ];
 
 const customIcons = {
@@ -63,6 +69,7 @@ const customIcons = {
   "rpg-clock": "/icons/rpg-clock.svg",
   "rpg-resource": "/icons/rpg-resource.svg",
   "rpg-dice": "/icons/cubes.svg",
+  "rpg-cards": "/icons/cards.svg",
 };
 
 export const DrawboardView = () => {
@@ -120,6 +127,13 @@ export const DrawboardView = () => {
         shapeUtils={customShapeUtils}
         store={store}
         tools={customTools}
+        acceptedImageMimeTypes={[
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/svg+xml",
+          "image/webp",
+        ]}
         assetUrls={{ icons: customIcons }}
         components={{
           InFrontOfTheCanvas: () => (

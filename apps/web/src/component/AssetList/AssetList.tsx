@@ -5,7 +5,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { assetListVisible, flexRowStyle } from "../../common";
+import {
+  assetListVisible,
+  flexRowStyle,
+  isImage,
+  isMarkdown,
+  isPdf,
+} from "../../common";
 import { assetListRootStyle, assetListStyle } from "./style.css";
 import { useAtomValue } from "jotai";
 import { AssetItem } from "./AssetItem";
@@ -79,20 +85,6 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
   const clearFilter = async () => {
     setFilter("");
     if (filterRef.current) filterRef.current.value = "";
-  };
-
-  const isImage = (mime: string) => {
-    return ["image/jpeg", "image/png", "image/gif", "image/svg+xml"].includes(
-      mime
-    );
-  };
-
-  const isPdf = (mime: string) => {
-    return ["application/pdf"].includes(mime);
-  };
-
-  const isMarkdown = (mime: string) => {
-    return ["text/markdown"].includes(mime);
   };
 
   const insertAsset = useCallback(
