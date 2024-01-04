@@ -7,7 +7,12 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
-import { currentRoom, flexColumnStyle, flexRowStyle } from "../common";
+import {
+  currentRoom,
+  flexColumnStyle,
+  flexRowStyle,
+  shuffleArray,
+} from "../common";
 import {
   FaAlignRight,
   FaAngleRight,
@@ -37,12 +42,13 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
   const [poolSel, setPoolSel] = useState<AssetDesc | undefined>(undefined);
 
   const update = () => {
+    const items = [...pool];
     const shapeUpdate: TLShapePartial<ICardStackShape> = {
       id: shape.id,
       type: "rpg-card-stack",
       props: {
         pool: pool,
-        current: pool,
+        current: shuffleArray(items),
       },
     };
     editor.updateShapes([shapeUpdate]);

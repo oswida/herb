@@ -30,7 +30,6 @@ import {
   RpgResourceShapeTool,
   RpgResourceShapeUtil,
 } from "../../shapes/RpgResourceShape";
-import { DiceAnimator } from "./DiceAnimator";
 import {
   DiceRollerShapeTool,
   DiceRollerShapeUtil,
@@ -148,7 +147,6 @@ export const DrawboardView = () => {
               />
               <DiceRollerPanel isOwner={isOwner} />
               <AssetList roomId={room ?? ""} />
-              <DiceAnimator />
             </>
           ),
         }}

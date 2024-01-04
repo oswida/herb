@@ -115,11 +115,12 @@ export const CardStackComponent = track(
             message="Are you sure?"
             callback={() => {
               editor.deleteShapes(shape.props.shapeIds);
+              const items = [...shape.props.pool];
               const shapeUpdate: TLShapePartial<ICardStackShape> = {
                 id: shape.id,
                 type: "rpg-card-stack",
                 props: {
-                  current: shape.props.pool,
+                  current: shuffleArray(items),
                   shapeIds: [],
                 },
               };

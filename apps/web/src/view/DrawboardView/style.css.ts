@@ -34,15 +34,3 @@ export const actionsInfoStyle = style({
   alignItems: "center",
   justifyContent: "center",
 });
-
-export const diceAnimatorRootStyle = style({
-  position: "absolute",
-  left: 350,
-  top: 30, //TODO: set to 30
-  width: "calc(100vw - 350px)",
-  height: "calc(100vh - 60px)",
-  backgroundColor: "transparent",
-  zIndex: 0,
-  pointerEvents: "none",
-  userSelect: "unset",
-});
