@@ -19,30 +19,29 @@ import {
   actionsPanelStyle,
   actionsRootStyle,
 } from "./style.css";
-import { FaDiceD20, FaCogs, FaChalkboard } from "react-icons/fa";
+import { FaDiceD20, FaCogs, FaChalkboard, FaUserPlus } from "react-icons/fa";
 import { MdLibraryBooks } from "react-icons/md";
 import { Settings } from "../../component/Settings";
 import * as React from "react";
 import useClipboard from "react-use-clipboard";
 import { flexRowStyle } from "../../common";
 import { useMemo } from "react";
+import { Users } from "../../component/Users";
 
 interface Props {
   ownerName: string;
   isOwner: boolean;
-  blockUser: (id: string, block: boolean) => void;
-  blockedList: string[];
-  isBlocked: (id: string) => boolean;
-  ownerId: string;
+  isUserAllowed: boolean;
+  allowedUsers: string[];
+  allowUser: (id: string, allow: boolean) => void;
 }
 
 export const MainUI = ({
   ownerName,
   isOwner,
-  ownerId,
-  blockUser,
-  blockedList,
-  isBlocked,
+  isUserAllowed,
+  allowedUsers,
+  allowUser,
 }: Props) => {
   const editor = useEditor();
   const [uv, setUv] = useAtom(uiVisible);
@@ -84,14 +83,22 @@ export const MainUI = ({
     return lines.join("\n");
   }, [room, presence]);
 
-  // const usersInfo = useMemo(() => {
-  //   const lines: string[] = [];
-  //   lines.push(`Connected users`);
-  //   Object.values(presence).forEach((it) => {
-  //     lines.push(it.name);
-  //   });
-  //   return lines.join("\n");
-  // }, [room, presence]);
+  const allow = () => {
+    addDialog({
+      component: ({ onClose }) => (
+        <Users
+          onClose={onClose}
+          allowedUsers={allowedUsers}
+          allowUser={allowUser}
+        />
+      ),
+      onClose: () => {
+        editor.setCurrentTool("select");
+      },
+    });
+  };
+
+  if (!isUserAllowed) return null;
 
   return (
     <div className={actionsRootStyle}>
@@ -122,14 +129,23 @@ export const MainUI = ({
           <FaDiceD20 size={16} />
         </Button>
         {isOwner && (
-          <Button
-            type="tool"
-            data-state={al ? "selected" : undefined}
-            onPointerDown={() => setAl(!al)}
-            title="Asset list"
-          >
-            <MdLibraryBooks size={20} />
-          </Button>
+          <>
+            <Button
+              type="tool"
+              data-state={al ? "selected" : undefined}
+              onPointerDown={() => setAl(!al)}
+              title="Asset list"
+            >
+              <MdLibraryBooks size={20} />
+            </Button>
+            <Button
+              type="tool"
+              onPointerDown={allow}
+              title="Accept user to room"
+            >
+              <FaUserPlus size={16} />
+            </Button>
+          </>
         )}
 
         <Button

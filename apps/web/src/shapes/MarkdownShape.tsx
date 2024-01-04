@@ -20,9 +20,8 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FaHome, FaTools, FaUserSecret } from "react-icons/fa";
-import { useRoomInfo } from "../hooks";
 import { useAtomValue } from "jotai";
-import { urlRoom, urlUpload } from "../common";
+import { urlUpload } from "../common";
 import { MarkdownSettings } from "./MarkdownSettings";
 
 export type IMarkdownShape = TLBaseShape<

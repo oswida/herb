@@ -35,6 +35,7 @@ import {
   DiceRollerShapeUtil,
 } from "../../shapes/DiceRollerShape";
 import { DiceShapeUtil } from "../../shapes/DiceShape";
+import { UserNotAlowed } from "./UserNotAllowed";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -85,7 +86,7 @@ export const DrawboardView = () => {
     params.roomId ?? "unknown",
     UPLOAD_BASE_URL
   );
-  const { isBlocked, blockUser, blockedList, isOwner, ownerId, ownerName } =
+  const { isOwner, ownerName, isUserAllowed, allowUser, allowedUsers } =
     useRoomInfo(ed, ROOM_BASE_URL);
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
@@ -119,7 +120,7 @@ export const DrawboardView = () => {
   return (
     <div className={drawBoardViewRoottyle}>
       <Tldraw
-        hideUi={!visible}
+        hideUi={!visible || !isUserAllowed}
         inferDarkMode
         onMount={mount}
         overrides={uiOverrides}
@@ -135,15 +136,17 @@ export const DrawboardView = () => {
         ]}
         assetUrls={{ icons: customIcons }}
         components={{
+          OnTheCanvas: () => (
+            <UserNotAlowed isUserAllowed={isUserAllowed} room={room} />
+          ),
           InFrontOfTheCanvas: () => (
             <>
               <MainUI
                 ownerName={ownerName}
                 isOwner={isOwner}
-                blockUser={blockUser}
-                blockedList={blockedList}
-                isBlocked={isBlocked}
-                ownerId={ownerId}
+                isUserAllowed={isUserAllowed}
+                allowUser={allowUser}
+                allowedUsers={allowedUsers}
               />
               <DiceRollerPanel isOwner={isOwner} />
               <AssetList roomId={room ?? ""} />

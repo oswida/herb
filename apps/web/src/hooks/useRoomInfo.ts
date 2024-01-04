@@ -83,6 +83,35 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
     [editor, rdata, roomApiUrl, editor?.user]
   );
 
+  const allowUser = useCallback(
+    async (id: string, allow: boolean) => {
+      if (!rdata || rdata.owner === id) return;
+      const newData = allow
+        ? [...rdata.allowedUsers, id]
+        : rdata.allowedUsers.filter((u) => u !== id);
+      await fetch(`${roomApiUrl}/${rdata.id}/${editor?.user.getId()}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ allowedUsers: newData }),
+      });
+      await refetch();
+    },
+    [editor, rdata, roomApiUrl, editor?.user]
+  );
+
+  const allowedUsers = useMemo(() => {
+    if (!rdata) return [];
+    return rdata.allowedUsers;
+  }, [rdata]);
+
+  const isUserAllowed = useMemo(() => {
+    if (isOwner) return true;
+    if (!editor) return false;
+    return allowedUsers.includes(editor.user.getId());
+  }, [rdata, isOwner, editor, allowedUsers]);
+
   return {
     isOwner,
     ownerName,
@@ -91,5 +120,8 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
     blockedList,
     ownerId,
     iamBlocked,
+    allowedUsers,
+    isUserAllowed,
+    allowUser,
   };
 };

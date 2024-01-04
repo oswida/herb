@@ -34,3 +34,17 @@ export const actionsInfoStyle = style({
   alignItems: "center",
   justifyContent: "center",
 });
+
+export const userNotAllowedStyle = style({
+  width: "100vw",
+  height: "100vh",
+  zIndex: 10000,
+  background: "var(--color-background)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "absolute",
+  left: 0,
+  top: 0,
+  flexDirection: "column",
+});

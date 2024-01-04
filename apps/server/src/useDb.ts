@@ -77,6 +77,9 @@ export const useDb = () => {
           if (data.blockedUsers) {
             inf.blockedUsers = data.blockedUsers;
           }
+          if (data.allowedUsers) {
+            inf.allowedUsers = data.allowedUsers;
+          }
           database
             .put(`room_${roomId}`, inf)
             .then(() => {

@@ -38,6 +38,7 @@ export const Settings = (props: TLUiDialogProps) => {
               setUsername(value);
             }}
           />
+          <div>Color</div>
           <Compact
             style={{ alignSelf: "center" }}
             data-color-mode="dark"
