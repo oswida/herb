@@ -10,7 +10,6 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "@3d-dice/dice-box-threejs": "^0.0.12",
     "@dice-roller/rpg-dice-roller": "^5.4.1",
     "@eonasdan/lz-string": "^1.0.3",
     "@radix-ui/react-icons": "^1.3.0",

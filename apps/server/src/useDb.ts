@@ -12,7 +12,7 @@ interface RoomData {
   blockedUsers: string[];
 }
 
-export const useDb = () => {
+export const useDb = (creators: string[]) => {
   const DB_PATH = "./hdata";
 
   const database = new Level<string, object>(DB_PATH, {
@@ -41,7 +41,9 @@ export const useDb = () => {
     const user = parts[4];
 
     if (!roomId || !user || user.trim() === "undefined") {
-      return false;
+      response.writeHead(503);
+      response.end();
+      return true;
     }
 
     if (request.method.toLowerCase() === "get") {
@@ -54,6 +56,11 @@ export const useDb = () => {
         response.end();
         return true;
       } catch {
+        if (!creators.includes(user)) {
+          response.writeHead(503);
+          response.end();
+          return true;
+        }
         const info = {
           id: roomId,
           allowedUsers: [],
@@ -97,11 +104,15 @@ export const useDb = () => {
         response.end();
         return true;
       } catch {
-        return false;
+        response.writeHead(503);
+        response.end();
+        return true;
       }
     }
 
-    return false;
+    response.writeHead(503);
+    response.end();
+    return true;
   };
 
   const dbClose = () => {

@@ -3,13 +3,15 @@ import { currentRoom, roomData, roomPresence } from "../common";
 import { Editor } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTlDrawData } from "./useTldrawData";
 
-export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
+export const useRoomInfo = (roomApiUrl: string) => {
   const roomId = useAtomValue(currentRoom);
+  const { tldrawUserId } = useTlDrawData();
   const { data, refetch } = useQuery({
-    queryKey: ["roomInfo", editor?.user.getId(), roomId],
+    queryKey: ["roomInfo", tldrawUserId, roomId],
     queryFn: () =>
-      fetch(`${roomApiUrl}/${roomId}/${editor?.user.getId()}`, {
+      fetch(`${roomApiUrl}/${roomId}/${tldrawUserId}`, {
         method: "GET",
       }).then((res) => res.json()),
     networkMode: "online",
@@ -22,48 +24,48 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
   const presence = useAtomValue(roomPresence);
 
   useEffect(() => {
-    if (!roomId || !editor) return;
+    if (!roomId) return;
     refetch().then((res) => {
       // console.log("refetch", res);
     });
-  }, [roomId, editor, roomApiUrl]);
+  }, [roomId, roomApiUrl]);
 
   useEffect(() => {
     setRdata(data);
   }, [data, roomId]);
 
   const isOwner = useMemo(() => {
-    if (!editor || !rdata) return false;
-    return editor.user.getId() === rdata.owner;
-  }, [editor, rdata, roomId]);
+    if (!rdata) return false;
+    return tldrawUserId === rdata.owner;
+  }, [rdata, roomId]);
 
   const ownerName = useMemo(() => {
     if (!rdata || !presence[rdata.owner]) return "";
     return presence[rdata.owner].name;
-  }, [editor, rdata, presence, roomId]);
+  }, [rdata, presence, roomId]);
 
   const ownerId = useMemo(() => {
     if (!rdata) return "";
     return rdata.owner;
-  }, [editor, rdata]);
+  }, [rdata]);
 
   const isBlocked = useCallback(
     (id: string) => {
       if (!rdata) return false;
       return rdata.blockedUsers.includes(id);
     },
-    [editor, rdata]
+    [rdata]
   );
 
   const iamBlocked = useMemo(() => {
-    if (!rdata || !editor) return false;
-    return rdata.blockedUsers.includes(editor.user.getId());
-  }, [editor, rdata]);
+    if (!rdata) return false;
+    return rdata.blockedUsers.includes(tldrawUserId);
+  }, [rdata, tldrawUserId]);
 
   const blockedList = useMemo(() => {
     if (!rdata) return [];
     return rdata.blockedUsers;
-  }, [editor, rdata]);
+  }, [rdata]);
 
   const blockUser = useCallback(
     async (id: string, blocked: boolean) => {
@@ -71,7 +73,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
       const newData = blocked
         ? [...rdata.blockedUsers, id]
         : rdata.blockedUsers.filter((u) => u !== id);
-      await fetch(`${roomApiUrl}/${rdata.id}/${editor?.user.getId()}`, {
+      await fetch(`${roomApiUrl}/${rdata.id}/${tldrawUserId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +82,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
       });
       await refetch();
     },
-    [editor, rdata, roomApiUrl, editor?.user]
+    [rdata, roomApiUrl, tldrawUserId]
   );
 
   const allowUser = useCallback(
@@ -89,7 +91,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
       const newData = allow
         ? [...rdata.allowedUsers, id]
         : rdata.allowedUsers.filter((u) => u !== id);
-      await fetch(`${roomApiUrl}/${rdata.id}/${editor?.user.getId()}`, {
+      await fetch(`${roomApiUrl}/${rdata.id}/${tldrawUserId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +100,7 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
       });
       await refetch();
     },
-    [editor, rdata, roomApiUrl, editor?.user]
+    [rdata, roomApiUrl, tldrawUserId]
   );
 
   const allowedUsers = useMemo(() => {
@@ -108,9 +110,8 @@ export const useRoomInfo = (editor: Editor | undefined, roomApiUrl: string) => {
 
   const isUserAllowed = useMemo(() => {
     if (isOwner) return true;
-    if (!editor) return false;
-    return allowedUsers.includes(editor.user.getId());
-  }, [rdata, isOwner, editor, allowedUsers]);
+    return allowedUsers.includes(tldrawUserId);
+  }, [rdata, isOwner, tldrawUserId, allowedUsers]);
 
   return {
     isOwner,

@@ -6,3 +6,4 @@ export * from "./useRoomInfo";
 export * from "./useBackup";
 export * from "./useAssets";
 export * from "./useCreator";
+export * from "./useTldrawData";

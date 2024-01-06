@@ -16,8 +16,8 @@ export const useServer = () => {
   const { cors } = useCors();
   const { processAsset } = useAsset();
   const serve = serveStatic("static");
-  const { processRoomConnect, dbClose } = useDb();
-  const { processCreators } = useCreators();
+  const { processCreators, creators } = useCreators();
+  const { processRoomConnect, dbClose } = useDb(creators);
 
   const server = createServer((request, response) => {
     if (

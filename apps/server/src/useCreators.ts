@@ -31,5 +31,5 @@ export const useCreators = () => {
     return true;
   };
 
-  return { processCreators };
+  return { processCreators, creators: cdata };
 };

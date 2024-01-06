@@ -5,7 +5,7 @@ import { drawBoardViewRoottyle } from "../DrawboardView/style.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
-import { useCreator } from "../../hooks";
+import { useCreator, useTlDrawData } from "../../hooks";
 import useLocalStorage from "use-local-storage";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
@@ -13,10 +13,10 @@ const CREATOR_URL = `${window.location.protocol}//${window.location.hostname}:${
 
 export const RoomCreateView = () => {
   // need to get tldraw local data, but editor is not initialized
-  const [ldata, setLData] = useLocalStorage("TLDRAW_USER_DATA_v3", {});
+  const { tldrawUserId } = useTlDrawData();
   const navigate = useNavigate();
   const [room, setRoom] = useState("");
-  const { isCreator } = useCreator((ldata as any).user.id, CREATOR_URL);
+  const { isCreator } = useCreator(tldrawUserId, CREATOR_URL);
 
   const go = () => {
     if (room.trim() === "") return;

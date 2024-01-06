@@ -24,7 +24,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 
 // src/server.ts
 var import_node_http = require("http");
-var import_node_fs3 = require("fs");
+var import_node_fs4 = require("fs");
 var import_ws = __toESM(require("ws"));
 var import_serve_static = __toESM(require("serve-static"));
 
@@ -430,6 +430,12 @@ var useDb = () => {
           if (data.blockedUsers) {
             inf.blockedUsers = data.blockedUsers;
           }
+          if (data.allowedUsers) {
+            inf.allowedUsers = data.allowedUsers;
+          }
+          inf.blockedUsers = inf.blockedUsers.filter(
+            (it) => !inf.allowedUsers.includes(it)
+          );
           database.put(`room_${roomId}`, inf).then(() => {
           }).catch((err) => {
             console.error(err);
@@ -453,6 +459,33 @@ var useDb = () => {
   return { processRoomConnect: processRoom, dbClose };
 };
 
+// src/useCreators.ts
+var import_node_fs3 = require("fs");
+var useCreators = () => {
+  if (!(0, import_node_fs3.existsSync)("creators.json"))
+    (0, import_node_fs3.writeFileSync)("creators.json", "[]");
+  const creatorsFile = (0, import_node_fs3.readFileSync)("creators.json");
+  const cdata = JSON.parse(creatorsFile.toString());
+  const processCreators = (request, response) => {
+    var _a;
+    if (!((_a = request.url) == null ? void 0 : _a.startsWith("/api/creator")) || request.method === void 0 || creatorsFile.length === 0)
+      return false;
+    const parts = request.url.split("/");
+    if (parts.length < 4)
+      return false;
+    const userId = parts[3];
+    if (!userId || userId.trim() === "")
+      return false;
+    response.writeHead(200, {
+      "Content-Type": "application/json"
+    });
+    response.write(JSON.stringify({ isCreator: cdata.includes(userId) }));
+    response.end();
+    return true;
+  };
+  return { processCreators };
+};
+
 // src/server.ts
 var useServer = () => {
   const wss = new import_ws.default.Server({ noServer: true });
@@ -461,8 +494,9 @@ var useServer = () => {
   const { processAsset } = useAsset();
   const serve = (0, import_serve_static.default)("static");
   const { processRoomConnect, dbClose } = useDb();
+  const { processCreators } = useCreators();
   const server2 = (0, import_node_http.createServer)((request, response) => {
-    if (cors(request, response) || processUpload(request, response) || processAsset(request, response)) {
+    if (cors(request, response) || processUpload(request, response) || processAsset(request, response) || processCreators(request, response)) {
       return;
     }
     processRoomConnect(request, response).then((resp) => {
@@ -471,12 +505,12 @@ var useServer = () => {
       }
       serve(request, response, () => {
         const fname = "static/index.html";
-        if (!(0, import_node_fs3.existsSync)(fname)) {
+        if (!(0, import_node_fs4.existsSync)(fname)) {
           response.writeHead(404);
           response.end();
           return;
         }
-        const buff = (0, import_node_fs3.readFileSync)(fname);
+        const buff = (0, import_node_fs4.readFileSync)(fname);
         response.writeHead(200, {
           "Content-Type": "text/html",
           "Content-length": buff.length

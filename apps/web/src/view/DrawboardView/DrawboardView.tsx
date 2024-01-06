@@ -6,7 +6,13 @@ import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import * as React from "react";
-import { currentRoom, uiVisible, urlRoom, urlUpload } from "../../common/state";
+import {
+  currentRoom,
+  roomData,
+  uiVisible,
+  urlRoom,
+  urlUpload,
+} from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
 import { useAssetHandler, useCreator, useRoomInfo } from "../../hooks";
@@ -96,9 +102,10 @@ export const DrawboardView = () => {
     blockUser,
     blockedList,
     isBlocked,
-  } = useRoomInfo(ed, ROOM_BASE_URL);
+  } = useRoomInfo(ROOM_BASE_URL);
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
+  const [rdata, _] = useAtom(roomData);
 
   if (!params.roomId) {
     return <div>No room ID</div>;
@@ -125,6 +132,8 @@ export const DrawboardView = () => {
     },
     [registerHostedImages]
   );
+
+  if (!rdata) return <div>Room does not exists</div>;
 
   return (
     <div className={drawBoardViewRoottyle}>
