@@ -7,6 +7,7 @@ import { useFileUpload } from "./useFileUpload";
 import { useCors } from "./useCors";
 import { useAsset } from "./useAsset";
 import { useDb } from "./useDb";
+import { useCreators } from "./useCreators";
 
 export const useServer = () => {
   const wss = new WebSocket.Server({ noServer: true });
@@ -16,12 +17,14 @@ export const useServer = () => {
   const { processAsset } = useAsset();
   const serve = serveStatic("static");
   const { processRoomConnect, dbClose } = useDb();
+  const { processCreators } = useCreators();
 
   const server = createServer((request, response) => {
     if (
       cors(request, response) ||
       processUpload(request, response) ||
-      processAsset(request, response)
+      processAsset(request, response) ||
+      processCreators(request, response)
     ) {
       return;
     }

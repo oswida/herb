@@ -1,45 +1,22 @@
-import {
-  Button,
-  Canvas,
-  Dialog,
-  Input,
-  TLUiDialogProps,
-  Tldraw,
-} from "@tldraw/tldraw";
+import { Button, Canvas, Input, Tldraw } from "@tldraw/tldraw";
 import { appPanelStyle, flexColumnStyle } from "../../common";
 import * as React from "react";
 import { drawBoardViewRoottyle } from "../DrawboardView/style.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
+import { useCreator } from "../../hooks";
+import useLocalStorage from "use-local-storage";
 
-const RoomCreateDialog = (props: TLUiDialogProps) => {
-  const create = () => {};
-  return (
-    <>
-      <Dialog.Header>
-        <Dialog.Title>Create room</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
-        <div className={flexColumnStyle({})}>
-          <div>Room name</div>
-        </div>
-      </Dialog.Body>
-      <Dialog.Footer>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button onClick={create} type="normal">
-            Create
-          </Button>
-        </div>
-      </Dialog.Footer>
-    </>
-  );
-};
+const port = import.meta.env.DEV ? 5001 : window.location.port;
+const CREATOR_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/creator`;
 
 export const RoomCreateView = () => {
+  // need to get tldraw local data, but editor is not initialized
+  const [ldata, setLData] = useLocalStorage("TLDRAW_USER_DATA_v3", {});
   const navigate = useNavigate();
   const [room, setRoom] = useState("");
+  const { isCreator } = useCreator((ldata as any).user.id, CREATOR_URL);
 
   const go = () => {
     if (room.trim() === "") return;
@@ -80,12 +57,16 @@ export const RoomCreateView = () => {
             <Button type="normal" onClick={go}>
               Connect
             </Button>
-            <hr
-              style={{ width: "100%", borderColor: "var(--color-text-3)" }}
-            ></hr>
-            <Button type="normal" onClick={create}>
-              Create new room
-            </Button>
+            {isCreator && (
+              <>
+                <hr
+                  style={{ width: "100%", borderColor: "var(--color-text-3)" }}
+                ></hr>
+                <Button type="normal" onClick={create}>
+                  Create new room
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </Tldraw>

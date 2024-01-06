@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function -- comment */
 /* eslint-disable import/no-extraneous-dependencies -- comment */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -80,11 +81,14 @@ export const useDb = () => {
           if (data.allowedUsers) {
             inf.allowedUsers = data.allowedUsers;
           }
+          // cleanup
+          inf.blockedUsers = inf.blockedUsers.filter(
+            (it) => !inf.allowedUsers.includes(it)
+          );
+
           database
             .put(`room_${roomId}`, inf)
-            .then(() => {
-              // console.log("room info updated");
-            })
+            .then(() => {})
             .catch((err) => {
               console.error(err);
             });

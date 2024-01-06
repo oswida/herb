@@ -9,7 +9,7 @@ import * as React from "react";
 import { currentRoom, uiVisible, urlRoom, urlUpload } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
-import { useAssetHandler, useRoomInfo } from "../../hooks";
+import { useAssetHandler, useCreator, useRoomInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
@@ -43,6 +43,7 @@ const HOST_URL = `${websockSchema}://${window.location.hostname}:${port}`;
 
 const UPLOAD_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/upload`;
 const ROOM_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/room`;
+const CREATOR_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/creator`;
 
 const customShapeUtils = [
   PdfShapeUtil,
@@ -86,8 +87,16 @@ export const DrawboardView = () => {
     params.roomId ?? "unknown",
     UPLOAD_BASE_URL
   );
-  const { isOwner, ownerName, isUserAllowed, allowUser, allowedUsers } =
-    useRoomInfo(ed, ROOM_BASE_URL);
+  const {
+    isOwner,
+    ownerName,
+    isUserAllowed,
+    allowUser,
+    allowedUsers,
+    blockUser,
+    blockedList,
+    isBlocked,
+  } = useRoomInfo(ed, ROOM_BASE_URL);
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
 
@@ -137,7 +146,12 @@ export const DrawboardView = () => {
         assetUrls={{ icons: customIcons }}
         components={{
           OnTheCanvas: () => (
-            <UserNotAlowed isUserAllowed={isUserAllowed} room={room} />
+            <UserNotAlowed
+              isUserAllowed={isUserAllowed}
+              room={room}
+              blockUser={blockUser}
+              isBlocked={isBlocked}
+            />
           ),
           InFrontOfTheCanvas: () => (
             <>
@@ -147,6 +161,8 @@ export const DrawboardView = () => {
                 isUserAllowed={isUserAllowed}
                 allowUser={allowUser}
                 allowedUsers={allowedUsers}
+                blockUser={blockUser}
+                blockedList={blockedList}
               />
               <DiceRollerPanel isOwner={isOwner} />
               <AssetList roomId={room ?? ""} />

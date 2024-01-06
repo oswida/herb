@@ -5,3 +5,4 @@ export * from "./useYjsStore";
 export * from "./useRoomInfo";
 export * from "./useBackup";
 export * from "./useAssets";
+export * from "./useCreator";

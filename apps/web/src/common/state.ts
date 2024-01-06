@@ -15,3 +15,5 @@ export const urlRoom = atom<string>("");
 export const animatedRollNotation = atom<string>("");
 
 export const diceBox = atom<any>(undefined);
+
+export const isCreator = atom<boolean>(false);

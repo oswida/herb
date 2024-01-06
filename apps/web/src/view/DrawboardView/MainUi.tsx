@@ -34,6 +34,8 @@ interface Props {
   isUserAllowed: boolean;
   allowedUsers: string[];
   allowUser: (id: string, allow: boolean) => void;
+  blockedList: string[];
+  blockUser: (id: string, blocked: boolean) => Promise<void>;
 }
 
 export const MainUI = ({
@@ -42,6 +44,8 @@ export const MainUI = ({
   isUserAllowed,
   allowedUsers,
   allowUser,
+  blockUser,
+  blockedList,
 }: Props) => {
   const editor = useEditor();
   const [uv, setUv] = useAtom(uiVisible);
@@ -90,6 +94,8 @@ export const MainUI = ({
           onClose={onClose}
           allowedUsers={allowedUsers}
           allowUser={allowUser}
+          blockUser={blockUser}
+          blockedList={blockedList}
         />
       ),
       onClose: () => {
