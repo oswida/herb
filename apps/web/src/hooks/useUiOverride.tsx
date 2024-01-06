@@ -5,27 +5,20 @@ import {
   menuItem,
   menuSubmenu,
   toolbarItem,
+  useDialogs,
 } from "@tldraw/tldraw";
 import { useInsertJson } from "./useInsertJson";
 import { useInsertFile } from "./useInsertFile";
 import { useBackup } from "./useBackup";
-import { IMarkdownShape, MarkdownSettings } from "../shapes";
+import { Follow } from "../component/Follow";
+import { WebsocketProvider } from "y-websocket";
 import React from "react";
-import { TimerSettings } from "../shapes/TimerSettings";
-import { ITimerShape } from "../shapes/TimerShape";
-import { RpgResourceSettings } from "../shapes/RpgResourceSettings";
-import { IRpgResourceShape } from "../shapes/RpgResourceShape";
-
-const hasSettings = (editor: Editor) => {
-  const shapes = editor.getSelectedShapes();
-  if (shapes.length !== 1) return false;
-  return ["markdown", "timer", "rpg-resource"].includes(shapes[0].type);
-};
 
 export const useUiOverride = (
   editor: Editor | undefined,
   roomId: string,
-  baseUrl: string
+  baseUrl: string,
+  roomProvider: WebsocketProvider
 ) => {
   const insertPdf = useInsertFile(editor, "pdf", roomId, baseUrl);
   const insertHandout = useInsertFile(editor, "handout", roomId, baseUrl);
@@ -33,7 +26,7 @@ export const useUiOverride = (
   const { backupPage } = useBackup(editor);
 
   const uiOverrides: TLUiOverrides = {
-    menu(editor, menu) {
+    menu(editor, menu, helpers) {
       const items = [
         menuItem({
           id: "upload-pdf",
@@ -83,6 +76,22 @@ export const useUiOverride = (
       if (bgrp) {
         menu.push(bgrp);
       }
+
+      menu.push(
+        menuItem({
+          id: "follow-user",
+          label: "Follow user" as any,
+          readonlyOk: false,
+          onSelect: () => {
+            helpers.addDialog({
+              component: ({ onClose }) => (
+                <Follow onClose={onClose} roomProvider={roomProvider} />
+              ),
+              onClose: () => {},
+            });
+          },
+        })
+      );
 
       return menu;
     },

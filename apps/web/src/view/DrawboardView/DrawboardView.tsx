@@ -90,10 +90,18 @@ export const DrawboardView = () => {
   );
   const [room, setRoom] = useAtom(currentRoom);
   const [ed, setEd] = React.useState<Editor | undefined>(undefined);
+
+  const { storeWithStatus: store, room: roomProvider } = useYjsStore({
+    roomId: params.roomId,
+    hostUrl: HOST_URL,
+    shapeUtils: customShapeUtils,
+  });
+
   const { uiOverrides } = useUiOverride(
     ed,
     params.roomId ?? "unknown",
-    UPLOAD_BASE_URL
+    UPLOAD_BASE_URL,
+    roomProvider
   );
   const {
     isOwner,
@@ -109,19 +117,9 @@ export const DrawboardView = () => {
   const setUrlUpload = useSetAtom(urlUpload);
   const [rdata, _] = useAtom(roomData);
 
-  if (!params.roomId) {
-    return <div>No room ID</div>;
-  }
-
   useEffect(() => {
     setRoom(params.roomId);
   }, [params, setRoom]);
-
-  const { storeWithStatus: store } = useYjsStore({
-    roomId: params.roomId,
-    hostUrl: HOST_URL,
-    shapeUtils: customShapeUtils,
-  });
 
   const mount = useCallback(
     (editor: Editor) => {
@@ -134,6 +132,10 @@ export const DrawboardView = () => {
     },
     [registerHostedImages]
   );
+
+  if (!params.roomId) {
+    return <div>No room ID</div>;
+  }
 
   if (!rdata) {
     return (
