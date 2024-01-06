@@ -70,8 +70,9 @@ export const useFileUpload = () => {
 
       return true;
     }
-
-    return false;
+    response.writeHead(404);
+    response.end();
+    return true;
   };
   return { processUpload };
 };

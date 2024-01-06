@@ -41,8 +41,11 @@ export const useAsset = () => {
           response.end();
           return true;
         }
-        default:
-          return false;
+        default: {
+          response.writeHead(404);
+          response.end();
+          return true;
+        }
       }
     } else if (request.method.toLowerCase() === "delete") {
       const path = `upload/${assetType}/${roomId}/${action}`;
@@ -51,7 +54,9 @@ export const useAsset = () => {
         return true;
       }
     }
-    return false;
+    response.writeHead(404);
+    response.end();
+    return true;
   };
 
   return { processAsset };

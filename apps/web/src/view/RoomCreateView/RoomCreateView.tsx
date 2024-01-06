@@ -20,12 +20,12 @@ export const RoomCreateView = () => {
 
   const go = () => {
     if (room.trim() === "") return;
-    navigate(`r/${room}`, { replace: true });
+    navigate(`r/${room}`);
   };
 
   const create = () => {
     const id = v4();
-    navigate(`r/${id}`, { replace: true });
+    navigate(`r/${id}`);
   };
 
   return (

@@ -15,9 +15,9 @@ export const useRoomInfo = (roomApiUrl: string) => {
         method: "GET",
       }).then((res) => res.json()),
     networkMode: "online",
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    // refetchOnMount: true,
+    // refetchOnReconnect: true,
+    // refetchOnWindowFocus: true,
     staleTime: 0,
   });
   const [rdata, setRdata] = useAtom(roomData);

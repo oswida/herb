@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
 import type { Editor } from "@tldraw/tldraw";
-import { Tldraw } from "@tldraw/tldraw";
+import { Button, Canvas, Tldraw } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as React from "react";
 import {
   currentRoom,
@@ -15,7 +15,7 @@ import {
 } from "../../common/state";
 import { DiceRollerPanel } from "../../component/DiceRoller";
 import { useYjsStore } from "../../hooks/useYjsStore";
-import { useAssetHandler, useCreator, useRoomInfo } from "../../hooks";
+import { useAssetHandler, useRoomInfo } from "../../hooks";
 import { PdfShapeUtil } from "../../shapes/PdfShape";
 import {
   RpgClockShapeTool,
@@ -42,6 +42,7 @@ import {
 } from "../../shapes/DiceRollerShape";
 import { DiceShapeUtil } from "../../shapes/DiceShape";
 import { UserNotAlowed } from "./UserNotAllowed";
+import { appPanelStyle } from "../../common";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -80,6 +81,7 @@ const customIcons = {
 };
 
 export const DrawboardView = () => {
+  const navigate = useNavigate();
   const [visible] = useAtom(uiVisible);
   const params = useParams();
   const { registerHostedImages } = useAssetHandler(
@@ -133,7 +135,34 @@ export const DrawboardView = () => {
     [registerHostedImages]
   );
 
-  if (!rdata) return <div>Room does not exists</div>;
+  if (!rdata) {
+    return (
+      <div className={drawBoardViewRoottyle}>
+        <Tldraw autoFocus inferDarkMode hideUi>
+          <Canvas />
+          <div
+            className={appPanelStyle}
+            style={{
+              position: "absolute",
+              left: "calc(50% - 100px)",
+              top: "calc(50% - 125px)",
+              width: "200px",
+              height: "250px",
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <h3>Room not found</h3>
+            <Button type="normal" onPointerDown={() => navigate("/")}>
+              Main page
+            </Button>
+          </div>
+        </Tldraw>
+      </div>
+    );
+  }
 
   return (
     <div className={drawBoardViewRoottyle}>
