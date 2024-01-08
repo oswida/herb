@@ -1,8 +1,13 @@
-import { useServer } from "./server";
+import express from "express";
+import cors from "cors";
+import setupServer from "./server";
 
 const port = process.env.PORT || 5001;
-const { server } = useServer();
+const app = express();
+app.use(cors({ origin: "*", maxAge: 60 * 60 * 24 }));
 
-server.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`running at on port ${port}`);
 });
+
+setupServer(server, app);

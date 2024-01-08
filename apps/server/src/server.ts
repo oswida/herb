@@ -1,72 +1,68 @@
-import { createServer } from "node:http";
-import { existsSync, readFileSync } from "node:fs";
+import type { IncomingMessage, Server } from "http";
+import type { Duplex } from "node:stream";
 import WebSocket from "ws";
 import serveStatic from "serve-static";
+import type { Express } from "express";
 import { useSetup } from "./useSetup";
-import { useFileUpload } from "./useFileUpload";
-import { useCors } from "./useCors";
-import { useAsset } from "./useAsset";
-import { useDb } from "./useDb";
-import { useCreators } from "./useCreators";
+import { initUpload, processUploadGet, processUploadPost } from "./upload";
+import { processRoomGet, processRoomPost } from "./room";
+import { processCreators } from "./creators";
+import { initAssets, processAssetDelete, processAssetGet } from "./assets";
+import { closeDb, initDb } from "./db";
 
-export const useServer = () => {
+const setupServer = (server: Server, app: Express) => {
   const wss = new WebSocket.Server({ noServer: true });
-
-  const { processUpload } = useFileUpload();
-  const { cors } = useCors();
-  const { processAsset } = useAsset();
-  const serve = serveStatic("static");
-  const { processCreators, creators } = useCreators();
-  const { processRoomConnect, dbClose } = useDb(creators);
-
-  const server = createServer((request, response) => {
-    if (
-      cors(request, response) ||
-      processUpload(request, response) ||
-      processAsset(request, response) ||
-      processCreators(request, response)
-    ) {
-      return;
-    }
-    processRoomConnect(request, response)
-      .then((resp) => {
-        if (resp) {
-          return;
-        }
-        serve(request, response, () => {
-          const fname = "static/index.html";
-          if (!existsSync(fname)) {
-            response.writeHead(404);
-            response.end();
-            return;
-          }
-          const buff = readFileSync(fname);
-          response.writeHead(200, {
-            "Content-Type": "text/html",
-            "Content-length": buff.length,
-          });
-          response.write(buff);
-          response.end();
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  });
-
   const { setupWSConnection } = useSetup();
   wss.on("connection", setupWSConnection);
-
-  server.on("upgrade", (request, socket, head) => {
-    const handleAuth = (ws: unknown) => {
-      wss.emit("connection", ws, request);
-    };
-    wss.handleUpgrade(request, socket, head, handleAuth);
+  server.on(
+    "upgrade",
+    (request: IncomingMessage, socket: Duplex, head: Buffer) => {
+      const handleAuth = (ws: unknown) => {
+        wss.emit("connection", ws, request);
+      };
+      wss.handleUpgrade(request, socket, head, handleAuth);
+    }
+  );
+  // creators
+  app.get("/api/creator/:userId", (request, response) => {
+    processCreators(request, response);
   });
+  // assets
+  initAssets();
+  app.get("/api/asset/:assetType/:roomId/:action", (request, response) => {
+    processAssetGet(request, response);
+  });
+  app.delete("/api/asset/:assetType/:roomId/:file", (request, response) => {
+    processAssetDelete(request, response);
+  });
+  // upload
+  initUpload();
+  app.get("/api/upload/:fileType/:roomId/:filename", (request, response) => {
+    processUploadGet(request, response);
+  });
+  app.post("/api/upload/:fileType/:roomId/:filename", (request, response) => {
+    processUploadPost(request, response);
+  });
+  const db = initDb();
+  // rooms
+  app.get("/api/room/:roomId/:user", (request, response) => {
+    processRoomGet(db, request, response).catch((err) => {
+      console.error(err);
+    });
+  });
+  app.post("/api/room/:roomId/:user", (request, response) => {
+    processRoomPost(db, request, response).catch((err) => {
+      console.error(err);
+    });
+  });
+  app.get("/r/:roomId", (req, res) => {
+    res.sendFile(`${__dirname}/static/index.html`);
+  });
+  app.use(serveStatic("static"));
 
   server.on("close", () => {
-    dbClose();
+    closeDb(db);
   });
-
-  return { server };
 };
+
+export default setupServer;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- comment*/
 import { LeveldbPersistence } from "y-leveldb";
 import { Doc, applyUpdate, encodeStateAsUpdate } from "yjs";
 import { decoding, encoding, map } from "lib0";
@@ -12,97 +13,79 @@ import {
 export const useSetup = () => {
   const wsReadyStateConnecting = 0;
   const wsReadyStateOpen = 1;
-  const wsReadyStateClosing = 2; // eslint-disable-line
-  const wsReadyStateClosed = 3; // eslint-disable-line
 
   // disable gc when using snapshots!
   const gcEnabled = process.env.GC !== "false" && process.env.GC !== "0";
   const persistenceDir = "ydata";
-  /**
-   * @type {{bindState: function(string,WSSharedDoc):void, writeState:function(string,WSSharedDoc):Promise<any>, provider: any}|null}
-   */
+
   let persistence: any = null;
 
-  console.info('Persisting documents to "' + persistenceDir + '"');
-  // @ts-ignore
+  console.info(`Persisting documents to "${persistenceDir}"`);
+
   const ldb = new LeveldbPersistence(persistenceDir);
   persistence = {
     provider: ldb,
     bindState: async (docName: string, ydoc: WSSharedDoc) => {
       const persistedYdoc = await ldb.getYDoc(docName);
       const newUpdates = encodeStateAsUpdate(ydoc);
-      ldb.storeUpdate(docName, newUpdates);
+      ldb.storeUpdate(docName, newUpdates).catch((err) => {
+        console.error(err);
+      });
       applyUpdate(ydoc, encodeStateAsUpdate(persistedYdoc));
       ydoc.on("update", (update: any) => {
-        ldb.storeUpdate(docName, update);
+        ldb.storeUpdate(docName, update).catch((err) => {
+          console.error(err);
+        });
       });
     },
-    writeState: async (docName: string, ydoc: WSSharedDoc) => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function -- coment
+    writeState: async (_docName: string, _ydoc: WSSharedDoc) => {},
   };
 
-  /**
-   * @type {Map<string,WSSharedDoc>}
-   */
   const docs = new Map();
 
   const messageSync = 0;
   const messageAwareness = 1;
-  // const messageAuth = 2
 
-  /**
-   * @param {Uint8Array} update
-   * @param {any} origin
-   * @param {WSSharedDoc} doc
-   */
   const updateHandler = (update: Uint8Array, origin: any, doc: WSSharedDoc) => {
     const encoder = encoding.createEncoder();
     encoding.writeVarUint(encoder, messageSync);
     writeUpdate(encoder, update);
     const message = encoding.toUint8Array(encoder);
-    doc.conns.forEach((_, conn) => send(doc, conn, message));
+    doc.conns.forEach((_, conn) => {
+      send(doc, conn, message);
+    });
   };
 
   class WSSharedDoc extends Doc {
     name: string;
-    conns: Map<Object, Set<number>>;
+    conns: Map<object, Set<number>>;
     awareness: Awareness;
 
-    /**
-     * @param {string} name
-     */
     constructor(name: string) {
       super({ gc: gcEnabled });
       this.name = name;
-      /**
-       * Maps from conn to set of controlled user ids. Delete all user ids from awareness when this conn is closed
-       * @type {Map<Object, Set<number>>}
-       */
+
       this.conns = new Map();
-      /**
-       * @type {awarenessProtocol.Awareness}
-       */
+
       this.awareness = new Awareness(this);
       this.awareness.setLocalState(null);
-      /**
-       * @param {{ added: Array<number>, updated: Array<number>, removed: Array<number> }} changes
-       * @param {Object | null} conn Origin is the connection that made the change
-       */
+
       const awarenessChangeHandler = (
         {
           added,
           updated,
           removed,
         }: {
-          added: Array<number>;
-          updated: Array<number>;
-          removed: Array<number>;
+          added: number[];
+          updated: number[];
+          removed: number[];
         },
-        conn: Object | null
+        conn: object | null
       ) => {
         const changedClients = added.concat(updated, removed);
         if (conn !== null) {
-          const connControlledIDs =
-            /** @type {Set<number>} */ this.conns.get(conn);
+          const connControlledIDs = this.conns.get(conn);
           if (connControlledIDs !== undefined) {
             added.forEach((clientID) => {
               connControlledIDs.add(clientID);
@@ -132,9 +115,7 @@ export const useSetup = () => {
   /**
    * Gets a Y.Doc by name, whether in memory or on disk
    *
-   * @param {string} docname - the name of the Y.Doc to find or create
-   * @param {boolean} gc - whether to allow gc on the doc (applies only when created)
-   * @return {WSSharedDoc}
+   
    */
   const getYDoc = (docname: string, gc = true) =>
     map.setIfUndefined(docs, docname, () => {
@@ -147,11 +128,6 @@ export const useSetup = () => {
       return doc;
     });
 
-  /**
-   * @param {any} conn
-   * @param {WSSharedDoc} doc
-   * @param {Uint8Array} message
-   */
   const messageListener = (
     conn: any,
     doc: WSSharedDoc,
@@ -188,16 +164,8 @@ export const useSetup = () => {
     }
   };
 
-  /**
-   * @param {WSSharedDoc} doc
-   * @param {any} conn
-   */
   const closeConn = (doc: WSSharedDoc, conn: any) => {
     if (doc.conns.has(conn)) {
-      /**
-       * @type {Set<number>}
-       */
-      // @ts-ignore
       const controlledIds = doc.conns.get(conn);
       if (!controlledIds) return; // TODO: check early return
       doc.conns.delete(conn);
@@ -212,11 +180,6 @@ export const useSetup = () => {
     conn.close();
   };
 
-  /**
-   * @param {WSSharedDoc} doc
-   * @param {any} conn
-   * @param {Uint8Array} m
-   */
   const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
     if (
       conn.readyState !== wsReadyStateConnecting &&
@@ -225,12 +188,10 @@ export const useSetup = () => {
       closeConn(doc, conn);
     }
     try {
-      conn.send(
-        m,
-        /** @param {any} err */ (err: any) => {
-          err != null && closeConn(doc, conn);
-        }
-      );
+      conn.send(m, (err: any) => {
+        // eslint-disable-next-line eqeqeq -- causes infinite loop, idk why
+        err != null && closeConn(doc, conn);
+      });
     } catch (e) {
       closeConn(doc, conn);
     }
@@ -238,11 +199,6 @@ export const useSetup = () => {
 
   const pingTimeout = 30000;
 
-  /**
-   * @param {any} conn
-   * @param {any} req
-   * @param {any} opts
-   */
   const setupWSConnection = (
     conn: any,
     req: any,
@@ -251,11 +207,9 @@ export const useSetup = () => {
     conn.binaryType = "arraybuffer";
     const doc = getYDoc(docName, gc);
     doc.conns.set(conn, new Set());
-    conn.on(
-      "message",
-      /** @param {ArrayBuffer} message */ (message: ArrayBuffer) =>
-        messageListener(conn, doc, new Uint8Array(message))
-    );
+    conn.on("message", (message: ArrayBuffer) => {
+      messageListener(conn, doc, new Uint8Array(message));
+    });
 
     let pongReceived = true;
     const pingInterval = setInterval(() => {
@@ -291,16 +245,16 @@ export const useSetup = () => {
       send(doc, conn, encoding.toUint8Array(encoder));
       const awarenessStates = doc.awareness.getStates();
       if (awarenessStates.size > 0) {
-        const encoder = encoding.createEncoder();
-        encoding.writeVarUint(encoder, messageAwareness);
+        const encoder2 = encoding.createEncoder();
+        encoding.writeVarUint(encoder2, messageAwareness);
         encoding.writeVarUint8Array(
-          encoder,
+          encoder2,
           encodeAwarenessUpdate(
             doc.awareness,
             Array.from(awarenessStates.keys())
           )
         );
-        send(doc, conn, encoding.toUint8Array(encoder));
+        send(doc, conn, encoding.toUint8Array(encoder2));
       }
     }
   };
