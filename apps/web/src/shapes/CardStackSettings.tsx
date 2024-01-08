@@ -6,10 +6,10 @@ import {
   TLUiDialogProps,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { flexColumnStyle, flexRowStyle } from "../common";
 import Compact from "@uiw/react-color-compact";
-import { FaUserFriends, FaUserSecret } from "react-icons/fa";
+import { FaBackspace, FaUserFriends, FaUserSecret } from "react-icons/fa";
 import { ICardStackShape } from "./CardStackShape";
 import { assetListStyle } from "../component/AssetList/style.css";
 import { AssetItem } from "../component/AssetList/AssetItem";
@@ -28,6 +28,7 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
   const [label, setLabel] = useState(shape.props.label);
   const { imageAssets } = useAssets(editor, "");
   const [sel, setSel] = useState(shape.props.cardBack);
+  const [filter, setFilter] = useState("");
 
   const update = () => {
     const shapeUpdate: TLShapePartial<ICardStackShape> = {
@@ -44,6 +45,12 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
     onClose();
   };
 
+  const items = useMemo(() => {
+    return imageAssets.filter(
+      (it) => filter.trim() === "" || it.filename.includes(filter)
+    );
+  }, [imageAssets, filter]);
+
   return (
     <>
       <Dialog.Header>
@@ -51,7 +58,7 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexRowStyle({})}>
+        <div className={flexRowStyle({})} style={{ alignItems: "start" }}>
           <div className={flexColumnStyle({})}>
             <div>Label</div>
             <Input
@@ -86,8 +93,11 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
           </div>
           <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
             <div>Card back asset</div>
-            <div className={assetListStyle} style={{ overflow: "auto" }}>
-              {imageAssets.map((it, idx) => (
+            <div
+              className={assetListStyle}
+              style={{ overflow: "auto", maxHeight: 200 }}
+            >
+              {items.map((it, idx) => (
                 <AssetItem
                   key={`${it}-${idx}`}
                   filename={it.filename}
@@ -95,6 +105,17 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
                   selected={sel == it.filename}
                 />
               ))}
+            </div>
+            <div className={flexRowStyle({})}>
+              <Input
+                className="tlui-embed-dialog__input"
+                placeholder="Filter..."
+                defaultValue={filter}
+                onValueChange={(value) => setFilter(value)}
+              />
+              <Button type="icon" onPointerDown={() => setFilter("")}>
+                <FaBackspace size={16} />
+              </Button>
             </div>
           </div>
         </div>

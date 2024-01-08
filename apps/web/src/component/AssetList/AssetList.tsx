@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import {
+  assetFilter,
   assetListVisible,
   flexRowStyle,
   isImage,
@@ -13,7 +14,7 @@ import {
   isPdf,
 } from "../../common";
 import { assetListRootStyle, assetListStyle } from "./style.css";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { AssetItem } from "./AssetItem";
 import {
   AssetRecordType,
@@ -44,8 +45,7 @@ const ASSET_BASE_URL = `${window.location.protocol}//${window.location.hostname}
 
 export const AssetList = ({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);
-  const [filter, setFilter] = useState("");
-  const filterRef = useRef<HTMLInputElement>();
+  const [filter, setFilter] = useAtom(assetFilter);
   const [sel, setSel] = useState<AssetDesc | undefined>(undefined);
   const editor = useEditor();
   const [tab, setTab] = useState<TabType>("Image");
@@ -71,6 +71,7 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
   }, [tab, filter, visible]);
 
   const items = useMemo(() => {
+    console.log("data changed", filter);
     if (!data) return [];
     return (data as AssetDesc[]).filter(
       (it) => filter === "" || it.filename.includes(filter)
@@ -79,12 +80,10 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
 
   const filterChange = async (value: string) => {
     setFilter(value);
-    await refetch();
   };
 
   const clearFilter = async () => {
     setFilter("");
-    if (filterRef.current) filterRef.current.value = "";
   };
 
   const insertAsset = useCallback(
@@ -167,7 +166,6 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
                 method: "DELETE",
               }
             );
-            setFilter("");
             onClose();
             await refetch();
           }}
@@ -211,7 +209,6 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
           className="tlui-embed-dialog__input"
           placeholder="Filter..."
           defaultValue={filter}
-          ref={filterRef as any}
           onValueChange={(value) => filterChange(value)}
         />
         <Button type="icon" onPointerDown={clearFilter}>

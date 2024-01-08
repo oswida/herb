@@ -1,12 +1,13 @@
 import {
   Button,
   Dialog,
+  Input,
   TLShapePartial,
   TLUiDialogProps,
   uniqueId,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   currentRoom,
   flexColumnStyle,
@@ -19,6 +20,7 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaArrowsAlt,
+  FaBackspace,
   FaChevronRight,
   FaGreaterThan,
   FaLongArrowAltRight,
@@ -36,6 +38,7 @@ type Props = TLUiDialogProps & {
 
 export const CardStackPool = ({ shape, onClose }: Props) => {
   const editor = useEditor();
+  const [filter, setFilter] = useState("");
   const [pool, setPool] = useState(shape.props.pool);
   const { imageAssets } = useAssets(editor, "");
   const [sel, setSel] = useState<AssetDesc | undefined>(undefined);
@@ -61,8 +64,8 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
   };
 
   const addAll = () => {
-    const items = imageAssets.map((asset) => ({ ...asset, id: uniqueId() }));
-    setPool((prev) => [...prev, ...items]);
+    const its = items.map((asset) => ({ ...asset, id: uniqueId() }));
+    setPool((prev) => [...prev, ...its]);
   };
 
   const removeAsset = () => {
@@ -71,6 +74,12 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
     setPool(newState);
   };
 
+  const items = useMemo(() => {
+    return imageAssets.filter(
+      (it) => filter.trim() === "" || it.filename.includes(filter)
+    );
+  }, [imageAssets, filter]);
+
   return (
     <>
       <Dialog.Header>
@@ -78,11 +87,11 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexRowStyle({})}>
+        <div className={flexRowStyle({})} style={{ alignItems: "start" }}>
           <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
             <div>Assets</div>
             <div className={assetListStyle}>
-              {imageAssets.map((it, idx) => (
+              {items.map((it, idx) => (
                 <AssetItem
                   key={`${it.filename}-${idx}`}
                   filename={it.filename}
@@ -90,6 +99,17 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
                   selected={sel?.filename == it.filename}
                 />
               ))}
+            </div>
+            <div className={flexRowStyle({})}>
+              <Input
+                className="tlui-embed-dialog__input"
+                placeholder="Filter..."
+                defaultValue={filter}
+                onValueChange={(value) => setFilter(value)}
+              />
+              <Button type="icon" onPointerDown={() => setFilter("")}>
+                <FaBackspace size={16} />
+              </Button>
             </div>
             <div className={flexRowStyle({ justify: "center" })}>
               <Button type="icon" onPointerDown={addAsset}>
