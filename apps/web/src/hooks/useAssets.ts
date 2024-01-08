@@ -51,6 +51,20 @@ export const useAssets = (editor: Editor, filter: string) => {
     );
   }, [imageData, filter]);
 
+  const getImageAssetData = useCallback(
+    async (filenames: string[]) => {
+      const retv: { url: string; size: { w: number; h: number } }[] = [];
+      for (let i = 0; i < filenames.length; i++) {
+        if (filenames[i].trim() === "") continue;
+        const url = `${UPLOAD_BASE_URL}/image/${roomId}/${filenames[i]}`;
+        const value = await MediaHelpers.getImageSizeFromSrc(url);
+        retv.push({ size: value, url: url });
+      }
+      return retv;
+    },
+    [roomId]
+  );
+
   const insertAsset = useCallback(
     async (asset: AssetDesc) => {
       if (!editor) {
@@ -116,8 +130,8 @@ export const useAssets = (editor: Editor, filter: string) => {
       }
       return sid;
     },
-    [editor]
+    [editor, roomId]
   );
 
-  return { imageAssets, insertAsset };
+  return { imageAssets, insertAsset, getImageAssetData };
 };

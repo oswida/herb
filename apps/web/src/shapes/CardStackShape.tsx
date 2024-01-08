@@ -3,6 +3,7 @@ import {
   BaseBoxShapeUtil,
   Box2d,
   Button,
+  MediaHelpers,
   Rectangle2d,
   ShapeProps,
   T,
@@ -13,13 +14,15 @@ import {
   TLShapeId,
   TLShapePartial,
   TLShapeUtilFlag,
+  createShapeId,
   resizeBox,
   track,
+  uniqueId,
   useDefaultHelpers,
   useEditor,
   useIsEditing,
 } from "@tldraw/tldraw";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { flexColumnStyle, shuffleArray } from "../common";
 import { FaReplyAll, FaTools } from "react-icons/fa";
 import {
@@ -31,6 +34,7 @@ import { CardStackSettings } from "./CardStackSettings";
 import { CardStackPool } from "./CardStackPool";
 import { AssetDesc, useAssets } from "../hooks";
 import { Confirmation } from "../component/Confirmation";
+import { ICardShape } from "./CardShape";
 
 export type ICardStackShape = TLBaseShape<
   "rpg-card-stack",
@@ -38,7 +42,7 @@ export type ICardStackShape = TLBaseShape<
     w: number;
     h: number;
     fill: string;
-    background: string;
+    cardBack: string;
     owner: string;
     label: string;
     pool: AssetDesc[];
@@ -58,7 +62,10 @@ export const CardStackComponent = track(
     const editor = useEditor();
     const isEditing = useIsEditing(shape.id);
     const { addDialog, addToast } = useDefaultHelpers();
-    const { insertAsset } = useAssets(editor, "");
+    const { getImageAssetData } = useAssets(editor, "");
+    const isOwner = useMemo(() => {
+      return shape.props.owner === editor.user.getId();
+    }, [shape, editor]);
 
     const selectPool = useCallback(() => {
       addDialog({
@@ -75,14 +82,35 @@ export const CardStackComponent = track(
       const items = [...shape.props.current];
       const asset = items.shift();
       if (!asset) return;
-      insertAsset(asset).then((id) => {
-        if (!id) return;
+      getImageAssetData([asset.filename, shape.props.cardBack]).then((data) => {
+        if (!data || data.length === 0) return;
+        const center = editor.getViewportPageCenter();
+        const sid: TLShapeId = createShapeId(uniqueId());
+        editor.createShapes<ICardShape>([
+          {
+            id: sid,
+            type: "card",
+            x: center.x - data[0].size.w / 2,
+            y: center.y - data[0].size.h / 2,
+            props: {
+              w: data[0].size.w,
+              h: data[0].size.h,
+              url: data[0].url,
+              bkgUrl: data[1] ? data[1].url : "",
+              owner: editor.user.getId(),
+              private: false,
+              flipped: false,
+              stack: shape.id,
+              aid: asset.id,
+            },
+          },
+        ]);
         const shapeUpdate: TLShapePartial<ICardStackShape> = {
           id: shape.id,
           type: "rpg-card-stack",
           props: {
             current: [...items],
-            shapeIds: [...shape.props.shapeIds, id],
+            shapeIds: [...shape.props.shapeIds, sid],
           },
         };
         editor.updateShapes([shapeUpdate]);
@@ -211,14 +239,16 @@ export const CardStackComponent = track(
             >
               <FaReplyAll size={16} />
             </Button>
-            <Button
-              type="icon"
-              title="Settings"
-              style={{ position: "absolute", left: "45%", bottom: -40 }}
-              onPointerDown={settings}
-            >
-              <FaTools size={16} />
-            </Button>
+            {isOwner && (
+              <Button
+                type="icon"
+                title="Settings"
+                style={{ position: "absolute", left: "45%", bottom: -40 }}
+                onPointerDown={settings}
+              >
+                <FaTools size={16} />
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -238,7 +268,7 @@ export const rpgCardStackProps: ShapeProps<ICardStackShape> = {
   w: T.number,
   h: T.number,
   fill: T.string,
-  background: T.string,
+  cardBack: T.string,
   owner: T.string,
   pool: T.arrayOf<AssetDesc>(T.any),
   current: T.arrayOf<AssetDesc>(T.any),
@@ -260,7 +290,7 @@ export class CardStackShapeUtil extends BaseBoxShapeUtil<ICardStackShape> {
       w: 70,
       h: 90,
       fill: "var(--color-text)",
-      background: "transparent",
+      cardBack: "",
       owner: "",
       pool: [],
       current: [],

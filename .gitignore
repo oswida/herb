@@ -17,3 +17,4 @@ bundle
 *.zip
 hdata
 deploy/index.js
+creators.json

@@ -28,7 +28,6 @@ import {
   CardStackShapeUtil,
   MarkdownShapeUtil,
 } from "../../shapes";
-import { HiddenShapeUtil } from "../../shapes/HiddenShape";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
 import { TimerShapeTool, TimerShapeUtil } from "../../shapes/TimerShape";
@@ -43,6 +42,7 @@ import {
 import { DiceShapeUtil } from "../../shapes/DiceShape";
 import { UserNotAlowed } from "./UserNotAllowed";
 import { appPanelStyle } from "../../common";
+import { CardShapeUtil } from "../../shapes/CardShape";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -56,12 +56,12 @@ const customShapeUtils = [
   PdfShapeUtil,
   RpgClockShapeUtil,
   MarkdownShapeUtil,
-  HiddenShapeUtil,
   TimerShapeUtil,
   RpgResourceShapeUtil,
   DiceRollerShapeUtil,
   DiceShapeUtil,
   CardStackShapeUtil,
+  CardShapeUtil,
 ];
 
 const customTools = [
