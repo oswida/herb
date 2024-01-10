@@ -18,11 +18,15 @@ import {
   useIsEditing,
 } from "@tldraw/tldraw";
 import React from "react";
-import { flexColumnStyle } from "../common";
-import { CardDrawIcon, CardShuffleIcon } from "../component/Icons";
+import { flexColumnStyle, shuffleArray } from "../common";
 import { FaReply } from "react-icons/fa";
 import { Confirmation } from "../component/Confirmation";
 import { ICardStackShape } from "./CardStackShape";
+import {
+  IconStackFront,
+  IconStackBack,
+  IconStackMiddle,
+} from "@tabler/icons-react";
 
 export type ICardShape = TLBaseShape<
   "card",
@@ -51,13 +55,28 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
 
   if (!shape) return <></>;
 
-  const shuffle = () => {
+  const move = (action: string) => {
+    let title = "";
+    let message = "";
+    switch (action) {
+      case "top":
+        title = "Put on top";
+        message = "Put card on top of stack?";
+        break;
+      case "bottom":
+        title = "Put to bottom";
+        message = "Put card to bottom of stack?";
+        break;
+      default:
+        title = "Shuffle to stack";
+        message = "Shuffle card to stack?";
+    }
     addDialog({
       component: ({ onClose }) => (
         <Confirmation
           onClose={onClose}
-          title="Return to stack"
-          message="Return card to stack?"
+          title={title}
+          message={message}
           callback={() => {
             if (!shape.props.stack) return;
             const parent = editor.getShape(
@@ -68,12 +87,19 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
               (it) => it.id === shape.props.aid
             );
             if (!asset) return;
-            const items = [...parent.props.current, asset];
+            const items = [...parent.props.current];
+            switch (action) {
+              case "top":
+                items.unshift(asset);
+                break;
+              default:
+                items.push(asset);
+            }
             const shapeUpdate: TLShapePartial<ICardStackShape> = {
               id: parent.id,
               type: "rpg-card-stack",
               props: {
-                current: [...items],
+                current: action === "shuffle" ? shuffleArray(items) : items,
               },
             };
             editor.updateShapes([shapeUpdate]);
@@ -115,11 +141,27 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
         <>
           <Button
             type="icon"
+            title="Put card on top of stack"
+            style={{ position: "absolute", left: -40, top: 0 }}
+            onPointerDown={() => move("top")}
+          >
+            <IconStackFront size={24} />
+          </Button>
+          <Button
+            type="icon"
+            title="Put card on bottom of stack"
+            style={{ position: "absolute", right: -40, top: 0 }}
+            onPointerDown={() => move("bottom")}
+          >
+            <IconStackBack size={24} />
+          </Button>
+          <Button
+            type="icon"
             title="Shuffle to stack"
             style={{ position: "absolute", left: -40, bottom: 0 }}
-            onPointerDown={shuffle}
+            onPointerDown={() => move("shuffle")}
           >
-            <CardShuffleIcon size="24" />
+            <IconStackMiddle size={24} />
           </Button>
           <Button
             type="icon"

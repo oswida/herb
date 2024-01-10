@@ -25,16 +25,12 @@ import {
 import React, { useCallback, useMemo } from "react";
 import { flexColumnStyle, shuffleArray } from "../common";
 import { FaReplyAll, FaTools } from "react-icons/fa";
-import {
-  CardDrawIcon,
-  CardPickIcon,
-  CardShuffleIcon,
-} from "../component/Icons";
 import { CardStackSettings } from "./CardStackSettings";
 import { CardStackPool } from "./CardStackPool";
 import { AssetDesc, useAssets } from "../hooks";
 import { Confirmation } from "../component/Confirmation";
 import { ICardShape } from "./CardShape";
+import { GiCardPick, GiCardExchange, GiCardDraw } from "react-icons/gi";
 
 export type ICardStackShape = TLBaseShape<
   "rpg-card-stack",
@@ -208,7 +204,7 @@ export const CardStackComponent = track(
               onPointerDown={selectPool}
               style={{ position: "absolute", left: -40, top: 0 }}
             >
-              <CardPickIcon size="24" />
+              <GiCardPick size="24" />
             </Button>
             <Button
               type="icon"
@@ -218,10 +214,9 @@ export const CardStackComponent = track(
                 position: "absolute",
                 right: -40,
                 top: 0,
-                color: "var(--color-focus)",
               }}
             >
-              <CardDrawIcon size="24" />
+              <GiCardDraw size="24" />
             </Button>
             <Button
               type="icon"
@@ -229,7 +224,7 @@ export const CardStackComponent = track(
               style={{ position: "absolute", left: -40, bottom: 0 }}
               onPointerDown={shuffle}
             >
-              <CardShuffleIcon size="24" />
+              <GiCardExchange size="24" />
             </Button>
             <Button
               type="icon"

@@ -71,7 +71,6 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
   }, [tab, filter, visible]);
 
   const items = useMemo(() => {
-    console.log("data changed", filter);
     if (!data) return [];
     return (data as AssetDesc[]).filter(
       (it) => filter === "" || it.filename.includes(filter)
