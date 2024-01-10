@@ -26,6 +26,7 @@ export type IDiceShape = TLBaseShape<
     value: number;
     isMin: boolean;
     isMax: boolean;
+    numericSix: boolean;
   }
 >;
 
@@ -54,6 +55,7 @@ export const DiceComponent = track(({ shape, bounds }: DiceComponentProps) => {
         background={shape.props.background}
         color={shape.props.fill}
         size={shape.props.w}
+        numericSix={shape.props.numericSix}
       />
       {/* {shape.props.isMax && (
         <div
@@ -95,6 +97,7 @@ export const rpgDiceShapeProps: ShapeProps<IDiceShape> = {
   value: T.number,
   isMin: T.boolean,
   isMax: T.boolean,
+  numericSix: T.boolean,
 };
 
 export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
@@ -116,13 +119,14 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
       value: 6,
       isMin: false,
       isMax: false,
+      numericSix: false,
     };
   }
 
   getGeometry(shape: IDiceShape) {
     return new Rectangle2d({
-      width: Math.max(shape.props.w, shape.props.h),
-      height: Math.max(shape.props.w, shape.props.h),
+      width: shape.props.w,
+      height: shape.props.h,
       isFilled: true,
     });
   }
@@ -133,12 +137,7 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<IDiceShape> {
   }
 
   indicator(shape: IDiceShape) {
-    return (
-      <rect
-        width={Math.max(shape.props.w, shape.props.h)}
-        height={Math.max(shape.props.w, shape.props.h)}
-      />
-    );
+    return <rect width={shape.props.w} height={shape.props.h} />;
   }
 
   override onBeforeCreate: TLOnBeforeCreateHandler<IDiceShape> = (next) => {

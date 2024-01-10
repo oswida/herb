@@ -3,11 +3,10 @@ import {
   DiceRoller,
   NumberGenerator,
 } from "@dice-roller/rpg-dice-roller";
-import { ChatMsg, animatedRollNotation, prettyNow } from "../common";
+import { ChatMsg, prettyNow, rollValues } from "../common";
 import { v4 } from "uuid";
 import { TLDefaultColorTheme, TLUserPreferences } from "@tldraw/tldraw";
 import { useCallback } from "react";
-import { useSetAtom } from "jotai";
 
 export const useRoll = (
   user: TLUserPreferences,
@@ -67,5 +66,14 @@ export const useRoll = (
     [user, user.id, user.name]
   );
 
-  return { rollSingleToChat };
+  const rollSimple = (notation: string) => {
+    const r = rollValues("white", roller.roll(notation) as DiceRoll);
+    const res: number[] = [];
+    r.forEach((it) => {
+      it.forEach((v) => res.push(v.value));
+    });
+    return res;
+  };
+
+  return { rollSingleToChat, rollSimple };
 };

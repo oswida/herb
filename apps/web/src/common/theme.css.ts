@@ -83,3 +83,7 @@ globalStyle(".hidden_tlui", {
 globalStyle("[data-color-mode*='dark'] .w-color-compact", {
   "--compact-background-color": "#323232 !important",
 });
+
+globalStyle(".short_input", {
+  maxWidth: "5em",
+});

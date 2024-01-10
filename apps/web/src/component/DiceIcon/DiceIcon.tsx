@@ -12,10 +12,11 @@ interface DiceIconProps {
   size: number;
   background?: string;
   color?: string;
+  numericSix?: boolean;
 }
 
 export const DiceIcon = track(
-  ({ background, color, face, value, size }: DiceIconProps) => {
+  ({ background, color, face, value, size, numericSix }: DiceIconProps) => {
     const icon = useMemo(() => {
       switch (face) {
         case 6:
@@ -24,6 +25,7 @@ export const DiceIcon = track(
               value={value}
               size={size}
               fill={color ? color : "var(--color-text)"}
+              numericSix={numericSix}
             />
           );
         case 4:

@@ -1,11 +1,34 @@
 import React from "react";
 import { DiceProps } from "./props";
 
-export const D6Svg = ({ value, size, fill }: DiceProps) => {
+const d6square = (value: number, fill?: string) => {
+  return (
+    <svg version="1.1" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3.4824" y="3.4824" width="433.04" height="433.04" fill={fill} />
+      <text
+        x="123.33342"
+        y="338.99988"
+        fill={fill === "white" ? "black" : "white"}
+        fontSize="333.33px"
+      >
+        {value}
+      </text>
+    </svg>
+  );
+};
+
+export const D6Svg = ({
+  value,
+  fill,
+  numericSix,
+  background,
+  size,
+}: DiceProps) => {
   if (value < 1 || value > 6)
     return <>Unproper value {value} for six-sided dice</>;
   switch (value) {
     case 1:
+      if (numericSix) return d6square(1, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path
@@ -15,6 +38,7 @@ export const D6Svg = ({ value, size, fill }: DiceProps) => {
         </svg>
       );
     case 2:
+      if (numericSix) return d6square(2, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path
@@ -24,6 +48,7 @@ export const D6Svg = ({ value, size, fill }: DiceProps) => {
         </svg>
       );
     case 3:
+      if (numericSix) return d6square(3, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path
@@ -33,6 +58,7 @@ export const D6Svg = ({ value, size, fill }: DiceProps) => {
         </svg>
       );
     case 4:
+      if (numericSix) return d6square(4, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path
@@ -42,6 +68,7 @@ export const D6Svg = ({ value, size, fill }: DiceProps) => {
         </svg>
       );
     case 5:
+      if (numericSix) return d6square(5, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path
@@ -51,6 +78,7 @@ export const D6Svg = ({ value, size, fill }: DiceProps) => {
         </svg>
       );
     default:
+      if (numericSix) return d6square(6, fill);
       return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440">
           <path

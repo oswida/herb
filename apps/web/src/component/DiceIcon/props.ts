@@ -3,4 +3,5 @@ export interface DiceProps {
   size: number;
   fill: string;
   background?: string;
+  numericSix?: boolean;
 }

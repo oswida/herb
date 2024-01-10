@@ -7,7 +7,7 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
-import { flexColumnStyle } from "../common";
+import { flexColumnStyle, flexRowStyle } from "../common";
 import { IDiceRollerShape } from "./DiceRollerShape";
 
 type Props = TLUiDialogProps & {
@@ -33,6 +33,7 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
   const [d12, setD12] = useState(
     shape.props.pool["d12"] ? shape.props.pool["d12"] : 0
   );
+  const [nsix, setNSix] = useState(shape.props.numericSix);
   const editor = useEditor();
 
   const update = () => {
@@ -60,6 +61,7 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
       type: "rpg-dice-roller",
       props: {
         pool: pool,
+        numericSix: nsix,
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -74,52 +76,63 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})}>
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of white d6 dice"
-            label={"d6 white" as any}
-            defaultValue={d6white.toString()}
-            onValueChange={(value: string) =>
-              setD6White(Number.parseInt(value))
-            }
-          />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of black d6 dice"
-            label={"d6 black" as any}
-            defaultValue={d6black.toString()}
-            onValueChange={(value: string) =>
-              setD6Black(Number.parseInt(value))
-            }
-          />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of d4 dice"
-            label={"d4" as any}
-            defaultValue={d4.toString()}
-            onValueChange={(value: string) => setD4(Number.parseInt(value))}
-          />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of d8 dice"
-            label={"d8" as any}
-            defaultValue={d8.toString()}
-            onValueChange={(value: string) => setD8(Number.parseInt(value))}
-          />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of d10 dice"
-            label={"d10" as any}
-            defaultValue={d10.toString()}
-            onValueChange={(value: string) => setD10(Number.parseInt(value))}
-          />
-          <Input
-            className="tlui-embed-dialog__input"
-            placeholder="number of d12 dice"
-            label={"d12" as any}
-            defaultValue={d12.toString()}
-            onValueChange={(value: string) => setD12(Number.parseInt(value))}
-          />
+          <div className={flexRowStyle({ justify: "space" })}>
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of white d6 dice"
+              label={"d6 white" as any}
+              defaultValue={d6white.toString()}
+              onValueChange={(value: string) =>
+                setD6White(Number.parseInt(value))
+              }
+            />
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of black d6 dice"
+              label={"d6 black" as any}
+              defaultValue={d6black.toString()}
+              onValueChange={(value: string) =>
+                setD6Black(Number.parseInt(value))
+              }
+            />
+          </div>
+
+          <Button type="normal" onPointerDown={() => setNSix(!nsix)}>
+            {nsix && <span>6 are numeric</span>}
+            {!nsix && <span>6 are dots</span>}
+          </Button>
+          <div className={flexRowStyle({ justify: "end" })}>
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of d4 dice"
+              label={"d4 " as any}
+              defaultValue={d4.toString()}
+              onValueChange={(value: string) => setD4(Number.parseInt(value))}
+            />
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of d8 dice"
+              label={"d8 " as any}
+              defaultValue={d8.toString()}
+              onValueChange={(value: string) => setD8(Number.parseInt(value))}
+            />
+          </div>
+          <div className={flexRowStyle({ justify: "space" })}>
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of d10 dice"
+              label={"d10" as any}
+              defaultValue={d10.toString()}
+              onValueChange={(value: string) => setD10(Number.parseInt(value))}
+            />
+            <Input
+              className="tlui-embed-dialog__input short_input"
+              placeholder="number of d12 dice"
+              label={"d12" as any}
+              defaultValue={d12.toString()}
+              onValueChange={(value: string) => setD12(Number.parseInt(value))}
+            />
+          </div>
         </div>
       </Dialog.Body>
       <Dialog.Footer>

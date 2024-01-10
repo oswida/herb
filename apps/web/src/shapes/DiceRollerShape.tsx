@@ -27,6 +27,7 @@ import { RollValue, flexColumnStyle, rollValues } from "../common";
 import { useRoll } from "../hooks";
 import { IDiceShape } from "./DiceShape";
 import { DiceRollerPool } from "./DiceRollerPool";
+import { RollResults } from "@dice-roller/rpg-dice-roller/types/results";
 
 export type IDiceRollerShape = TLBaseShape<
   "rpg-dice-roller",
@@ -39,6 +40,7 @@ export type IDiceRollerShape = TLBaseShape<
     pool: Record<string, number>;
     roll: Record<string, RollValue[]>;
     label: string;
+    numericSix: boolean;
   }
 >;
 
@@ -56,7 +58,7 @@ export const DiceRollerComponent = track(
       isDarkMode: editor.user.getIsDarkMode(),
     });
     const { addDialog } = useDialogs();
-    const { rollSingleToChat } = useRoll(user, theme);
+    const { rollSingleToChat, rollSimple } = useRoll(user, theme);
 
     const notation = useMemo(() => {
       const res: string[] = [];
@@ -100,6 +102,7 @@ export const DiceRollerComponent = track(
           owner: editor.user.getId(),
           isMax: val.isMax,
           isMin: val.isMin,
+          numericSix: shape.props.numericSix,
         },
       } as IDiceShape;
     };
@@ -112,25 +115,50 @@ export const DiceRollerComponent = track(
       editor.deleteShapes(tr);
     };
 
+    const area = useMemo(() => {
+      const sx = shape.x + shape.props.w + 20;
+      const sy = shape.y;
+      const len = Object.keys(shape.props.pool).length;
+      const dx = sx + len * 60;
+      const dy = sy + len * 60;
+      return [sx, sy, dx, dy, dx - sx, dy - sy];
+    }, [shape]);
+
+    const places = useCallback(
+      (num: number) => {
+        const x = rollSimple(`${num}d${area[4]}`);
+        const y = rollSimple(`${num}d${area[5]}`);
+        const res = [];
+        for (let i = 0; i < num; i++) {
+          res.push({ x: area[0] + x[i], y: area[1] + y[i] });
+        }
+        return res;
+      },
+      [area]
+    );
+
     const insertDice = useCallback(() => {
       clearChildren();
       const msg = rollSingleToChat(notation, false);
       const values = rollValues("white", msg.roll, msg.rollMarkers);
       const dr: Record<string, RollValue[]> = {};
       if (!msg.rollMarkers) return;
-      const center = editor.getViewportPageCenter();
+      //const center = editor.getViewportPageCenter();
       let dy = 10;
       let cnt = 1;
       for (let i = 0; i < msg.rollMarkers!.length; i++) {
         dr[msg.rollMarkers[i]] = values[i];
         let dx = 0;
+        const pos = places(values[i].length);
+        let c = 0;
         values[i].forEach((rv) => {
           const shp = shapeFromRoll(rv, msg.rollMarkers![i], cnt);
           cnt++;
-          shp.x = center.x + dx;
-          shp.y = center.y + shape.props.h + dy;
+          shp.x = pos[c].x;
+          shp.y = pos[c].y;
           editor.createShape(shp);
           dx += 48;
+          c++;
         });
         dy += 48;
       }
@@ -231,6 +259,7 @@ export const rpgDiceShapeProps: ShapeProps<IDiceRollerShape> = {
   pool: T.dict(T.string, T.number),
   roll: T.dict(T.string, T.arrayOf<RollValue>(T.any)),
   label: T.string,
+  numericSix: T.boolean,
 };
 
 export class DiceRollerShapeUtil extends BaseBoxShapeUtil<IDiceRollerShape> {
@@ -251,6 +280,7 @@ export class DiceRollerShapeUtil extends BaseBoxShapeUtil<IDiceRollerShape> {
       pool: { dTl: 2, dTd: 2, d4: 2 },
       roll: {},
       label: "Dice roller",
+      numericSix: true,
     };
   }
 
