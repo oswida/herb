@@ -3,5 +3,6 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "rust-analyzer.showUnlinkedFileNotification": false
 }

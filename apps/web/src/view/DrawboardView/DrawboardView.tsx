@@ -44,7 +44,7 @@ import { UserNotAlowed } from "./UserNotAllowed";
 import { appPanelStyle } from "../../common";
 import { CardShapeUtil } from "../../shapes/CardShape";
 
-const port = import.meta.env.DEV ? 5001 : window.location.port;
+const port = import.meta.env.DEV ? 8000 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
 const HOST_URL = `${websockSchema}://${window.location.hostname}:${port}`;
 
