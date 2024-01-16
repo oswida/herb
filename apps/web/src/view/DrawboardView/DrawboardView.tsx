@@ -112,6 +112,8 @@ export const DrawboardView = () => {
     blockUser,
     blockedList,
     isBlocked,
+    changeSecret,
+    login,
   } = useRoomInfo(ROOM_BASE_URL);
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
@@ -191,6 +193,7 @@ export const DrawboardView = () => {
               room={room}
               blockUser={blockUser}
               isBlocked={isBlocked}
+              login={login}
             />
           ),
           InFrontOfTheCanvas: () => (
@@ -203,6 +206,7 @@ export const DrawboardView = () => {
                 allowedUsers={allowedUsers}
                 blockUser={blockUser}
                 blockedList={blockedList}
+                changeSecret={changeSecret}
               />
               <DiceRollerPanel isOwner={isOwner} />
               <AssetList roomId={room ?? ""} />

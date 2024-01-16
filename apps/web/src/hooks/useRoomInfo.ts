@@ -85,6 +85,35 @@ export const useRoomInfo = (roomApiUrl: string) => {
     [rdata, roomApiUrl, tldrawUserId]
   );
 
+  const changeSecret = useCallback(
+    async (secret: string) => {
+      if (!rdata || rdata.owner !== tldrawUserId) return;
+      await fetch(`${roomApiUrl}/${rdata.id}/${tldrawUserId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ secret }),
+      });
+      await refetch();
+    },
+    [rdata, roomApiUrl, tldrawUserId]
+  );
+
+  const login = useCallback(
+    async (roomId: string, secret: string) => {
+      await fetch(`${roomApiUrl}/${roomId}/${tldrawUserId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ secret }),
+      });
+      await refetch();
+    },
+    [rdata, roomApiUrl, tldrawUserId]
+  );
+
   const allowUser = useCallback(
     async (id: string, allow: boolean) => {
       if (!rdata || rdata.owner === id) return;
@@ -124,5 +153,7 @@ export const useRoomInfo = (roomApiUrl: string) => {
     allowedUsers,
     isUserAllowed,
     allowUser,
+    changeSecret,
+    login,
   };
 };

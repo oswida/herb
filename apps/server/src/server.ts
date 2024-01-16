@@ -5,7 +5,7 @@ import serveStatic from "serve-static";
 import type { Express } from "express";
 import { useSetup } from "./useSetup";
 import { initUpload, processUploadGet, processUploadPost } from "./upload";
-import { processRoomGet, processRoomPost } from "./room";
+import { processRoomGet, processRoomPost, processRoomPut } from "./room";
 import { processCreators } from "./creators";
 import { initAssets, processAssetDelete, processAssetGet } from "./assets";
 import { closeDb, initDb } from "./db";
@@ -52,6 +52,11 @@ const setupServer = (server: Server, app: Express) => {
   });
   app.post("/api/room/:roomId/:user", (request, response) => {
     processRoomPost(db, request, response).catch((err) => {
+      console.error(err);
+    });
+  });
+  app.put("/api/room/:roomId/:user", (request, response) => {
+    processRoomPut(db, request, response).catch((err) => {
       console.error(err);
     });
   });

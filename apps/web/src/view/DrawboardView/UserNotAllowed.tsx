@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { userNotAllowedStyle } from "./style.css";
-import { Button, getUserPreferences } from "@tldraw/tldraw";
+import { Button, Input, getUserPreferences } from "@tldraw/tldraw";
 import { FaCopy } from "react-icons/fa";
 import { flexRowStyle } from "../../common";
 import useClipboard from "react-use-clipboard";
@@ -10,6 +10,7 @@ type Props = {
   room: string | undefined;
   blockUser: (id: string, blocked: boolean) => Promise<void>;
   isBlocked: (id: string) => boolean;
+  login: (roomId: string, secret: string) => void;
 };
 
 export const UserNotAlowed = ({
@@ -17,9 +18,11 @@ export const UserNotAlowed = ({
   room,
   blockUser,
   isBlocked,
+  login,
 }: Props) => {
   const user = getUserPreferences();
   const [copyUser, setCopyUser] = useClipboard(user.id);
+  const [secret, setSecret] = useState("");
 
   useEffect(() => {
     if (isUserAllowed || isBlocked(user.id)) return;
@@ -36,6 +39,12 @@ export const UserNotAlowed = ({
   };
   const userCopy = () => {
     setCopyUser();
+  };
+
+  const doLogin = async () => {
+    if (secret.trim() === "") return;
+    await login(room ?? "", secret);
+    // window.location.reload();
   };
 
   if (isUserAllowed) return null;
@@ -65,6 +74,20 @@ export const UserNotAlowed = ({
       {!isBlocked(user.id) && (
         <div>Acceptance request has been sent to room owner</div>
       )}
+      <h3>Or alternatively you can login if you know the secret</h3>
+      <div className={flexRowStyle({})}>
+        <Input
+          className="tlui-embed-dialog__input"
+          placeholder=""
+          autofocus
+          onValueChange={(value) => {
+            setSecret(value);
+          }}
+        />
+        <Button type="normal" onPointerDown={doLogin}>
+          Authenticate
+        </Button>
+      </div>
     </div>
   );
 };
