@@ -1,6 +1,7 @@
 use lmdb_rs::core::DbCreate;
 use lmdb_rs::{DbHandle, Environment};
 use std::sync::Arc;
+use yrs::Doc;
 use yrs_kvstore::DocOps;
 use yrs_lmdb::LmdbStore;
 
@@ -28,7 +29,20 @@ impl DocDb {
         }
     }
 
-    pub fn observe_doc(self, doc: yrs::Doc, room_id: String) {
+    pub fn get_doc(&self, room_id: String) -> Option<Doc> {
+        let txn = self.env.new_transaction().unwrap();
+        let doc_name = format!("doc_{}", room_id);
+        let db = LmdbStore::from(txn.bind(&self.handle));
+        db.
+        let r = db.get(&doc_name);
+        txn.commit().unwrap();
+        match r {
+            Ok(doc) => Ok(doc),
+            Err(_) => todo!(),
+        }
+    }
+
+    pub fn observe_doc(self, doc: Doc, room_id: String) {
         let doc_name = format!("doc_{}", room_id);
         let _sub = {
             let env = self.env.clone();

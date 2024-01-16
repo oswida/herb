@@ -1,5 +1,5 @@
 use db::store::DocDb;
-use net::{http::HttpServer, ws::WsServer};
+use net::ws::WsServer;
 
 mod db;
 mod net;
@@ -10,11 +10,8 @@ async fn main() {
 
     let doc_db = DocDb::new("herb-docs".to_string());
 
-    let ws = WsServer::new();
+    let ws = WsServer::new(5001);
     ws.run().await;
-
-    let http = HttpServer::new();
-    http.run().await;
 
     loop {}
 }

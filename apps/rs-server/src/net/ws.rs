@@ -1,11 +1,12 @@
 use std::{collections::HashMap, sync::Arc};
 
-use futures_util::stream::StreamExt;
+use futures::{sink::SinkExt, stream::StreamExt};
 use tokio::{
     spawn,
     sync::{Mutex, RwLock},
 };
 
+use tracing::debug;
 use warp::{
     filters::ws::{WebSocket, Ws},
     Filter,
@@ -18,20 +19,24 @@ use yrs_warp::{
 };
 
 #[derive(Clone)]
-struct RoomData {
+struct Room {
+    pub room_id: String,
+    pub doc: Doc,
     pub awareness: Arc<RwLock<Awareness>>,
     pub bcast: Arc<BroadcastGroup>,
 }
 
 #[derive(Clone)]
 pub struct WsServer {
-    rooms: Arc<Mutex<HashMap<String, RoomData>>>,
+    port: u16,
+    rooms: Arc<Mutex<HashMap<String, Room>>>,
 }
 
 impl WsServer {
-    pub fn new() -> Self {
+    pub fn new(port: u16) -> Self {
         Self {
             rooms: Arc::new(Mutex::new(HashMap::new())),
+            port,
         }
     }
 
@@ -40,20 +45,22 @@ impl WsServer {
             .and(warp::ws())
             .and(warp::any().map(move || self.rooms.clone()))
             .map(
-                |room_id: String, ws: Ws, rooms: Arc<Mutex<HashMap<String, RoomData>>>| {
+                |room_id: String, ws: Ws, rooms: Arc<Mutex<HashMap<String, Room>>>| {
                     let r = rooms.clone();
                     ws.on_upgrade(|socket| async move {
                         let mut room_map = r.lock().await;
                         if let None = room_map.get_mut(&room_id.clone()) {
                             let awareness = Arc::new(RwLock::new(Awareness::new(Doc::new())));
                             let bcast = Arc::new(BroadcastGroup::new(awareness.clone(), 32).await);
-                            let data = RoomData { awareness, bcast };
+                            let data = Room { awareness, bcast };
+                            debug!("Creating new room data {}", room_id);
                             room_map.insert(room_id.clone(), data);
                         };
                         if let Some(room) = room_map.get(&room_id) {
                             let (sink, stream) = socket.split();
                             let sink = Arc::new(Mutex::new(WarpSink::from(sink)));
                             let stream = WarpStream::from(stream);
+                            debug!("Subscribing client to room changes ");
                             let sub = room.bcast.subscribe(sink, stream);
                             match sub.completed().await {
                                 Ok(_) => println!("broadcasting for channel finished successfully"),
@@ -65,30 +72,9 @@ impl WsServer {
                     })
                 },
             );
+        let port = self.port.clone();
         spawn(async move {
-            warp::serve(ws).run(([127, 0, 0, 1], 8000)).await;
+            warp::serve(ws).run(([0, 0, 0, 0], port)).await;
         });
     }
-
-    // async fn ws_handler(self,room_id: String, ws: Ws) -> Result<impl Reply, Rejection> {
-    //     Ok(ws.on_upgrade(move |socket| self.peer(room_id, socket)))
-    // }
-
-    // async fn peer(self, _room_id: String, ws: WebSocket) {
-    //     // We're using a single static document shared among all the peers.
-    //     let awareness = Arc::new(RwLock::new(Awareness::new(Doc::new())));
-
-    //     // open a broadcast group that listens to awareness and document updates
-    //     // and has a pending message buffer of up to 32 updates
-    //     let bcast = Arc::new(BroadcastGroup::new(awareness, 32).await);
-
-    //     let (sink, stream) = ws.split();
-    //     let sink = Arc::new(Mutex::new(WarpSink::from(sink)));
-    //     let stream = WarpStream::from(stream);
-    //     let sub = bcast.subscribe(sink, stream);
-    //     match sub.completed().await {
-    //         Ok(_) => println!("broadcasting for channel finished successfully"),
-    //         Err(e) => eprintln!("broadcasting for channel finished abruptly: {}", e),
-    //     }
-    // }
 }
