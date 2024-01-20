@@ -17,9 +17,9 @@ type Props = TLUiDialogProps & {
 };
 
 export const Confirmation = (props: Props) => {
-  const activate = () => {
+  const activate = async () => {
     props.onClose();
-    props.callback();
+    await props.callback();
   };
 
   return (

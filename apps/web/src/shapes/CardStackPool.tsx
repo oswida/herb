@@ -8,27 +8,16 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useMemo, useState } from "react";
-import {
-  currentRoom,
-  flexColumnStyle,
-  flexRowStyle,
-  shuffleArray,
-} from "../common";
+import { flexColumnStyle, flexRowStyle, shuffleArray } from "../common";
 import {
   FaAlignRight,
-  FaAngleRight,
   FaArrowLeft,
   FaArrowRight,
-  FaArrowsAlt,
   FaBackspace,
-  FaChevronRight,
-  FaGreaterThan,
-  FaLongArrowAltRight,
   FaTrashAlt,
 } from "react-icons/fa";
 import { ICardStackShape } from "./CardStackShape";
 import { AssetDesc, useAssets } from "../hooks";
-import { useAtomValue } from "jotai";
 import { assetListStyle } from "../component/AssetList/style.css";
 import { AssetItem } from "../component/AssetList/AssetItem";
 
@@ -41,8 +30,8 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
   const [filter, setFilter] = useState("");
   const [pool, setPool] = useState(shape.props.pool);
   const { imageAssets } = useAssets(editor, "");
-  const [sel, setSel] = useState<AssetDesc | undefined>(undefined);
-  const [poolSel, setPoolSel] = useState<AssetDesc | undefined>(undefined);
+  const [sel, setSel] = useState<AssetDesc[]>([]);
+  const [poolSel, setPoolSel] = useState<AssetDesc[]>([]);
 
   const update = () => {
     const items = [...pool];
@@ -58,9 +47,14 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
     onClose();
   };
 
-  const addAsset = () => {
-    if (!sel) return;
-    setPool((prev) => [...prev, { ...sel, id: uniqueId() }]);
+  const addAssets = () => {
+    if (sel.length === 0) return;
+    const newPool = [...pool];
+    sel.forEach((a) => {
+      newPool.push({ ...a, id: uniqueId() });
+    });
+    setPool(newPool);
+    setSel([]);
   };
 
   const addAll = () => {
@@ -68,16 +62,34 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
     setPool((prev) => [...prev, ...its]);
   };
 
-  const removeAsset = () => {
-    if (!poolSel) return;
-    const newState = pool.filter((it) => it.id !== poolSel.id);
+  const removeAssets = () => {
+    if (poolSel.length === 0) return;
+    const ids = poolSel.map((it) => it.id);
+    const newState = pool.filter((it) => !ids.includes(it.id));
     setPool(newState);
+    setPoolSel([]);
+  };
+
+  const select = (it: AssetDesc) => {
+    if (sel.includes(it)) {
+      setSel(sel.filter((x) => x.filename !== it.filename));
+      return;
+    }
+    setSel([...sel, it]);
+  };
+
+  const selectPool = (it: AssetDesc) => {
+    if (poolSel.includes(it)) {
+      setPoolSel(poolSel.filter((x) => x.id !== it.id));
+      return;
+    }
+    setPoolSel([...poolSel, it]);
   };
 
   const items = useMemo(() => {
-    return imageAssets.filter(
-      (it) => filter.trim() === "" || it.filename.includes(filter)
-    );
+    return imageAssets
+      .filter((it) => filter.trim() === "" || it.filename.includes(filter))
+      .sort((a, b) => a.filename.localeCompare(b.filename));
   }, [imageAssets, filter]);
 
   return (
@@ -95,8 +107,8 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
                 <AssetItem
                   key={`${it.filename}-${idx}`}
                   filename={it.filename}
-                  onClick={() => setSel(it)}
-                  selected={sel?.filename == it.filename}
+                  onClick={() => select(it)}
+                  selected={sel.includes(it)}
                 />
               ))}
             </div>
@@ -112,7 +124,11 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
               </Button>
             </div>
             <div className={flexRowStyle({ justify: "center" })}>
-              <Button type="icon" onPointerDown={addAsset}>
+              <Button
+                type="icon"
+                onPointerDown={addAssets}
+                title="Add assets to pool"
+              >
                 <FaArrowRight size={16} />
               </Button>
               <Button type="icon" onPointerDown={addAll} title="Add all">
@@ -127,15 +143,15 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
                 <AssetItem
                   key={it.id ? it.id : `${it.filename}-${idx}`}
                   filename={it.filename}
-                  onClick={() => setPoolSel(it)}
-                  selected={poolSel?.id == it.id}
+                  onClick={() => selectPool(it)}
+                  selected={poolSel.includes(it)}
                 />
               ))}
             </div>
             <div className={flexRowStyle({ justify: "center" })}>
               <Button
                 type="icon"
-                onPointerDown={removeAsset}
+                onPointerDown={removeAssets}
                 title="Remove item"
               >
                 <FaArrowLeft size={16} />

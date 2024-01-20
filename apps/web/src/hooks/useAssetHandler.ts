@@ -15,7 +15,7 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
       async ({ file }: { type: "file"; file: File }) => {
         const id = generateSerialKeys(6, "-");
 
-        const objectName = `${id}-${file.name}`.replaceAll(
+        const objectName = `${file.name}-${id}`.replaceAll(
           /[^a-zA-Z0-9.]/g,
           "-"
         );

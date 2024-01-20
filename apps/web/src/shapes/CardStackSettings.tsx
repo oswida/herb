@@ -26,29 +26,35 @@ export const CardStackSettings = ({ shape, onClose }: Props) => {
   );
   const [priv, setPriv] = useState(shape.props.private);
   const [label, setLabel] = useState(shape.props.label);
-  const { imageAssets } = useAssets(editor, "");
+  const { imageAssets, getImageAssetData } = useAssets(editor, "");
   const [sel, setSel] = useState(shape.props.cardBack);
   const [filter, setFilter] = useState("");
 
   const update = () => {
-    const shapeUpdate: TLShapePartial<ICardStackShape> = {
-      id: shape.id,
-      type: "rpg-card-stack",
-      props: {
-        fill: color,
-        private: priv,
-        label: label,
-        cardBack: sel,
-      },
-    };
-    editor.updateShapes([shapeUpdate]);
-    onClose();
+    getImageAssetData([sel]).then((data) => {
+      if (data.length === 0) return;
+      const shapeUpdate: TLShapePartial<ICardStackShape> = {
+        id: shape.id,
+        type: "rpg-card-stack",
+        props: {
+          fill: color,
+          private: priv,
+          label: label,
+          cardBack: sel,
+          cardBackUrl: data[0].url,
+          w: data[0].size.w,
+          h: data[0].size.h,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      onClose();
+    });
   };
 
   const items = useMemo(() => {
-    return imageAssets.filter(
-      (it) => filter.trim() === "" || it.filename.includes(filter)
-    );
+    return imageAssets
+      .filter((it) => filter.trim() === "" || it.filename.includes(filter))
+      .sort((a, b) => a.filename.localeCompare(b.filename));
   }, [imageAssets, filter]);
 
   return (

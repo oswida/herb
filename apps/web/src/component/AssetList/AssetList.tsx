@@ -46,7 +46,7 @@ const ASSET_BASE_URL = `${window.location.protocol}//${window.location.hostname}
 export const AssetList = ({ roomId }: { roomId: string }) => {
   const visible = useAtomValue(assetListVisible);
   const [filter, setFilter] = useAtom(assetFilter);
-  const [sel, setSel] = useState<AssetDesc | undefined>(undefined);
+  const [sel, setSel] = useState<AssetDesc[]>([]);
   const editor = useEditor();
   const [tab, setTab] = useState<TabType>("Image");
   const tabs: TabType[] = ["Image", "PDF", "Handout"];
@@ -72,9 +72,9 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
 
   const items = useMemo(() => {
     if (!data) return [];
-    return (data as AssetDesc[]).filter(
-      (it) => filter === "" || it.filename.includes(filter)
-    );
+    return (data as AssetDesc[])
+      .filter((it) => filter === "" || it.filename.includes(filter))
+      .sort((a, b) => a.filename.localeCompare(b.filename));
   }, [data, filter]);
 
   const filterChange = async (value: string) => {
@@ -86,85 +86,93 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
   };
 
   const insertAsset = useCallback(
-    async (asset: AssetDesc) => {
+    async (assets: AssetDesc[]) => {
       if (!editor) {
         return;
       }
-      if (!isImage(asset.mime) && !isPdf(asset.mime) && !isMarkdown(asset.mime))
-        return;
-      const atype = isImage(asset.mime)
-        ? "image"
-        : isPdf(asset.mime)
-        ? "pdf"
-        : "handout";
-      const url = `${UPLOAD_BASE_URL}/${atype}/${roomId}/${asset.filename}`;
-      const aid = AssetRecordType.createId(getHashForString(url));
-      const center = { x: 800, y: 500 };
+      assets.forEach(async (asset) => {
+        if (
+          !isImage(asset.mime) &&
+          !isPdf(asset.mime) &&
+          !isMarkdown(asset.mime)
+        )
+          return;
+        const atype = isImage(asset.mime)
+          ? "image"
+          : isPdf(asset.mime)
+          ? "pdf"
+          : "handout";
+        const url = `${UPLOAD_BASE_URL}/${atype}/${roomId}/${asset.filename}`;
+        const aid = AssetRecordType.createId(getHashForString(url));
+        const center = { x: 800, y: 500 };
 
-      switch (atype) {
-        case "image":
-          {
-            const size = await MediaHelpers.getImageSizeFromSrc(url);
-            editor.createShapes<TLImageShape>([
-              {
-                type: "image",
-                x: center.x - size.w / 2,
-                y: center.y - size.h / 2,
-                props: {
-                  w: size.w,
-                  h: size.h,
-                  assetId: aid,
+        switch (atype) {
+          case "image":
+            {
+              const size = await MediaHelpers.getImageSizeFromSrc(url);
+              editor.createShapes<TLImageShape>([
+                {
+                  type: "image",
+                  x: center.x - size.w / 2,
+                  y: center.y - size.h / 2,
+                  props: {
+                    w: size.w,
+                    h: size.h,
+                    assetId: aid,
+                  },
                 },
+              ]);
+            }
+            break;
+          case "pdf":
+            editor.createShape<IPdfShape>({
+              type: "pdf",
+              x: center.x - 250,
+              y: center.y - 150,
+              props: {
+                pdf: url,
+                w: 500,
+                h: 300,
               },
-            ]);
-          }
-          break;
-        case "pdf":
-          editor.createShape<IPdfShape>({
-            type: "pdf",
-            x: center.x - 250,
-            y: center.y - 150,
-            props: {
-              pdf: url,
-              w: 500,
-              h: 300,
-            },
-          });
-          break;
-        case "handout":
-          editor.createShape<IMarkdownShape>({
-            type: "markdown",
-            x: center.x - 250,
-            y: center.y - 150,
-            props: {
-              url: url,
-              w: 500,
-              h: 300,
-            },
-          });
-          break;
-      }
+            });
+            break;
+          case "handout":
+            editor.createShape<IMarkdownShape>({
+              type: "markdown",
+              x: center.x - 250,
+              y: center.y - 150,
+              props: {
+                url: url,
+                w: 500,
+                h: 300,
+              },
+            });
+            break;
+        }
+      });
     },
     [editor]
   );
 
-  const deleteAsset = (asset: AssetDesc | undefined) => {
-    if (!asset) return;
+  const deleteAsset = (assets: AssetDesc[]) => {
+    if (assets.length === 0) return;
     addDialog({
       component: ({ onClose }) => (
         <Confirmation
           onClose={onClose}
           title="Delete asset"
-          message={`Delete ${asset.filename}? \nPlease be aware, that all objects\npointing to this asset will be broken.`}
+          message={`Delete selected assets? \nPlease be aware, that all objects\npointing to these assets will be broken.`}
           callback={async () => {
-            await fetch(
-              `${ASSET_BASE_URL}/${tab.toLowerCase()}/${roomId}/${
-                asset.filename
-              }`,
-              {
-                method: "DELETE",
-              }
-            );
+            assets.forEach(async (a) => {
+              await fetch(
+                `${ASSET_BASE_URL}/${tab.toLowerCase()}/${roomId}/${
+                  a.filename
+                }`,
+                {
+                  method: "DELETE",
+                }
+              );
+            });
             onClose();
             await refetch();
           }}
@@ -174,6 +182,14 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
         void null;
       },
     });
+  };
+
+  const select = (it: AssetDesc) => {
+    if (sel.includes(it)) {
+      setSel(sel.filter((x) => x.filename !== it.filename));
+      return;
+    }
+    setSel([...sel, it]);
   };
 
   if (!visible) return null;
@@ -219,8 +235,8 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
           <AssetItem
             key={`${it.filename}-${idx}`}
             filename={it.filename}
-            onClick={() => setSel(it)}
-            selected={sel?.filename == it.filename}
+            onClick={() => select(it)}
+            selected={sel.includes(it)}
           />
         ))}
       </div>
