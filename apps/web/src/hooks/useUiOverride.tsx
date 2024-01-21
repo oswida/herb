@@ -5,7 +5,6 @@ import {
   menuItem,
   menuSubmenu,
   toolbarItem,
-  useDialogs,
 } from "@tldraw/tldraw";
 import { useInsertJson } from "./useInsertJson";
 import { useInsertFile } from "./useInsertFile";
@@ -106,15 +105,15 @@ export const useUiOverride = (
         },
       };
 
-      tools.timer = {
-        id: "timer",
-        icon: "timer",
-        label: "Timer" as any,
-        readonlyOk: false,
-        onSelect: () => {
-          editor.setCurrentTool("timer");
-        },
-      };
+      // tools.timer = {
+      //   id: "timer",
+      //   icon: "timer",
+      //   label: "Timer" as any,
+      //   readonlyOk: false,
+      //   onSelect: () => {
+      //     editor.setCurrentTool("timer");
+      //   },
+      // };
 
       tools.rpgRes = {
         id: "rpg-resource",
@@ -150,7 +149,7 @@ export const useUiOverride = (
     },
     toolbar(_app, toolbar, { tools }) {
       toolbar.push(toolbarItem(tools.rpgClock));
-      toolbar.push(toolbarItem(tools.timer));
+      // toolbar.push(toolbarItem(tools.timer));
       toolbar.push(toolbarItem(tools.rpgRes));
       toolbar.push(toolbarItem(tools.rpgDice));
       toolbar.push(toolbarItem(tools.rpgCards));
