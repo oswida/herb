@@ -14,11 +14,10 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
       "file",
       async ({ file }: { type: "file"; file: File }) => {
         const id = generateSerialKeys(6, "-");
-
-        const objectName = `${file.name}-${id}`.replaceAll(
-          /[^a-zA-Z0-9.]/g,
-          "-"
-        );
+        const parts = file.name.split(".");
+        parts.splice(1, 0, id);
+        const fname = parts.join(".");
+        const objectName = `${fname}`.replaceAll(/[^a-zA-Z0-9.]/g, "-");
         const url = `${baseUrl}/image/${roomId}/${objectName}`;
 
         await fetch(url, {
