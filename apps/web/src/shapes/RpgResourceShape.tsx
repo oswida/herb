@@ -39,6 +39,7 @@ export type IRpgResourceShape = TLBaseShape<
     fill: string;
     owner: string;
     private: boolean;
+    style: string;
   }
 >;
 
@@ -135,7 +136,8 @@ export const RpgResComponent = track(
                 height: boxWidth,
                 maxHeight: boxWidth,
                 maxWidth: boxWidth,
-                borderRadius: "50%",
+                borderRadius:
+                  shape.props.style === "circle" ? "50%" : undefined,
                 backgroundColor: v ? shape.props.color : undefined,
               }}
             >
@@ -153,21 +155,27 @@ export const RpgResComponent = track(
         >
           {canMod && (
             <Button type="icon" onPointerDown={() => mod(-1)}>
-              <FaMinusCircle size={16} fill="var(--color-text)" />
+              <FaMinusCircle size={16} fill={shape.props.color} />
             </Button>
           )}
           <div>{shape.props.label}</div>
           {canMod && (
             <>
               <Button type="icon" onPointerDown={() => mod(1)}>
-                <FaPlusCircle size={16} fill="var(--color-text)" />
+                <FaPlusCircle size={16} fill={shape.props.color} />
               </Button>
               <Button
                 type="icon"
                 onPointerDown={settings}
-                style={{ position: "absolute", left: "50%", top: -40 }}
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: -45,
+                  backgroundColor: shape.props.fill,
+                  borderRadius: "50%",
+                }}
               >
-                <FaTools size={16} fill="var(--color-text)" />
+                <FaTools size={16} fill={shape.props.color} />
               </Button>
             </>
           )}
@@ -202,6 +210,7 @@ export const rpgResShapeProps: ShapeProps<IRpgResourceShape> = {
   fill: T.string,
   owner: T.string,
   private: T.boolean,
+  style: T.string,
 };
 
 export class RpgResourceShapeUtil extends BaseBoxShapeUtil<IRpgResourceShape> {
@@ -209,7 +218,7 @@ export class RpgResourceShapeUtil extends BaseBoxShapeUtil<IRpgResourceShape> {
   static override props = rpgResShapeProps;
 
   override canResize = (_shape: IRpgResourceShape) => true;
-  override canEditInReadOnly = () => false;
+  override canEditInReadOnly = () => true;
   override canEdit: TLShapeUtilFlag<IRpgResourceShape> = () => true;
 
   getDefaultProps(): IRpgResourceShape["props"] {
@@ -223,6 +232,7 @@ export class RpgResourceShapeUtil extends BaseBoxShapeUtil<IRpgResourceShape> {
       fill: "transparent",
       owner: "",
       private: false,
+      style: "circle",
     };
   }
 

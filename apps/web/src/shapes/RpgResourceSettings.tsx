@@ -9,9 +9,13 @@ import {
 import React, { useState } from "react";
 import { flexColumnStyle, flexRowStyle } from "../common";
 import Compact from "@uiw/react-color-compact";
-import { ITimerShape } from "./TimerShape";
 import { IRpgResourceShape } from "./RpgResourceShape";
-import { FaUserFriends, FaUserSecret } from "react-icons/fa";
+import {
+  FaCircle,
+  FaSquare,
+  FaUserFriends,
+  FaUserSecret,
+} from "react-icons/fa";
 
 type Props = TLUiDialogProps & {
   shape: IRpgResourceShape;
@@ -22,6 +26,10 @@ export const RpgResourceSettings = ({ shape, onClose }: Props) => {
   const [color, setColor] = useState(
     shape.props.color ? shape.props.color : "var(--color-text)"
   );
+  const [bkg, setBkg] = useState(
+    shape.props.fill ? shape.props.fill : "transparent"
+  );
+  const [style, setStyle] = useState(shape.props.style);
   const [max, setMax] = useState(shape.props.max);
   const [lbl, setLbl] = useState(shape.props.label);
   const [priv, setPriv] = useState(shape.props.private);
@@ -35,6 +43,8 @@ export const RpgResourceSettings = ({ shape, onClose }: Props) => {
         max: max,
         label: lbl,
         private: priv,
+        fill: bkg,
+        style: style,
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -49,7 +59,17 @@ export const RpgResourceSettings = ({ shape, onClose }: Props) => {
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})}>
-          <div>Fill color</div>
+          <div>Background color</div>
+          <Compact
+            style={{ alignSelf: "center" }}
+            data-color-mode="dark"
+            color={bkg}
+            onChange={(color) => setBkg(color.hex)}
+          />
+          <Button type="normal" onClick={() => setBkg("transparent")}>
+            Transparent
+          </Button>
+          <div>Text color</div>
           <Compact
             style={{ alignSelf: "center" }}
             data-color-mode="dark"
@@ -87,6 +107,23 @@ export const RpgResourceSettings = ({ shape, onClose }: Props) => {
               </div>
             )}
           </Button>
+          <div>Style</div>
+          <div className={flexRowStyle({ justify: "center" })}>
+            <Button
+              type="tool"
+              data-state={style === "circle" ? "selected" : undefined}
+              onPointerDown={() => setStyle("circle")}
+            >
+              <FaCircle />
+            </Button>
+            <Button
+              type="tool"
+              data-state={style !== "circle" ? "selected" : undefined}
+              onPointerDown={() => setStyle("square")}
+            >
+              <FaSquare />
+            </Button>
+          </div>
         </div>
       </Dialog.Body>
       <Dialog.Footer>
