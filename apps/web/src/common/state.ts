@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { Presence, RoomData } from "./types";
+import { TLShapeId } from "@tldraw/tldraw";
 
 export const uiVisible = atom(true);
 export const diceRollerVisible = atom(false);
@@ -19,3 +20,6 @@ export const diceBox = atom<any>(undefined);
 export const isCreator = atom<boolean>(false);
 
 export const assetFilter = atom<string>("");
+
+export const customSettingsVisible = atom<boolean>(false);
+export const selectedCustomShape = atom<TLShapeId | null>(null);

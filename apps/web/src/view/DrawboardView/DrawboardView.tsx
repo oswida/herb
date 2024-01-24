@@ -8,7 +8,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as React from "react";
 import {
   currentRoom,
+  customSettingsVisible,
   roomData,
+  selectedCustomShape,
   uiVisible,
   urlRoom,
   urlUpload,
@@ -27,6 +29,8 @@ import {
   CardStackShapeTool,
   CardStackShapeUtil,
   MarkdownShapeUtil,
+  RpgAttrShapeTool,
+  RpgAttrShapeUtil,
 } from "../../shapes";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
@@ -43,6 +47,7 @@ import { DiceShapeUtil } from "../../shapes/DiceShape";
 import { UserNotAlowed } from "./UserNotAllowed";
 import { appPanelStyle } from "../../common";
 import { CardShapeUtil } from "../../shapes/CardShape";
+import { CustomSettings } from "../../component/CustomSettings";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -62,6 +67,7 @@ const customShapeUtils = [
   DiceShapeUtil,
   CardStackShapeUtil,
   CardShapeUtil,
+  RpgAttrShapeUtil,
 ];
 
 const customTools = [
@@ -70,6 +76,7 @@ const customTools = [
   RpgResourceShapeTool,
   DiceRollerShapeTool,
   CardStackShapeTool,
+  RpgAttrShapeTool,
 ];
 
 const customIcons = {
@@ -78,7 +85,10 @@ const customIcons = {
   "rpg-resource": "/icons/rpg-resource.svg",
   "rpg-dice": "/icons/cubes.svg",
   "rpg-cards": "/icons/cards.svg",
+  "rpg-attr": "/icons/rpg-attr.svg",
 };
+
+const customPrefix = "rpg";
 
 export const DrawboardView = () => {
   const navigate = useNavigate();
@@ -118,6 +128,8 @@ export const DrawboardView = () => {
   const setUrlRoom = useSetAtom(urlRoom);
   const setUrlUpload = useSetAtom(urlUpload);
   const [rdata, _] = useAtom(roomData);
+  const setCustomPanelVisible = useSetAtom(customSettingsVisible);
+  const setSelectedCustomShape = useSetAtom(selectedCustomShape);
 
   useEffect(() => {
     setRoom(params.roomId);
@@ -131,6 +143,21 @@ export const DrawboardView = () => {
       setUrlRoom(ROOM_BASE_URL);
       setUrlUpload(UPLOAD_BASE_URL);
       setEd(editor);
+      editor.addListener("update", () => {
+        const shape = editor.getOnlySelectedShape();
+        if (!shape) {
+          setCustomPanelVisible(false);
+          setSelectedCustomShape(null);
+          return;
+        }
+        if (shape.type.startsWith(customPrefix)) {
+          setCustomPanelVisible(true);
+          setSelectedCustomShape(shape.id);
+        } else {
+          setCustomPanelVisible(false);
+          setSelectedCustomShape(null);
+        }
+      });
     },
     [registerHostedImages]
   );
@@ -210,6 +237,7 @@ export const DrawboardView = () => {
               />
               <DiceRollerPanel isOwner={isOwner} />
               <AssetList roomId={room ?? ""} />
+              <CustomSettings />
             </>
           ),
         }}

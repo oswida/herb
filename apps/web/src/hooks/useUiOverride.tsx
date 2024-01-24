@@ -115,6 +115,16 @@ export const useUiOverride = (
       //   },
       // };
 
+      tools.rpgAttr = {
+        id: "rpg-attr",
+        icon: "rpg-attr",
+        label: "RPG Attribute" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-attr");
+        },
+      };
+
       tools.rpgRes = {
         id: "rpg-resource",
         icon: "rpg-resource",
@@ -149,7 +159,7 @@ export const useUiOverride = (
     },
     toolbar(_app, toolbar, { tools }) {
       toolbar.push(toolbarItem(tools.rpgClock));
-      // toolbar.push(toolbarItem(tools.timer));
+      toolbar.push(toolbarItem(tools.rpgAttr));
       toolbar.push(toolbarItem(tools.rpgRes));
       toolbar.push(toolbarItem(tools.rpgDice));
       toolbar.push(toolbarItem(tools.rpgCards));

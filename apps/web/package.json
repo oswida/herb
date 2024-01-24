@@ -18,6 +18,7 @@
     "@tldraw/tldraw": "2.0.0-canary.7d699a749f6b",
     "@types/node": "^20.10.0",
     "@uiw/react-color": "^2.0.1",
+    "@uiw/react-color-circle": "^2.0.6",
     "@uiw/react-color-compact": "^2.0.1",
     "@vanilla-extract/css": "^1.13.0",
     "@vanilla-extract/recipes": "^0.5.1",
