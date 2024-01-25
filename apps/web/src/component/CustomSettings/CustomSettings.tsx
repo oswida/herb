@@ -7,6 +7,7 @@ import {
   selectedCustomShape,
 } from "../../common";
 import {
+  Input,
   TLBaseShape,
   TLShapePartial,
   stopEventPropagation,
@@ -15,13 +16,15 @@ import {
 } from "@tldraw/tldraw";
 import { Compact } from "@uiw/react-color";
 
-export const CsColor = track(({ shape }: { shape: TLBaseShape<any, any> }) => {
-  const editor = useEditor();
+type CsProps = {
+  shape: TLBaseShape<any, any>;
+  field: string;
+  title: string;
+};
 
-  const value = useMemo(() => {
-    console.log("value");
-    return shape ? shape.props.color : "#ffffff";
-  }, [shape]);
+export const CsInput = ({ shape, field, title }: CsProps) => {
+  const editor = useEditor();
+  const [value, setValue] = useState<string>(shape ? shape.props[field] : "");
 
   const change = useCallback(
     (val: string) => {
@@ -29,17 +32,52 @@ export const CsColor = track(({ shape }: { shape: TLBaseShape<any, any> }) => {
         id: shape.id,
         type: shape.type,
         props: {
-          color: val,
+          [field]: val,
         },
       };
       editor.updateShapes([shapeUpdate]);
+      setValue(val);
     },
     [shape]
   );
 
   return (
     <>
-      <div>Color</div>
+      <div>{title}</div>
+      <Input
+        className="tlui-embed-dialog__input"
+        placeholder={field}
+        defaultValue={`${shape.props[field]}`}
+        onValueChange={change}
+      />
+    </>
+  );
+};
+
+export const CsColor = ({ shape, field, title }: CsProps) => {
+  const editor = useEditor();
+  const [value, setValue] = useState<string>(
+    shape ? shape.props[field] : "#ffffff"
+  );
+
+  const change = useCallback(
+    (val: string) => {
+      const shapeUpdate: TLShapePartial<any> = {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          [field]: val,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      setValue(val);
+    },
+    [shape]
+  );
+
+  return (
+    <>
+      <div>{title}</div>
       <Compact
         colors={compactColors}
         data-color-mode={editor.user.getIsDarkMode() ? "dark" : undefined}
@@ -49,7 +87,7 @@ export const CsColor = track(({ shape }: { shape: TLBaseShape<any, any> }) => {
       />
     </>
   );
-});
+};
 
 export const CustomSettings = () => {
   const visible = useAtomValue(customSettingsVisible);
@@ -63,7 +101,6 @@ export const CustomSettings = () => {
 
   const component = useMemo(() => {
     if (!shape) return null;
-    console.log("comp");
     const util = editor.getShapeUtil(shape) as any;
     return util.settingsComponent(shape);
   }, [shape]);

@@ -1,22 +1,18 @@
 import {
   BaseBoxShapeTool,
   BaseBoxShapeUtil,
+  Editor,
   Rectangle2d,
   ShapeProps,
   T,
   TLBaseShape,
-  TLHandle,
-  TLOnClickHandler,
-  TLOnHandleChangeHandler,
   TLResizeInfo,
   TLShapeUtilFlag,
   resizeBox,
   track,
-  useUiEvents,
 } from "@tldraw/tldraw";
-import React, { ComponentProps } from "react";
-import { customSettingsVisible, flexColumnStyle } from "../common";
-import { useSetAtom } from "jotai";
+import React, { ComponentProps, useMemo } from "react";
+import { flexColumnStyle } from "../common";
 
 export type ICustomShape = TLBaseShape<
   "custom", // override, give common prefix
@@ -24,7 +20,7 @@ export type ICustomShape = TLBaseShape<
     w: number;
     h: number;
     label: string;
-    // TODO: your props
+    // your props
   }
 >;
 
@@ -36,28 +32,29 @@ export class CustomShapeTool extends BaseBoxShapeTool {
 
 type BaseCustomProps = {
   shape: TLBaseShape<any, any>;
+  actions: (shape: any) => React.JSX.Element;
+  editor: Editor;
 } & ComponentProps<"div">;
 
 export const BaseCustomMain = track(
-  ({ shape, children, ...rest }: BaseCustomProps) => {
-    const setVisible = useSetAtom(customSettingsVisible);
-
-    const select = () => {
-      console.log("click");
-      setVisible(true);
-    };
+  ({ shape, children, actions, editor, ...rest }: BaseCustomProps) => {
+    const isSelected = useMemo(() => {
+      return shape.id === editor.getOnlySelectedShape()?.id;
+    }, [editor, shape, editor.getOnlySelectedShape()]);
 
     return (
       <div
         className={flexColumnStyle({})}
         style={{
-          backgroundColor: "red",
           width: shape.props.w,
           height: shape.props.h,
+          alignItems: "center",
+          justifyContent: "start",
         }}
         {...rest}
       >
         {children}
+        {isSelected && actions(shape)}
       </div>
     );
   }
@@ -74,6 +71,8 @@ export abstract class CustomShapeUtil<
 > extends BaseBoxShapeUtil<T> {
   // static override type = "custom" as const; // override
   // static override props = shapeProps; // override
+  actionsHeight = 40;
+  actionsCount = 1; // override if needed
 
   override canResize = (_shape: T) => true; // override if needed
   override canEditInReadOnly = () => false;
@@ -95,7 +94,7 @@ export abstract class CustomShapeUtil<
   getGeometry(shape: T) {
     return new Rectangle2d({
       width: shape.props.w,
-      height: shape.props.h,
+      height: shape.props.h + this.actionsHeight,
       isFilled: true,
     });
   }
@@ -103,18 +102,28 @@ export abstract class CustomShapeUtil<
   component(shape: T) {
     if (!shape) return null;
     return (
-      <BaseCustomMain shape={shape}>
+      <BaseCustomMain
+        shape={shape}
+        editor={this.editor}
+        actions={this.actionComponent}
+      >
         {this.mainComponent(shape)}
-        {this.actionComponent(shape)}
       </BaseCustomMain>
     );
   }
 
   indicator(shape: T) {
-    return <rect width={shape.props.w} height={shape.props.h} />;
+    return (
+      <rect width={shape.props.w} height={shape.props.h + this.actionsHeight} />
+    );
   }
 
   override onResize = (shape: T, info: TLResizeInfo<T>) => {
+    if (
+      info.scaleX * info.initialBounds.w <=
+      this.actionsCount * this.actionsHeight
+    )
+      return;
     return resizeBox(shape, info);
   };
 }

@@ -1,4 +1,5 @@
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
+import { Editor, TLBaseShape, TLShapePartial } from "@tldraw/tldraw";
 
 export const prettyNow = () => {
   var date = new Date();
@@ -249,4 +250,21 @@ export const compactColors = [
   "#ff5722",
   "#795548",
   "#607d8b",
+  "#ffffff",
+  "#000000",
 ];
+
+export const updateShapeFields = (
+  editor: Editor,
+  shape: TLBaseShape<any, any>,
+  values: object
+) => {
+  const shapeUpdate: TLShapePartial<any> = {
+    id: shape.id,
+    type: shape.type,
+    props: {
+      ...values,
+    },
+  };
+  editor.updateShapes([shapeUpdate]);
+};
