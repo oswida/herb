@@ -10,18 +10,10 @@ import {
 } from "@tldraw/tldraw";
 import React from "react";
 import { CustomShapeUtil } from "./CustomShape";
-import {
-  compactColors,
-  flexColumnStyle,
-  flexRowStyle,
-  rollNotationWithResults,
-  updateShapeFields,
-} from "../common";
-import { Circle, Compact } from "@uiw/react-color";
-import { CsColor, CsInput } from "../component/CustomSettings";
-import { CheckItem } from "../component/CheckItem";
-import { FaDice, FaDiceD20, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { flexColumnStyle, flexRowStyle, updateShapeFields } from "../common";
+import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { useChat, useRoll } from "../hooks";
+import { CsField } from "../component/CustomSettings";
 
 export type RpgAttrShape = TLBaseShape<
   "rpg-attr",
@@ -56,9 +48,14 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
       className={flexColumnStyle({})}
       style={{ padding: "5px", gap: "10px" }}
     >
-      <CsColor shape={shape} field="color" title="Color" />
-      <CsInput shape={shape} field="label" title="Label" />
-      <CsInput shape={shape} field="dice" title="Dice notation" />
+      <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField shape={shape} field="label" title="Label" vtype="string" />
+      <CsField
+        shape={shape}
+        field="dice"
+        title="Dice notation"
+        vtype="string"
+      />
     </div>
   );
 });
