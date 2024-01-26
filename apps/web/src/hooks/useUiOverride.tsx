@@ -105,16 +105,6 @@ export const useUiOverride = (
         },
       };
 
-      // tools.timer = {
-      //   id: "timer",
-      //   icon: "timer",
-      //   label: "Timer" as any,
-      //   readonlyOk: false,
-      //   onSelect: () => {
-      //     editor.setCurrentTool("timer");
-      //   },
-      // };
-
       tools.rpgAttr = {
         id: "rpg-attr",
         icon: "rpg-attr",

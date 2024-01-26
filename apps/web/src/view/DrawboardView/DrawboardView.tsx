@@ -34,7 +34,6 @@ import {
 } from "../../shapes";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
-import { TimerShapeTool, TimerShapeUtil } from "../../shapes/TimerShape";
 import {
   RpgResourceShapeTool,
   RpgResourceShapeUtil,
@@ -61,7 +60,6 @@ const customShapeUtils = [
   PdfShapeUtil,
   RpgClockShapeUtil,
   MarkdownShapeUtil,
-  TimerShapeUtil,
   RpgResourceShapeUtil,
   DiceRollerShapeUtil,
   DiceShapeUtil,
@@ -72,7 +70,6 @@ const customShapeUtils = [
 
 const customTools = [
   RpgClockShapeTool,
-  TimerShapeTool,
   RpgResourceShapeTool,
   DiceRollerShapeTool,
   CardStackShapeTool,

@@ -36,12 +36,17 @@ export const CsField = ({
 
   const change = useCallback(
     (val: string | number | boolean | null) => {
-      // TODO: convert values properly
+      let result: any = val;
+      if (vtype === "number") {
+        const num = Number.parseInt(result);
+        if (!Number.isNaN(num)) result = num;
+        else result = 1;
+      }
       const shapeUpdate: TLShapePartial<any> = {
         id: shape.id,
         type: shape.type,
         props: {
-          [field]: val,
+          [field]: result,
         },
       };
       editor.updateShapes([shapeUpdate]);

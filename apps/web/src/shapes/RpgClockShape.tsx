@@ -1,195 +1,180 @@
 import {
   BaseBoxShapeTool,
-  BaseBoxShapeUtil,
   Button,
-  Rectangle2d,
   ShapeProps,
   T,
   TLBaseShape,
-  TLClickEvent,
-  TLOnResizeHandler,
   TLShapePartial,
-  TLShapeUtilFlag,
   getDefaultColorTheme,
-  resizeBox,
-  useDialogs,
-  useIsEditing,
+  track,
+  useEditor,
 } from "@tldraw/tldraw";
 import React, { useCallback } from "react";
 import { PieChart } from "react-minimal-pie-chart";
-import { FaMinusCircle, FaPlusCircle, FaTools } from "react-icons/fa";
-import { RpgClockSettings } from "./RpgClockSettings";
+import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import { flexColumnStyle, flexRowStyle } from "../common";
+import { CsField } from "../component/CustomSettings";
+import { CustomShapeUtil } from "./CustomShape";
 
-export type IRpgClockShape = TLBaseShape<
+export type RpgClockShape = TLBaseShape<
   "rpg-clock",
   {
     w: number;
     h: number;
-    parts: number;
-    count: number;
     label: string;
+    color: string;
+    parts: number;
+    _count: number;
   }
 >;
 
 export class RpgClockShapeTool extends BaseBoxShapeTool {
   static override id = "rpg-clock";
-  static override initial = "idle";
   override shapeType = "rpg-clock";
-
-  override onDoubleClick: TLClickEvent = (_info) => {};
+  static override initial = "idle";
 }
 
-export const rpgClockShapeProps: ShapeProps<IRpgClockShape> = {
+export const shapeProps: ShapeProps<RpgClockShape> = {
   w: T.number,
   h: T.number,
-  parts: T.number,
-  count: T.number,
   label: T.string,
+  color: T.string,
+  parts: T.number,
+  _count: T.number,
 };
 
-export class RpgClockShapeUtil extends BaseBoxShapeUtil<IRpgClockShape> {
+const RpgClockSettings = track(({ shape }: { shape: RpgClockShape }) => {
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{ padding: "5px", gap: "10px" }}
+    >
+      <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField shape={shape} field="label" title="Label" vtype="string" />
+      <CsField
+        shape={shape}
+        field="parts"
+        title="Number of parts"
+        vtype="number"
+      />
+    </div>
+  );
+});
+
+const RpgClockMain = track(({ shape }: { shape: RpgClockShape }) => {
+  const editor = useEditor();
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.getIsDarkMode(),
+  });
+
+  const getData = useCallback(() => {
+    const result = [];
+
+    for (let i = 0; i < shape.props.parts; i++) {
+      result.push({
+        title: `p${i}`,
+        value: 100 / shape.props.parts,
+        color:
+          i < shape.props._count ? shape.props.color : `${shape.props.color}22`,
+      });
+    }
+    return result;
+  }, [shape]);
+
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{
+        justifyContent: "center",
+        color: shape.props.color,
+        alignItems: "center",
+      }}
+    >
+      {shape.props.label}
+      <PieChart
+        data={getData()}
+        background={theme.background}
+        startAngle={-90}
+        segmentsShift={0.3}
+        radius={48}
+      ></PieChart>
+    </div>
+  );
+});
+
+const RpgClockActions = ({ shape }: { shape: RpgClockShape }) => {
+  const editor = useEditor();
+
+  const mod = useCallback(
+    (value: number) => {
+      let cnt = shape.props._count + value;
+      if (cnt > shape.props.parts) cnt = shape.props.parts;
+      if (cnt < 0) cnt = 0;
+      const shapeUpdate: TLShapePartial<RpgClockShape> = {
+        id: shape.id,
+        type: "rpg-clock",
+        props: {
+          _count: cnt,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+    },
+    [shape]
+  );
+
+  return (
+    <div
+      className={flexRowStyle({ justify: "center" })}
+      style={{ flexWrap: "nowrap", gap: "2px" }}
+    >
+      <Button
+        type="icon"
+        title="Decrease"
+        onPointerDown={() => mod(-1)}
+        style={{ minHeight: "16px", minWidth: "16px" }}
+      >
+        <FaMinusCircle size={16} />
+      </Button>
+      <Button
+        type="icon"
+        title="Increase"
+        onPointerDown={() => mod(1)}
+        style={{ minHeight: "16px", minWidth: "16px" }}
+      >
+        <FaPlusCircle size={16} />
+      </Button>
+    </div>
+  );
+};
+
+export class RpgClockShapeUtil extends CustomShapeUtil<RpgClockShape> {
   static override type = "rpg-clock" as const;
-  static override props = rpgClockShapeProps;
+  static override props = shapeProps;
+  override actionsCount = 3;
 
-  override canResize = (_shape: IRpgClockShape) => true;
-  override canEditInReadOnly = () => true;
-  override canEdit: TLShapeUtilFlag<IRpgClockShape> = () => true;
-
-  getDefaultProps(): IRpgClockShape["props"] {
-    return {
-      w: 150,
-      h: 150,
-      parts: 6,
-      count: 1,
-      label: "clock",
-    };
-  }
-
-  getGeometry(shape: IRpgClockShape) {
-    return new Rectangle2d({
-      width: Math.max(shape.props.w, shape.props.h),
-      height: Math.max(shape.props.w, shape.props.h),
-      isFilled: true,
-    });
-  }
-
-  component(shape: IRpgClockShape) {
+  override getDefaultProps(): RpgClockShape["props"] {
     const theme = getDefaultColorTheme({
       isDarkMode: this.editor.user.getIsDarkMode(),
     });
-
-    const getData = useCallback(() => {
-      const result = [];
-
-      for (let i = 0; i < shape.props.parts; i++) {
-        result.push({
-          title: `p${i}`,
-          value: 100 / shape.props.parts,
-          color: i < shape.props.count ? theme.text : `${theme.text}22`,
-        });
-      }
-      return result;
-    }, [shape]);
-
-    const mod = useCallback(
-      (value: number) => {
-        let cnt = shape.props.count + value;
-        if (cnt > shape.props.parts) cnt = shape.props.parts;
-        if (cnt < 0) cnt = 0;
-        const shapeUpdate: TLShapePartial<IRpgClockShape> = {
-          id: shape.id,
-          type: "rpg-clock",
-          props: {
-            count: cnt,
-          },
-        };
-        this.editor.updateShapes([shapeUpdate]);
-      },
-      [shape]
-    );
-
-    const isEditing = useIsEditing(shape.id);
-
-    const { addDialog } = useDialogs();
-
-    return (
-      <div id={shape.id} style={{ padding: "10px" }}>
-        <PieChart
-          data={getData()}
-          background={theme.background}
-          startAngle={-90}
-          segmentsShift={0.3}
-          radius={48}
-        ></PieChart>
-        <div
-          style={{
-            position: "absolute",
-            left: 5,
-            top: 5,
-          }}
-        >
-          {shape.props.label}
-        </div>
-        {isEditing && (
-          <>
-            <Button
-              type="icon"
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-              }}
-              onPointerDown={() => mod(-1)}
-            >
-              <FaMinusCircle />
-            </Button>
-            <Button
-              type="icon"
-              style={{
-                position: "absolute",
-                right: 0,
-                bottom: 0,
-              }}
-              onPointerDown={() => mod(1)}
-            >
-              <FaPlusCircle />
-            </Button>
-            <Button
-              type="icon"
-              style={{
-                position: "absolute",
-                right: 0,
-                top: 0,
-              }}
-              onPointerDown={() => {
-                addDialog({
-                  component: ({ onClose }) => (
-                    <RpgClockSettings onClose={onClose} shape={shape} />
-                  ),
-                  onClose: () => {
-                    void null;
-                  },
-                });
-              }}
-            >
-              <FaTools />
-            </Button>
-          </>
-        )}
-      </div>
-    );
+    return {
+      w: 150,
+      h: 150,
+      label: "",
+      color: theme.text,
+      _count: 6,
+      parts: 6,
+    };
   }
 
-  indicator(shape: IRpgClockShape) {
-    return (
-      <rect
-        width={Math.max(shape.props.w, shape.props.h)}
-        height={Math.max(shape.props.w, shape.props.h)}
-      />
-    );
+  override settingsComponent(shape: RpgClockShape): React.JSX.Element {
+    return <RpgClockSettings shape={shape} />;
   }
 
-  override onResize: TLOnResizeHandler<IRpgClockShape> = (shape, info) => {
-    return resizeBox(shape, info);
-  };
+  override mainComponent(shape: RpgClockShape): React.JSX.Element {
+    return <RpgClockMain shape={shape} />;
+  }
+
+  override actionComponent(shape: RpgClockShape): React.JSX.Element {
+    return <RpgClockActions shape={shape} />;
+  }
 }
