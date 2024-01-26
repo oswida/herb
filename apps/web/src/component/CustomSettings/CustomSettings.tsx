@@ -4,9 +4,11 @@ import { useAtomValue } from "jotai";
 import {
   compactColors,
   customSettingsVisible,
+  flexRowStyle,
   selectedCustomShape,
 } from "../../common";
 import {
+  Button,
   Input,
   TLBaseShape,
   TLShapePartial,
@@ -83,6 +85,56 @@ export const CsField = ({
           onChange={(color) => change(color.hex)}
         />
       )}
+    </div>
+  );
+};
+
+type CsSelectProps = {
+  shape: TLBaseShape<any, any>;
+  field: string;
+  title: string;
+  dict: Record<string, any>;
+};
+
+export const CsIconSelect = ({
+  field,
+  shape,
+  title,
+  dict,
+  ...rest
+}: CsSelectProps & ComponentProps<"div">) => {
+  const editor = useEditor();
+  const [value, setValue] = useState<string>(shape ? shape.props[field] : null);
+
+  const change = useCallback(
+    (val: string) => {
+      const shapeUpdate: TLShapePartial<any> = {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          [field]: val,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      setValue(val);
+    },
+    [shape]
+  );
+
+  return (
+    <div {...rest}>
+      <div>{title}</div>
+      <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
+        {Object.keys(dict).map((it) => (
+          <Button
+            type="icon"
+            data-state={it === value ? "hinted" : undefined}
+            onPointerDown={() => change(it)}
+          >
+            {dict[it]}
+          </Button>
+        ))}
+      </div>
     </div>
   );
 };

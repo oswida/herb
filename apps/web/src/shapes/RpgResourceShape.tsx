@@ -1,268 +1,261 @@
 import {
   BaseBoxShapeTool,
-  BaseBoxShapeUtil,
-  Box2d,
   Button,
-  Rectangle2d,
   ShapeProps,
   T,
   TLBaseShape,
-  TLClickEvent,
-  TLOnBeforeCreateHandler,
-  TLOnResizeHandler,
-  TLShapeUtilFlag,
-  resizeBox,
+  getDefaultColorTheme,
   track,
-  useDialogs,
   useEditor,
-  useIsEditing,
 } from "@tldraw/tldraw";
 import React, { useCallback, useMemo } from "react";
-import { flexRowStyle } from "../common";
+import { flexColumnStyle, flexRowStyle } from "../common";
 import {
+  FaCircle,
+  FaHeart,
   FaMinusCircle,
   FaPlusCircle,
-  FaTools,
-  FaUserSecret,
+  FaRegCircle,
+  FaRegHeart,
+  FaRegSquare,
+  FaRegStar,
+  FaSquare,
+  FaStar,
 } from "react-icons/fa";
-import { RpgResourceSettings } from "./RpgResourceSettings";
+import { CsField, CsIconSelect } from "../component/CustomSettings";
+import { CustomShapeUtil } from "./CustomShape";
+import {
+  BsDroplet,
+  BsDropletFill,
+  BsSquare,
+  BsTriangle,
+  BsTriangleFill,
+  BsXSquare,
+} from "react-icons/bs";
+import { BiLeaf, BiSolidLeaf } from "react-icons/bi";
 
-export type IRpgResourceShape = TLBaseShape<
+export type RpgResourceShape = TLBaseShape<
   "rpg-resource",
   {
     w: number;
     h: number;
-    max: number;
-    value: number;
     label: string;
     color: string;
-    fill: string;
-    owner: string;
-    private: boolean;
     style: string;
+    max: number;
+    _value: number;
   }
 >;
 
-type RpgResComponentProps = {
-  shape: IRpgResourceShape;
-  bounds: Box2d;
-};
-
-export const RpgResComponent = track(
-  ({ shape, bounds }: RpgResComponentProps) => {
-    const editor = useEditor();
-    const isEditing = useIsEditing(shape.id);
-    const { addDialog } = useDialogs();
-
-    const isOwner = useMemo(() => {
-      return shape.props.owner === editor.user.getId();
-    }, []);
-
-    const items = useMemo(() => {
-      const retv: boolean[] = [];
-      for (let i = 1; i <= shape.props.max; i++) {
-        if (i <= shape.props.value) retv.push(true);
-        else retv.push(false);
-      }
-      return retv;
-    }, [shape, shape.props.value]);
-
-    const boxWidth = useMemo(() => {
-      let w = bounds.width - 60;
-      return Math.max(w / (shape.props.max + 1), 16);
-    }, [shape]);
-
-    const mod = (value: number) => {
-      let cnt = shape.props.value + value;
-      if (cnt > shape.props.max) cnt = shape.props.max;
-      if (cnt < 0) cnt = 0;
-      editor.updateShapes([
-        {
-          id: shape.id,
-          type: shape.type,
-          props: {
-            value: cnt,
-          },
-        },
-      ]);
-    };
-
-    const canMod = useMemo(() => {
-      if (!isEditing) return false;
-      if (!shape.props.private) return true;
-      return isOwner;
-    }, [shape, isEditing, isOwner]);
-
-    const settings = useCallback(() => {
-      addDialog({
-        id: "rpg-res-settings",
-        component: ({ onClose }) => (
-          <RpgResourceSettings onClose={onClose} shape={shape} />
-        ),
-        onClose: () => {},
-      });
-    }, [shape]);
-
-    if (!shape) return <></>;
-
-    return (
-      <div
-        id={shape.id}
-        style={{
-          width: bounds.width,
-          height: bounds.height,
-          overflow: "hidden",
-          padding: "10px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: shape.props.fill,
-          color: shape.props.color,
-          borderRadius: "5px",
-          gap: "10px",
-        }}
-      >
-        <div
-          className={flexRowStyle({ justify: "center" })}
-          style={{ width: "100%", flexWrap: "wrap" }}
-        >
-          {items.map((v, i) => (
-            <div
-              key={`res-${i}-${shape.id}`}
-              style={{
-                border: "solid 2px",
-                borderColor: shape.props.color,
-                width: boxWidth,
-                height: boxWidth,
-                maxHeight: boxWidth,
-                maxWidth: boxWidth,
-                borderRadius:
-                  shape.props.style === "circle" ? "50%" : undefined,
-                backgroundColor: v ? shape.props.color : undefined,
-              }}
-            >
-              {" "}
-            </div>
-          ))}
-        </div>
-        <div
-          className={flexRowStyle({ justify: canMod ? "space" : "center" })}
-          style={{
-            width: "100%",
-            alignItems: "center",
-            minHeight: 42,
-          }}
-        >
-          {canMod && (
-            <Button type="icon" onPointerDown={() => mod(-1)}>
-              <FaMinusCircle size={16} fill={shape.props.color} />
-            </Button>
-          )}
-          <div>{shape.props.label}</div>
-          {canMod && (
-            <>
-              <Button type="icon" onPointerDown={() => mod(1)}>
-                <FaPlusCircle size={16} fill={shape.props.color} />
-              </Button>
-              <Button
-                type="icon"
-                onPointerDown={settings}
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: -45,
-                  backgroundColor: shape.props.fill,
-                  borderRadius: "50%",
-                }}
-              >
-                <FaTools size={16} fill={shape.props.color} />
-              </Button>
-            </>
-          )}
-        </div>
-        {shape.props.private && (
-          <div
-            style={{ position: "absolute", top: -15, right: -15, opacity: 0.5 }}
-          >
-            <FaUserSecret size={16} fill="var(--color-accent)" />
-          </div>
-        )}
-      </div>
-    );
-  }
-);
-
 export class RpgResourceShapeTool extends BaseBoxShapeTool {
   static override id = "rpg-resource";
-  static override initial = "idle";
   override shapeType = "rpg-resource";
-
-  override onDoubleClick: TLClickEvent = (_info) => {};
+  static override initial = "idle";
 }
 
-export const rpgResShapeProps: ShapeProps<IRpgResourceShape> = {
+export const shapeProps: ShapeProps<RpgResourceShape> = {
   w: T.number,
   h: T.number,
-  max: T.number,
-  value: T.number,
   label: T.string,
   color: T.string,
-  fill: T.string,
-  owner: T.string,
-  private: T.boolean,
+  _value: T.number,
+  max: T.number,
   style: T.string,
 };
 
-export class RpgResourceShapeUtil extends BaseBoxShapeUtil<IRpgResourceShape> {
+const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{ padding: "5px", gap: "10px" }}
+    >
+      <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField shape={shape} field="label" title="Label" vtype="string" />
+      <CsField shape={shape} field="max" title="Maximum value" vtype="number" />
+      <CsIconSelect
+        shape={shape}
+        field="style"
+        title="Shape"
+        dict={{
+          square: <FaSquare size={16} />,
+          circle: <FaCircle size={16} />,
+          triangle: <BsTriangleFill size={16} />,
+          star: <FaStar size={16} />,
+          heart: <FaHeart size={16} />,
+          droplet: <BsDropletFill size={16} />,
+          leaf: <BiSolidLeaf size={16} />,
+          cross: <BsXSquare size={16} />,
+        }}
+      />
+    </div>
+  );
+});
+
+const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
+  const items = useMemo(() => {
+    const retv: boolean[] = [];
+    for (let i = 1; i <= shape.props.max; i++) {
+      if (i <= shape.props._value) retv.push(true);
+      else retv.push(false);
+    }
+    return retv;
+  }, [shape, shape.props._value]);
+
+  const boxWidth = useMemo(() => {
+    let w = shape.props.w;
+    return Math.max((w - 4 * (shape.props.max - 1)) / shape.props.max, 16);
+  }, [shape.props.w]);
+
+  const dotShape = useCallback(
+    (v: boolean) => {
+      switch (shape.props.style) {
+        case "heart":
+          return v ? (
+            <FaHeart fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <FaRegHeart fill={shape.props.color} size={boxWidth} />
+          );
+        case "star":
+          return v ? (
+            <FaStar fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <FaRegStar fill={shape.props.color} size={boxWidth} />
+          );
+        case "circle":
+          return v ? (
+            <FaCircle fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <FaRegCircle fill={shape.props.color} size={boxWidth} />
+          );
+        case "triangle":
+          return v ? (
+            <BsTriangleFill fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <BsTriangle fill={shape.props.color} size={boxWidth} />
+          );
+        case "droplet":
+          return v ? (
+            <BsDropletFill fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <BsDroplet fill={shape.props.color} size={boxWidth} />
+          );
+        case "leaf":
+          return v ? (
+            <BiSolidLeaf fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <BiLeaf fill={shape.props.color} size={boxWidth} />
+          );
+        case "cross":
+          return v ? (
+            <BsXSquare fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <BsSquare fill={shape.props.color} size={boxWidth} />
+          );
+        default:
+          return v ? (
+            <FaSquare fill={shape.props.color} size={boxWidth} />
+          ) : (
+            <FaRegSquare fill={shape.props.color} size={boxWidth} />
+          );
+      }
+    },
+    [shape.props.style, boxWidth, shape.props.color]
+  );
+
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{
+        justifyContent: "center",
+        color: shape.props.color,
+        alignItems: "center",
+      }}
+    >
+      <div
+        className={flexRowStyle({ justify: "center" })}
+        style={{ width: "100%", flexWrap: "nowrap", gap: 4 }}
+      >
+        {items.map((v, i) => (
+          <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
+        ))}
+      </div>
+      {shape.props.label}
+    </div>
+  );
+});
+
+const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
+  const editor = useEditor();
+
+  const mod = (value: number) => {
+    let cnt = shape.props._value + value;
+    if (cnt > shape.props.max) cnt = shape.props.max;
+    if (cnt < 0) cnt = 0;
+    editor.updateShapes([
+      {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          _value: cnt,
+        },
+      },
+    ]);
+  };
+
+  return (
+    <div
+      className={flexRowStyle({ justify: "space" })}
+      style={{ flexWrap: "nowrap", gap: "10px", flex: 1 }}
+    >
+      <Button
+        type="icon"
+        title="Decrease"
+        onPointerDown={() => mod(-1)}
+        style={{ minHeight: "16px", minWidth: "16px" }}
+      >
+        <FaMinusCircle size={16} />
+      </Button>
+      <Button
+        type="icon"
+        title="Increase"
+        onPointerDown={() => mod(1)}
+        style={{ minHeight: "16px", minWidth: "16px" }}
+      >
+        <FaPlusCircle size={16} />
+      </Button>
+    </div>
+  );
+};
+
+export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
   static override type = "rpg-resource" as const;
-  static override props = rpgResShapeProps;
+  static override props = shapeProps;
+  override actionsCount = 3;
 
-  override canResize = (_shape: IRpgResourceShape) => true;
-  override canEditInReadOnly = () => true;
-  override canEdit: TLShapeUtilFlag<IRpgResourceShape> = () => true;
-
-  getDefaultProps(): IRpgResourceShape["props"] {
-    return {
-      w: 140,
-      h: 50,
-      max: 10,
-      value: 10,
-      label: "Resource",
-      color: "var(--color-text)",
-      fill: "transparent",
-      owner: "",
-      private: false,
-      style: "circle",
-    };
-  }
-
-  getGeometry(shape: IRpgResourceShape) {
-    return new Rectangle2d({
-      width: shape.props.w,
-      height: shape.props.h,
-      isFilled: true,
+  override getDefaultProps(): RpgResourceShape["props"] {
+    const theme = getDefaultColorTheme({
+      isDarkMode: this.editor.user.getIsDarkMode(),
     });
-  }
-
-  component(shape: IRpgResourceShape) {
-    const bounds = this.editor.getShapeGeometry(shape).bounds;
-    return <RpgResComponent bounds={bounds} shape={shape} key={shape.id} />;
-  }
-
-  indicator(shape: IRpgResourceShape) {
-    return <rect width={shape.props.w} height={shape.props.h} />;
-  }
-
-  override onResize: TLOnResizeHandler<IRpgResourceShape> = (shape, info) => {
-    return resizeBox(shape, info);
-  };
-
-  override onBeforeCreate: TLOnBeforeCreateHandler<IRpgResourceShape> = (
-    next
-  ) => {
     return {
-      ...next,
-      props: { ...next.props, owner: this.editor.user.getId() },
+      w: 150,
+      h: 150,
+      label: "",
+      color: theme.text,
+      _value: 0,
+      max: 5,
+      style: "square",
     };
-  };
+  }
+
+  override settingsComponent(shape: RpgResourceShape): React.JSX.Element {
+    return <RpgResourceSettings shape={shape} />;
+  }
+
+  override mainComponent(shape: RpgResourceShape): React.JSX.Element {
+    return <RpgResourceMain shape={shape} />;
+  }
+
+  override actionComponent(shape: RpgResourceShape): React.JSX.Element {
+    return <RpgResourceActions shape={shape} />;
+  }
 }
