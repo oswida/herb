@@ -29,7 +29,7 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import { FaBackspace } from "react-icons/fa";
-import { IMarkdownShape, IPdfShape } from "../../shapes";
+import { IPdfShape, MarkdownShape } from "../../shapes";
 import { Confirmation } from "../Confirmation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -137,8 +137,8 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
             });
             break;
           case "handout":
-            editor.createShape<IMarkdownShape>({
-              type: "markdown",
+            editor.createShape<MarkdownShape>({
+              type: "rpg-markdown",
               x: center.x - 250,
               y: center.y - 150,
               props: {

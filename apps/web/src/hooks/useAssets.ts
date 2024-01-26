@@ -11,7 +11,7 @@ import {
 } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { currentRoom, isImage, isMarkdown, isPdf } from "../common";
-import { IMarkdownShape, IPdfShape } from "../shapes";
+import { IPdfShape, MarkdownShape } from "../shapes";
 import { useAtomValue } from "jotai";
 
 type AssetType = "image" | "pdf" | "handout";
@@ -115,9 +115,9 @@ export const useAssets = (editor: Editor, filter: string) => {
           });
           break;
         case "handout":
-          editor.createShape<IMarkdownShape>({
+          editor.createShape<MarkdownShape>({
             id: sid,
-            type: "markdown",
+            type: "rpg-markdown",
             x: center.x - 250,
             y: center.y - 150,
             props: {

@@ -2,7 +2,7 @@
 import type { Editor } from "@tldraw/tldraw";
 import { useCallback, useEffect, useRef } from "react";
 import { generateSerialKeys } from "../common";
-import type { IMarkdownShape, IPdfShape } from "../shapes";
+import type { IPdfShape, MarkdownShape } from "../shapes";
 
 export type UploadCategory = "pdf" | "handout";
 export const UploadCategoryMime: Record<UploadCategory, string> = {
@@ -57,8 +57,8 @@ export const useInsertFile = (
 
                 break;
               case "handout":
-                editor.createShape<IMarkdownShape>({
-                  type: "markdown",
+                editor.createShape<MarkdownShape>({
+                  type: "rpg-markdown",
                   x: 200,
                   y: 200,
                   props: {

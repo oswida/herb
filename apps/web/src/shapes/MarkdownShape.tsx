@@ -1,265 +1,242 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  BaseBoxShapeUtil,
-  Box2d,
+  BaseBoxShapeTool,
   Button,
-  Rectangle2d,
+  ShapeProps,
+  T,
   TLBaseShape,
-  TLOnBeforeCreateHandler,
-  TLOnResizeHandler,
   TLShapePartial,
-  TLShapeUtilFlag,
-  resizeBox,
-  toDomPrecision,
+  getDefaultColorTheme,
   track,
-  useDialogs,
   useEditor,
-  useIsEditing,
 } from "@tldraw/tldraw";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FaHome, FaTools, FaUserSecret } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { useAtomValue } from "jotai";
-import { urlUpload } from "../common";
-import { MarkdownSettings } from "./MarkdownSettings";
+import { flexColumnStyle, flexRowStyle, urlUpload } from "../common";
+import { CsField } from "../component/CustomSettings";
+import { CustomShapeUtil } from "./CustomShape";
 
-export type IMarkdownShape = TLBaseShape<
-  "markdown",
+export type MarkdownShape = TLBaseShape<
+  "rpg-markdown",
   {
     w: number;
     h: number;
-    url: string | undefined;
-    currentUrl: string | undefined;
+    label: string;
     color: string;
-    fill: string;
-    private: boolean;
-    owner: string;
+    bkg: string;
+    url: string | undefined;
+    _currentUrl: string | undefined;
   }
 >;
 
-interface MarkdownComponentProps {
-  shape: IMarkdownShape;
-  isEditing: boolean;
-  bounds: Box2d;
+export class MarkdownShapeTool extends BaseBoxShapeTool {
+  static override id = "rpg-markdown";
+  override shapeType = "rpg-markdown";
+  static override initial = "idle";
 }
 
-export const MarkdownComponent = track(
-  ({ shape, isEditing, bounds }: MarkdownComponentProps) => {
-    const editor = useEditor();
-    const baseUrl = useAtomValue(urlUpload);
-    const { addDialog } = useDialogs();
+export const shapeProps: ShapeProps<MarkdownShape> = {
+  w: T.number,
+  h: T.number,
+  label: T.string,
+  color: T.string,
+  bkg: T.string,
+  url: T.string,
+  _currentUrl: T.string,
+};
 
-    const isOwner = useMemo(() => {
-      return shape.props.owner === editor.user.getId();
-    }, [shape, editor]);
-
-    let url = shape.props.url;
-    if (!url) return <div>No url defined</div>;
-    if (shape.props.currentUrl && shape.props.currentUrl.trim() !== "")
-      url = shape.props.currentUrl;
-
-    const { data, refetch } = useQuery({
-      queryKey: [shape.id],
-      queryFn: async () => {
-        const res = await fetch(url!!, {
-          method: "GET",
-        });
-        return await res.text();
+const MarkdownSettings = track(({ shape }: { shape: MarkdownShape }) => {
+  const editor = useEditor();
+  const setBkg = () => {
+    const shapeUpdate: TLShapePartial<any> = {
+      id: shape.id,
+      type: shape.type,
+      props: {
+        bkg: "transparent",
       },
-      networkMode: "online",
-      refetchOnMount: true,
-      staleTime: 0,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      structuralSharing: true,
-    });
+    };
+    editor.updateShapes([shapeUpdate]);
+  };
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{ padding: "5px", gap: "10px" }}
+    >
+      <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField shape={shape} field="bkg" title="Background" vtype="color" />
+      <Button type="normal" onPointerDown={setBkg}>
+        Set transparent background
+      </Button>
+      <CsField shape={shape} field="label" title="Label" vtype="string" />
+    </div>
+  );
+});
 
-    const open = useCallback(
-      (name: string | undefined) => {
-        if (!name) return;
-        const newUrl = `${baseUrl}/handout/${name}`;
-        const shapeUpdate: TLShapePartial<IMarkdownShape> = {
-          id: shape.id,
-          type: "markdown",
-          props: {
-            currentUrl: newUrl,
-          },
-        };
-        editor.updateShapes([shapeUpdate]);
-      },
-      [baseUrl]
-    );
+const MarkdownMain = track(({ shape }: { shape: MarkdownShape }) => {
+  const baseUrl = useAtomValue(urlUpload);
+  const editor = useEditor();
 
-    const home = () => {
-      const shapeUpdate: TLShapePartial<IMarkdownShape> = {
+  const url = useMemo(() => {
+    if (shape.props._currentUrl && shape.props._currentUrl.trim() !== "")
+      return shape.props._currentUrl;
+    return shape.props.url;
+  }, [shape.props._currentUrl, shape.props.url]);
+
+  const { data, refetch } = useQuery({
+    queryKey: [shape.id],
+    queryFn: async () => {
+      const res = await fetch(url!!, {
+        method: "GET",
+      });
+      return await res.text();
+    },
+    networkMode: "online",
+    refetchOnMount: true,
+  });
+
+  const open = useCallback(
+    (name: string | undefined) => {
+      if (!name) return;
+      const newUrl = `${baseUrl}/handout/${name}`;
+      const shapeUpdate: TLShapePartial<MarkdownShape> = {
         id: shape.id,
-        type: "markdown",
+        type: "rpg-markdown",
         props: {
-          currentUrl: "",
+          _currentUrl: newUrl,
         },
       };
       editor.updateShapes([shapeUpdate]);
-    };
+    },
+    [baseUrl]
+  );
 
-    const settings = useCallback(() => {
-      addDialog({
-        id: "markdown-settings",
-        component: ({ onClose }) => (
-          <MarkdownSettings onClose={onClose} shape={shape} />
-        ),
-        onClose: () => {},
-      });
-    }, [shape]);
+  useEffect(() => {
+    refetch().then(() => {});
+  }, [shape]);
 
-    useEffect(() => {
-      refetch().then(() => {});
-    }, [shape]);
+  if (!url) return <div>No url defined</div>;
 
-    if (!shape) return <></>;
-    if (shape.props.private && shape.props.owner !== editor.user.getId())
-      return <></>;
-
-    return (
-      <div
-        id={shape.id}
-        style={{
-          width: bounds.width,
-          height: bounds.height,
-          overflow: "hidden",
-          padding: "10px",
-          backgroundColor: shape.props.fill,
-          color: shape.props.color,
-          borderRadius: "5px",
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{
+        justifyContent: "center",
+        color: shape.props.color,
+        backgroundColor: shape.props.bkg,
+        alignItems: "center",
+        padding: 10,
+      }}
+    >
+      <Markdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: (url) => {
+            return (
+              <Button
+                type="normal"
+                style={{
+                  color: "var(--color-accent)",
+                  margin: 0,
+                  display: "inline-block",
+                }}
+                onPointerDown={() => open(url.href)}
+              >
+                {url.children}
+              </Button>
+            );
+          },
         }}
       >
-        <Markdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            a: (url) => {
-              return (
-                <Button
-                  type="normal"
-                  style={{
-                    color: "var(--color-accent)",
-                    margin: 0,
-                    display: "inline-block",
-                  }}
-                  onPointerDown={() => open(url.href)}
-                >
-                  {url.children}
-                </Button>
-              );
-            },
+        {data}
+      </Markdown>
+    </div>
+  );
+});
+
+const MarkdownActions = ({ shape }: { shape: MarkdownShape }) => {
+  const editor = useEditor();
+
+  const home = () => {
+    const shapeUpdate: TLShapePartial<MarkdownShape> = {
+      id: shape.id,
+      type: "rpg-markdown",
+      props: {
+        _currentUrl: "",
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  };
+
+  return (
+    <div
+      className={flexRowStyle({ justify: "center" })}
+      style={{ flexWrap: "nowrap", gap: "2px" }}
+    >
+      {shape.props._currentUrl !== "" && (
+        <Button
+          type="icon"
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
           }}
+          onPointerDown={home}
         >
-          {data}
-        </Markdown>
-        {shape.props.private && (
-          <div style={{ position: "absolute", top: 5, left: 5, opacity: 0.5 }}>
-            <FaUserSecret size={16} fill="var(--color-accent)" />
-          </div>
-        )}
+          <FaHome
+            className="markdown-buttons"
+            size={16}
+            fill={shape.props.color}
+          />
+        </Button>
+      )}
+    </div>
+  );
+};
 
-        {isEditing && (
-          <>
-            {shape.props.currentUrl &&
-              shape.props.currentUrl !== shape.props.url && (
-                <Button
-                  type="icon"
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                  }}
-                  onPointerDown={home}
-                >
-                  <FaHome
-                    className="markdown-buttons"
-                    size={16}
-                    fill={shape.props.color}
-                  />
-                </Button>
-              )}
-            {isOwner && (
-              <Button
-                type="icon"
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                }}
-                onPointerDown={settings}
-              >
-                <FaTools
-                  className="markdown-buttons"
-                  size={16}
-                  fill={shape.props.color}
-                />
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-    );
-  }
-);
+export class MarkdownShapeUtil extends CustomShapeUtil<MarkdownShape> {
+  static override type = "rpg-markdown" as const;
+  static override props = shapeProps;
+  override actionsCount = 3;
 
-export class MarkdownShapeUtil extends BaseBoxShapeUtil<IMarkdownShape> {
-  static override type = "markdown" as const;
-
-  override canEditInReadOnly = () => true;
-  override canEdit: TLShapeUtilFlag<IMarkdownShape> = () => true;
-  override canResize = (_shape: IMarkdownShape) => true;
-
-  override getDefaultProps(): any {
-    return {
-      type: "markdown",
-      w: 500,
-      h: 300,
-      url: undefined,
-      color: "var(--color-text)",
-      background: "transparent",
-      private: false,
-    };
-  }
-
-  getGeometry(shape: IMarkdownShape) {
-    return new Rectangle2d({
-      width: shape.props.w,
-      height: shape.props.h,
-      isFilled: true,
+  override getDefaultProps(): MarkdownShape["props"] {
+    const theme = getDefaultColorTheme({
+      isDarkMode: this.editor.user.getIsDarkMode(),
     });
-  }
-
-  override component(shape: IMarkdownShape) {
-    const isEditing = useIsEditing(shape.id);
-    const bounds = this.editor.getShapeGeometry(shape).bounds;
-
-    return (
-      <MarkdownComponent shape={shape} isEditing={isEditing} bounds={bounds} />
-    );
-  }
-
-  override indicator(shape: IMarkdownShape) {
-    return (
-      <rect
-        width={toDomPrecision(shape.props.w)}
-        height={toDomPrecision(shape.props.h)}
-        rx={8}
-        ry={8}
-      />
-    );
-  }
-
-  override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {
-    return resizeBox(shape, info);
-  };
-
-  override onBeforeCreate: TLOnBeforeCreateHandler<IMarkdownShape> = (next) => {
     return {
-      ...next,
-      props: { ...next.props, owner: this.editor.user.getId() },
+      w: 150,
+      h: 150,
+      label: "",
+      color: theme.text,
+      bkg: theme.background,
+      url: "",
+      _currentUrl: "",
     };
-  };
+  }
+
+  override settingsComponent(shape: MarkdownShape): React.JSX.Element {
+    return <MarkdownSettings shape={shape} />;
+  }
+
+  override mainComponent(shape: MarkdownShape): React.JSX.Element {
+    return <MarkdownMain shape={shape} />;
+  }
+
+  override actionComponent(shape: MarkdownShape): React.JSX.Element {
+    return <MarkdownActions shape={shape} />;
+  }
 }
+
+//   override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {
+//     return resizeBox(shape, info);
+//   };
+
+//   override onBeforeCreate: TLOnBeforeCreateHandler<IMarkdownShape> = (next) => {
+//     return {
+//       ...next,
+//       props: { ...next.props, owner: this.editor.user.getId() },
+//     };
+//   };
+// }
