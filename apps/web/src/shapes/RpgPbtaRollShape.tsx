@@ -5,17 +5,20 @@ import {
   T,
   TLBaseShape,
   TLShapePartial,
+  TLShapeUtilFlag,
   getDefaultColorTheme,
   getUserPreferences,
   track,
+  useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React from "react";
+import React, { useCallback } from "react";
 import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { flexColumnStyle, flexRowStyle } from "../common";
 import { CsField } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
+import { PbtaInfo } from "./PbtaInfo";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -64,6 +67,19 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
     };
     editor.updateShapes([shapeUpdate]);
   };
+
+  const { addDialog } = useDefaultHelpers();
+
+  const desc = useCallback(() => {
+    addDialog({
+      id: "rpg-pbta-roll-desc",
+      component: ({ onClose }) => <PbtaInfo onClose={onClose} shape={shape} />,
+      onClose: () => {
+        editor.setSelectedShapes([]);
+      },
+    });
+  }, [shape]);
+
   return (
     <div
       className={flexColumnStyle({})}
@@ -86,24 +102,9 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         title="Attribute label"
         vtype="string"
       />
-      <CsField
-        shape={shape}
-        field="rollInfo1"
-        title="Fail (6-) result"
-        vtype="string"
-      />
-      <CsField
-        shape={shape}
-        field="rollInfo2"
-        title="Weak hit (7-9) result"
-        vtype="string"
-      />
-      <CsField
-        shape={shape}
-        field="rollInfo3"
-        title="Strong hit (10+) result"
-        vtype="string"
-      />
+      <Button type="normal" onPointerDown={desc}>
+        Set roll descriptions
+      </Button>
     </div>
   );
 });
