@@ -77,7 +77,7 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
       <CsField
         shape={shape}
         field="revActionColor"
-        title="Reverse action colors"
+        title="Colorize actions"
         vtype="boolean"
       />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
@@ -196,10 +196,7 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
 
 const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
   const editor = useEditor();
-  const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.getIsDarkMode(),
-  });
-
+  
   const mod = (value: number) => {
     let cnt = shape.props._value + value;
     if (cnt > shape.props.max) cnt = shape.props.max;
@@ -227,13 +224,13 @@ const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
       <Button type="icon" title="Decrease" onPointerDown={() => mod(-1)}>
         <FaMinusCircle
           size={16}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
       <Button type="icon" title="Increase" onPointerDown={() => mod(1)}>
         <FaPlusCircle
           size={16}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
     </div>

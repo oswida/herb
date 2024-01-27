@@ -66,7 +66,7 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
       <CsField
         shape={shape}
         field="revActionColor"
-        title="Reverse action colors"
+        title="Colorize actions"
         vtype="boolean"
       />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
@@ -77,6 +77,7 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
         vtype="string"
       />
       <CsFontSelect shape={shape} title="Font" field="font" />
+      <CsField shape={shape} field="value" title="Value" vtype="number" />
     </div>
   );
 });
@@ -155,18 +156,7 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
       >
         <FaMinusCircle
           size={16}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
-        />
-      </Button>
-      <Button
-        type="icon"
-        title="Reset"
-        onPointerDown={reset}
-        className={actionButtonStyle}
-      >
-        <BiReset
-          size={22}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
       {shape.props.dice !== "" && (
@@ -179,7 +169,7 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
           <FaDice
             size={16}
             fill={
-              shape.props.revActionColor ? theme.background : "currentColor"
+              shape.props.revActionColor ? shape.props.color : "currentColor"
             }
           />
         </Button>
@@ -192,7 +182,7 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
       >
         <FaPlusCircle
           size={16}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
     </div>
@@ -202,7 +192,7 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
 export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
   static override type = "rpg-attr" as const;
   static override props = shapeProps;
-  override actionsCount = 4;
+  override actionsCount = 3;
 
   override getDefaultProps(): RpgAttrShape["props"] {
     const theme = getDefaultColorTheme({

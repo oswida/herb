@@ -93,7 +93,7 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       <CsField
         shape={shape}
         field="revActionColor"
-        title="Reverse action colors"
+        title="Colorize actions"
         vtype="boolean"
       />
       <CsField
@@ -208,7 +208,7 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
       <Button type="icon" title="Roll" onPointerDown={roll}>
         <FaDice
           size={16}
-          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
     </div>
