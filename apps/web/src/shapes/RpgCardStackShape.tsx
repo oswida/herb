@@ -252,10 +252,10 @@ const RpgCardStackActions = ({ shape }: { shape: RpgCardStackShape }) => {
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
       <Button type="icon" title="Draw" onPointerDown={drawCard}>
-        <GiCardDraw size="24" fill="var(--color-accent)" />
+        <GiCardDraw size="20" fill="var(--color-accent)" />
       </Button>
       <Button type="icon" title="Shuffle" onPointerDown={shuffle}>
-        <GiCardExchange size="24" />
+        <GiCardExchange size="18" />
       </Button>
       <Button type="icon" title="Reset stack" onPointerDown={reset}>
         <FaReplyAll size={16} />

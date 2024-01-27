@@ -12,9 +12,15 @@ import {
 import React from "react";
 import { CustomShapeUtil } from "./CustomShape";
 import { flexColumnStyle, flexRowStyle, updateShapeFields } from "../common";
-import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
+import {
+  FaDice,
+  FaMinusCircle,
+  FaPlusCircle,
+  FaReplyAll,
+} from "react-icons/fa";
 import { useChat, useRoll } from "../hooks";
-import { CsField } from "../component/CustomSettings";
+import { CsField, CsFontSelect } from "../component/CustomSettings";
+import { BiReset } from "react-icons/bi";
 
 export type RpgAttrShape = TLBaseShape<
   "rpg-attr",
@@ -26,6 +32,7 @@ export type RpgAttrShape = TLBaseShape<
     color: string;
     value: number;
     owner: string;
+    font: string;
   }
 >;
 
@@ -43,6 +50,7 @@ const shapeProps: ShapeProps<RpgAttrShape> = {
   color: T.string,
   value: T.number,
   owner: T.string,
+  font: T.string,
 };
 
 const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
@@ -59,6 +67,7 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
         title="Dice notation"
         vtype="string"
       />
+      <CsFontSelect shape={shape} title="Font" field="font" />
     </div>
   );
 });
@@ -84,6 +93,7 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
           x="50%"
           y="60%"
           fontSize={shape.props.h}
+          fontFamily={`var(--tl-font-${shape.props.font})`}
           fill="currentColor"
         >
           {shape.props.value}
@@ -107,11 +117,14 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
     updateShapeFields(editor, shape, { value: val });
   };
 
+  const reset = () => {
+    updateShapeFields(editor, shape, { value: 0 });
+  };
+
   const roll = () => {
     if (shape.props.dice === "") return;
     const v =
       shape.props.value > 0 ? `+${shape.props.value}` : `${shape.props.value}`;
-    console.log("roll", v, `${shape.props.dice}${v}`);
     const msg = rollSingleToChat(
       `${shape.props.dice}${v}`,
       false,
@@ -125,30 +138,18 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button
-        type="icon"
-        title="Decrease"
-        onPointerDown={() => inc(-1)}
-        style={{ minHeight: "16px", minWidth: "16px" }}
-      >
+      <Button type="icon" title="Decrease" onPointerDown={() => inc(-1)}>
         <FaMinusCircle size={16} />
       </Button>
+      <Button type="icon" title="Reset" onPointerDown={reset}>
+        <BiReset size={22} />
+      </Button>
       {shape.props.dice !== "" && (
-        <Button
-          type="icon"
-          title="Roll dice"
-          onPointerDown={roll}
-          style={{ minHeight: "16px", minWidth: "16px" }}
-        >
+        <Button type="icon" title="Roll dice" onPointerDown={roll}>
           <FaDice size={16} />
         </Button>
       )}
-      <Button
-        type="icon"
-        title="Increase"
-        onPointerDown={() => inc(1)}
-        style={{ minHeight: "16px", minWidth: "16px" }}
-      >
+      <Button type="icon" title="Increase" onPointerDown={() => inc(1)}>
         <FaPlusCircle size={16} />
       </Button>
     </div>
@@ -158,7 +159,7 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
 export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
   static override type = "rpg-attr" as const;
   static override props = shapeProps;
-  override actionsCount = 3;
+  override actionsCount = 4;
 
   override getDefaultProps(): RpgAttrShape["props"] {
     const theme = getDefaultColorTheme({
@@ -172,6 +173,7 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       color: theme.text,
       value: 0,
       owner: "",
+      font: "draw",
     };
   }
 

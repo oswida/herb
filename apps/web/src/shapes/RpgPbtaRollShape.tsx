@@ -15,7 +15,7 @@ import {
 import React, { useCallback } from "react";
 import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { flexColumnStyle, flexRowStyle } from "../common";
-import { CsField } from "../component/CustomSettings";
+import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
@@ -33,6 +33,7 @@ export type RpgPbtaRollShape = TLBaseShape<
     rollInfo1: string;
     rollInfo2: string;
     rollInfo3: string;
+    font: string;
   }
 >;
 
@@ -53,6 +54,7 @@ const shapeProps: ShapeProps<RpgPbtaRollShape> = {
   rollInfo1: T.string,
   rollInfo2: T.string,
   rollInfo3: T.string,
+  font: T.string,
 };
 
 const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
@@ -102,6 +104,7 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         title="Attribute label"
         vtype="string"
       />
+      <CsFontSelect field="font" title="Font" shape={shape} />
       <Button type="normal" onPointerDown={desc}>
         Set roll descriptions
       </Button>
@@ -137,6 +140,7 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
           x="50%"
           y="60%"
           fontSize={shape.props.h - 20}
+          fontFamily={`var(--tl-font-${shape.props.font})`}
           fill="currentColor"
         >
           {shape.props.label}
@@ -179,11 +183,11 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
     const total = msg.roll?.total;
     if (!total) return;
     if (total <= 6) {
-      msg.comment = shape.props.rollInfo1;
+      msg.comment = `${shape.props.label}: ${shape.props.rollInfo1}`;
     } else if (total >= 10) {
-      msg.comment = shape.props.rollInfo3;
+      msg.comment = `${shape.props.label}: ${shape.props.rollInfo3}`;
     } else {
-      msg.comment = shape.props.rollInfo2;
+      msg.comment = `${shape.props.label}: ${shape.props.rollInfo2}`;
     }
     addChatMessage(msg);
   };
@@ -220,6 +224,7 @@ export class RpgPbtaRollShapeUtil extends CustomShapeUtil<RpgPbtaRollShape> {
       rollInfo1: "",
       rollInfo2: "",
       rollInfo3: "",
+      font: "draw",
     };
   }
 

@@ -9,6 +9,7 @@ import {
 } from "../../common";
 import {
   Button,
+  DropdownMenu,
   Input,
   TLBaseShape,
   TLShapePartial,
@@ -139,6 +140,69 @@ export const CsIconSelect = ({
             {dict[it]}
           </Button>
         ))}
+      </div>
+    </div>
+  );
+};
+
+type CsFontSelectProps = {
+  shape: TLBaseShape<any, any>;
+  field: string;
+  title: string;
+};
+
+export const CsFontSelect = ({
+  field,
+  shape,
+  title,
+  ...rest
+}: CsFontSelectProps & ComponentProps<"div">) => {
+  const editor = useEditor();
+  const [value, setValue] = useState<string>(shape ? shape.props[field] : null);
+
+  const change = useCallback(
+    (val: string) => {
+      const shapeUpdate: TLShapePartial<any> = {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          [field]: val,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+      setValue(val);
+    },
+    [shape]
+  );
+
+  return (
+    <div {...rest}>
+      <div>{title}</div>
+      <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
+        <Button
+          type="icon"
+          icon="font-draw"
+          data-state={value === "draw" ? "hinted" : undefined}
+          onPointerDown={() => change("draw")}
+        />
+        <Button
+          type="icon"
+          icon="font-sans"
+          data-state={value === "sans" ? "hinted" : undefined}
+          onPointerDown={() => change("sans")}
+        />
+        <Button
+          type="icon"
+          icon="font-serif"
+          data-state={value === "serif" ? "hinted" : undefined}
+          onPointerDown={() => change("serif")}
+        />
+        <Button
+          type="icon"
+          icon="font-mono"
+          data-state={value === "mono" ? "hinted" : undefined}
+          onPointerDown={() => change("mono")}
+        />
       </div>
     </div>
   );

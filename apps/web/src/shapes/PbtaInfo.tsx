@@ -51,7 +51,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             rows={5}
             cols={15}
             className="tlui-embed-dialog__input"
-            placeholder="Fail roll (6-)"
+            placeholder="Enter description..."
             defaultValue={info1}
             onChange={(e) => setInfo1(e.target.value)}
             style={{ color: theme.text }}
@@ -61,7 +61,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             rows={5}
             cols={15}
             className="tlui-embed-dialog__input"
-            placeholder="Weak hit roll (7-9)"
+            placeholder="Enter description..."
             defaultValue={info2}
             onChange={(e) => setInfo2(e.target.value)}
             style={{ color: theme.text }}
@@ -71,7 +71,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             rows={5}
             cols={15}
             className="tlui-embed-dialog__input"
-            placeholder="Strong hit roll (10+)"
+            placeholder="Enter description..."
             defaultValue={info3}
             onChange={(e) => setInfo3(e.target.value)}
             style={{ color: theme.text }}
