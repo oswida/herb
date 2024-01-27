@@ -87,3 +87,7 @@ globalStyle("[data-color-mode*='dark'] .w-color-compact", {
 globalStyle(".short_input", {
   maxWidth: "5em",
 });
+
+globalStyle(".tlui-input__wrapper", {
+  justifyContent: "flex-end",
+});

@@ -21,7 +21,7 @@ import {
   IconStackMiddle,
 } from "@tabler/icons-react";
 import { CustomShapeUtil } from "./CustomShape";
-import { RpgCardStackShape } from "./CardStackShape";
+import { RpgCardStackShape } from "./RpgCardStackShape";
 
 export type RpgCardShape = TLBaseShape<
   "rpg-card",

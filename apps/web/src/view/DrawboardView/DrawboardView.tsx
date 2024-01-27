@@ -30,6 +30,8 @@ import {
   RpgAttrShapeUtil,
   RpgCardStackShapeTool,
   RpgCardStackShapeUtil,
+  RpgDiceRollerShapeTool,
+  RpgDiceRollerShapeUtil,
 } from "../../shapes";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
@@ -37,10 +39,6 @@ import {
   RpgResourceShapeTool,
   RpgResourceShapeUtil,
 } from "../../shapes/RpgResourceShape";
-import {
-  DiceRollerShapeTool,
-  DiceRollerShapeUtil,
-} from "../../shapes/DiceRollerShape";
 import { UserNotAlowed } from "./UserNotAllowed";
 import { appPanelStyle } from "../../common";
 import { CustomSettings } from "../../component/CustomSettings";
@@ -59,7 +57,7 @@ const customShapeUtils = [
   PdfShapeUtil,
   RpgClockShapeUtil,
   RpgResourceShapeUtil,
-  DiceRollerShapeUtil,
+  RpgDiceRollerShapeUtil,
   RpgDiceShapeUtil,
   RpgCardStackShapeUtil,
   RpgCardShapeUtil,
@@ -69,7 +67,7 @@ const customShapeUtils = [
 const customTools = [
   RpgClockShapeTool,
   RpgResourceShapeTool,
-  DiceRollerShapeTool,
+  RpgDiceRollerShapeTool,
   RpgCardStackShapeTool,
   RpgAttrShapeTool,
 ];

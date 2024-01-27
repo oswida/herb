@@ -92,9 +92,10 @@ export abstract class CustomShapeUtil<
   abstract settingsComponent(shape: T): React.JSX.Element | null;
 
   getGeometry(shape: T) {
+    const hasActions = this.actionComponent(shape) !== null;
     return new Rectangle2d({
       width: shape.props.w,
-      height: shape.props.h + this.actionsHeight,
+      height: hasActions ? shape.props.h + this.actionsHeight : shape.props.h,
       isFilled: true,
     });
   }
@@ -113,8 +114,12 @@ export abstract class CustomShapeUtil<
   }
 
   indicator(shape: T) {
+    const hasActions = this.actionComponent(shape) !== null;
     return (
-      <rect width={shape.props.w} height={shape.props.h + this.actionsHeight} />
+      <rect
+        width={shape.props.w}
+        height={hasActions ? shape.props.h + this.actionsHeight : shape.props.h}
+      />
     );
   }
 

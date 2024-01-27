@@ -19,7 +19,7 @@ import {
 import { AssetDesc, useAssets } from "../hooks";
 import { assetListStyle } from "../component/AssetList/style.css";
 import { AssetItem } from "../component/AssetList/AssetItem";
-import { RpgCardStackShape } from "./CardStackShape";
+import { RpgCardStackShape } from "./RpgCardStackShape";
 
 type Props = TLUiDialogProps & {
   shape: RpgCardStackShape;

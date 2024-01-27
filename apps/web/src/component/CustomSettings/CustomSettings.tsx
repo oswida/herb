@@ -16,6 +16,7 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import { Compact } from "@uiw/react-color";
+import { CheckItem } from "../CheckItem";
 
 type CsProps = {
   shape: TLBaseShape<any, any>;
@@ -59,7 +60,7 @@ export const CsField = ({
 
   return (
     <div {...rest}>
-      <div>{title}</div>
+      {vtype !== "boolean" && <div>{title}</div>}
       {vtype === "string" && (
         <Input
           className="tlui-embed-dialog__input"
@@ -84,6 +85,9 @@ export const CsField = ({
           color={value as string}
           onChange={(color) => change(color.hex)}
         />
+      )}
+      {vtype === "boolean" && (
+        <CheckItem checked={value as boolean} label={title} setValue={change} />
       )}
     </div>
   );
@@ -127,6 +131,7 @@ export const CsIconSelect = ({
       <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
         {Object.keys(dict).map((it) => (
           <Button
+            key={it}
             type="icon"
             data-state={it === value ? "hinted" : undefined}
             onPointerDown={() => change(it)}

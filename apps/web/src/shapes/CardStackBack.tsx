@@ -12,7 +12,7 @@ import { FaBackspace } from "react-icons/fa";
 import { assetListStyle } from "../component/AssetList/style.css";
 import { AssetItem } from "../component/AssetList/AssetItem";
 import { useAssets } from "../hooks";
-import { RpgCardStackShape } from "./CardStackShape";
+import { RpgCardStackShape } from "./RpgCardStackShape";
 
 type Props = TLUiDialogProps & {
   shape: RpgCardStackShape;
