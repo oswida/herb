@@ -75,6 +75,7 @@ export abstract class CustomShapeUtil<
   // static override type = "custom" as const; // override
   // static override props = shapeProps; // override
   actionsHeight = 40;
+  actionsWidth = 25;
   actionsCount = 1; // override if needed
 
   override canResize = (_shape: T) => true; // override if needed
@@ -130,7 +131,7 @@ export abstract class CustomShapeUtil<
   override onResize = (shape: T, info: TLResizeInfo<T>) => {
     if (
       info.scaleX * info.initialBounds.w <=
-      this.actionsCount * this.actionsHeight
+      this.actionsCount * this.actionsWidth
     )
       return;
     return resizeBox(shape, info);

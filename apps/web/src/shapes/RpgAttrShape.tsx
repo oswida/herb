@@ -21,6 +21,7 @@ import {
 import { useChat, useRoll } from "../hooks";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { BiReset } from "react-icons/bi";
+import { actionButtonStyle } from "./styles.css";
 
 export type RpgAttrShape = TLBaseShape<
   "rpg-attr",
@@ -146,20 +147,35 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button type="icon" title="Decrease" onPointerDown={() => inc(-1)}>
+      <Button
+        type="icon"
+        title="Decrease"
+        onPointerDown={() => inc(-1)}
+        className={actionButtonStyle}
+      >
         <FaMinusCircle
           size={16}
           fill={shape.props.revActionColor ? theme.background : "currentColor"}
         />
       </Button>
-      <Button type="icon" title="Reset" onPointerDown={reset}>
+      <Button
+        type="icon"
+        title="Reset"
+        onPointerDown={reset}
+        className={actionButtonStyle}
+      >
         <BiReset
           size={22}
           fill={shape.props.revActionColor ? theme.background : "currentColor"}
         />
       </Button>
       {shape.props.dice !== "" && (
-        <Button type="icon" title="Roll dice" onPointerDown={roll}>
+        <Button
+          type="icon"
+          title="Roll dice"
+          onPointerDown={roll}
+          className={actionButtonStyle}
+        >
           <FaDice
             size={16}
             fill={
@@ -168,7 +184,12 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
           />
         </Button>
       )}
-      <Button type="icon" title="Increase" onPointerDown={() => inc(1)}>
+      <Button
+        type="icon"
+        title="Increase"
+        onPointerDown={() => inc(1)}
+        className={actionButtonStyle}
+      >
         <FaPlusCircle
           size={16}
           fill={shape.props.revActionColor ? theme.background : "currentColor"}
