@@ -161,10 +161,16 @@ export const rollValues = (
 
   const rslt: RollValue[][] = [];
   if (!roll) return rslt;
-  const dice = roll.notation.split("+");
-  const tr = roll.rolls.filter((r) => (r as any) !== "+");
+  const dice = roll.notation.replaceAll("-", "+").split("+");
+  const tr = roll.rolls.filter((r) => (r as any) !== "+" && (r as any) !== "-");
   if (dice.length !== tr.length) {
-    console.error("Bad roll results");
+    console.error(
+      "Bad roll results. Dice length=",
+      dice.length,
+      ", tr.length=",
+      tr.length,
+      roll
+    );
     return rslt;
   }
   const faces: string[] = [];

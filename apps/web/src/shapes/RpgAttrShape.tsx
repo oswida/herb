@@ -5,6 +5,7 @@ import {
   T,
   TLBaseShape,
   getDefaultColorTheme,
+  getUserPreferences,
   track,
   useEditor,
 } from "@tldraw/tldraw";
@@ -94,10 +95,11 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
 
 const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
   const editor = useEditor();
+  const user = getUserPreferences();
   const theme = getDefaultColorTheme({
     isDarkMode: editor.user.getIsDarkMode(),
   });
-  const { rollSingleToChat } = useRoll(editor.user, theme);
+  const { rollSingleToChat } = useRoll(user, theme);
   const { addChatMessage } = useChat(editor);
 
   const inc = (value: number) => {
@@ -169,7 +171,7 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       dice: "",
       color: theme.text,
       value: 0,
-      owner: ""
+      owner: "",
     };
   }
 
@@ -177,7 +179,7 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
     return <RpgAttrSettings shape={shape} />;
   }
 
-  override mainComponent(shape: RpgAttrShape): React.JSX.Element  | null{
+  override mainComponent(shape: RpgAttrShape): React.JSX.Element | null {
     return <RpgAttrMain shape={shape} />;
   }
 

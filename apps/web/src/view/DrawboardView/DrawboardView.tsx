@@ -32,6 +32,8 @@ import {
   RpgCardStackShapeUtil,
   RpgDiceRollerShapeTool,
   RpgDiceRollerShapeUtil,
+  RpgPbtaRollShapeTool,
+  RpgPbtaRollShapeUtil,
 } from "../../shapes";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
@@ -62,6 +64,7 @@ const customShapeUtils = [
   RpgCardStackShapeUtil,
   RpgCardShapeUtil,
   RpgAttrShapeUtil,
+  RpgPbtaRollShapeUtil,
 ];
 
 const customTools = [
@@ -70,6 +73,7 @@ const customTools = [
   RpgDiceRollerShapeTool,
   RpgCardStackShapeTool,
   RpgAttrShapeTool,
+  RpgPbtaRollShapeTool,
 ];
 
 const customIcons = {
@@ -79,6 +83,7 @@ const customIcons = {
   "rpg-dice": "/icons/cubes.svg",
   "rpg-cards": "/icons/cards.svg",
   "rpg-attr": "/icons/rpg-attr.svg",
+  "rpg-pbta-roll": "/icons/rule-book.svg",
 };
 
 const customPrefix = "rpg";

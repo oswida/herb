@@ -145,6 +145,16 @@ export const useUiOverride = (
         },
       };
 
+      tools.rpgPbtaRoll = {
+        id: "rpg-pbta-roll",
+        icon: "rpg-pbta-roll",
+        label: "PBTA Roll" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-pbta-roll");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
@@ -153,6 +163,7 @@ export const useUiOverride = (
       toolbar.push(toolbarItem(tools.rpgRes));
       toolbar.push(toolbarItem(tools.rpgDice));
       toolbar.push(toolbarItem(tools.rpgCards));
+      toolbar.push(toolbarItem(tools.rpgPbtaRoll));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

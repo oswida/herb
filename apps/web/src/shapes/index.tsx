@@ -6,3 +6,4 @@ export * from "./RpgCardStackShape";
 export * from "./CustomShape";
 export * from "./RpgAttrShape";
 export * from "./RpgResourceShape";
+export * from "./RpgPbtaRollShape";
