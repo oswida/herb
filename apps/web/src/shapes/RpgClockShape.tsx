@@ -59,6 +59,7 @@ const RpgClockSettings = track(({ shape }: { shape: RpgClockShape }) => {
         title="Number of parts"
         vtype="number"
       />
+      <CsField shape={shape} field="_count" title="Value" vtype="number" />
     </div>
   );
 });

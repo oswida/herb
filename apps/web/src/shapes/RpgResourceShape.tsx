@@ -97,6 +97,7 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
           cross: <BsXSquare size={16} />,
         }}
       />
+      <CsField shape={shape} field="_value" title="Value" vtype="number" />
     </div>
   );
 });
@@ -196,7 +197,7 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
 
 const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
   const editor = useEditor();
-  
+
   const mod = (value: number) => {
     let cnt = shape.props._value + value;
     if (cnt > shape.props.max) cnt = shape.props.max;
