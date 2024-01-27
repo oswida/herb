@@ -16,31 +16,31 @@ import {
   FaBackspace,
   FaTrashAlt,
 } from "react-icons/fa";
-import { ICardStackShape } from "./CardStackShape";
 import { AssetDesc, useAssets } from "../hooks";
 import { assetListStyle } from "../component/AssetList/style.css";
 import { AssetItem } from "../component/AssetList/AssetItem";
+import { RpgCardStackShape } from "./CardStackShape";
 
 type Props = TLUiDialogProps & {
-  shape: ICardStackShape;
+  shape: RpgCardStackShape;
 };
 
 export const CardStackPool = ({ shape, onClose }: Props) => {
   const editor = useEditor();
   const [filter, setFilter] = useState("");
-  const [pool, setPool] = useState(shape.props.pool);
+  const [pool, setPool] = useState(shape.props._pool);
   const { imageAssets } = useAssets(editor, "");
   const [sel, setSel] = useState<AssetDesc[]>([]);
   const [poolSel, setPoolSel] = useState<AssetDesc[]>([]);
 
   const update = () => {
     const items = [...pool];
-    const shapeUpdate: TLShapePartial<ICardStackShape> = {
+    const shapeUpdate: TLShapePartial<RpgCardStackShape> = {
       id: shape.id,
       type: "rpg-card-stack",
       props: {
-        pool: pool,
-        current: shuffleArray(items),
+        _pool: pool,
+        _current: shuffleArray(items),
       },
     };
     editor.updateShapes([shapeUpdate]);

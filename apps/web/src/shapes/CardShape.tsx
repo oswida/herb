@@ -1,59 +1,77 @@
 import {
-  BaseBoxShapeUtil,
-  Box2d,
+  BaseBoxShapeTool,
   Button,
-  Rectangle2d,
   ShapeProps,
   T,
   TLBaseShape,
-  TLOnBeforeCreateHandler,
-  TLOnResizeHandler,
   TLShapeId,
   TLShapePartial,
-  TLShapeUtilFlag,
-  resizeBox,
+  getDefaultColorTheme,
   track,
-  useDialogs,
+  useDefaultHelpers,
   useEditor,
-  useIsEditing,
 } from "@tldraw/tldraw";
 import React from "react";
-import { flexColumnStyle, shuffleArray } from "../common";
+import { flexColumnStyle, flexRowStyle, shuffleArray } from "../common";
 import { FaReply } from "react-icons/fa";
 import { Confirmation } from "../component/Confirmation";
-import { ICardStackShape } from "./CardStackShape";
 import {
   IconStackFront,
   IconStackBack,
   IconStackMiddle,
 } from "@tabler/icons-react";
+import { CustomShapeUtil } from "./CustomShape";
+import { RpgCardStackShape } from "./CardStackShape";
 
-export type ICardShape = TLBaseShape<
-  "card",
+export type RpgCardShape = TLBaseShape<
+  "rpg-card",
   {
     w: number;
     h: number;
-    owner: string;
-    private: boolean;
-    url: string;
-    bkgUrl: string;
-    flipped: boolean;
-    stack: TLShapeId | undefined;
-    aid?: string;
+    _url: string;
+    _bkgUrl: string;
+    _flipped: boolean;
+    _stack: TLShapeId | undefined;
+    _aid?: string;
   }
 >;
 
-type CardComponentProps = {
-  shape: ICardShape;
-  bounds: Box2d;
+export class RpgCardShapeTool extends BaseBoxShapeTool {
+  static override id = "rpg-card";
+  override shapeType = "rpg-card";
+  static override initial = "idle";
+}
+
+const shapeProps: ShapeProps<RpgCardShape> = {
+  w: T.number,
+  h: T.number,
+  _url: T.string,
+  _bkgUrl: T.string,
+  _flipped: T.boolean,
+  _stack: T.any,
+  _aid: T.string,
 };
 
-export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
-  const isEditing = useIsEditing(shape.id);
-  const editor = useEditor();
-  const { addDialog } = useDialogs();
+const RpgCardMain = track(({ shape }: { shape: RpgCardShape }) => {
+  return (
+    <div
+      className={flexColumnStyle({})}
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <img
+        src={shape.props._flipped ? shape.props._bkgUrl : shape.props._url}
+        style={{ width: shape.props.w, height: shape.props.h }}
+      />
+    </div>
+  );
+});
 
-  if (!shape) return <></>;
+const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
+  const editor = useEditor();
+  const { addDialog } = useDefaultHelpers();
 
   const move = (action: string) => {
     let title = "";
@@ -78,16 +96,16 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
           title={title}
           message={message}
           callback={() => {
-            if (!shape.props.stack) return;
+            if (!shape.props._stack) return;
             const parent = editor.getShape(
-              shape.props.stack
-            ) as ICardStackShape;
+              shape.props._stack
+            ) as RpgCardStackShape;
             if (!parent) return;
-            const asset = parent.props.pool.find(
-              (it) => it.id === shape.props.aid
+            const asset = parent.props._pool.find(
+              (it) => it.id === shape.props._aid
             );
             if (!asset) return;
-            const items = [...parent.props.current];
+            const items = [...parent.props._current];
             switch (action) {
               case "top":
                 items.unshift(asset);
@@ -95,11 +113,11 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
               default:
                 items.push(asset);
             }
-            const shapeUpdate: TLShapePartial<ICardStackShape> = {
+            const shapeUpdate: TLShapePartial<RpgCardStackShape> = {
               id: parent.id,
               type: "rpg-card-stack",
               props: {
-                current: action === "shuffle" ? shuffleArray(items) : items,
+                _current: action === "shuffle" ? shuffleArray(items) : items,
               },
             };
             editor.updateShapes([shapeUpdate]);
@@ -112,11 +130,11 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
   };
 
   const flip = () => {
-    const shapeUpdate: TLShapePartial<ICardShape> = {
+    const shapeUpdate: TLShapePartial<RpgCardShape> = {
       id: shape.id,
-      type: "card",
+      type: "rpg-card",
       props: {
-        flipped: !shape.props.flipped,
+        _flipped: !shape.props._flipped,
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -124,118 +142,66 @@ export const CardComponent = track(({ shape, bounds }: CardComponentProps) => {
 
   return (
     <div
-      id={shape.id}
-      className={flexColumnStyle({})}
-      style={{
-        width: shape.props.w,
-        height: shape.props.h,
-        alignItems: "center",
-        position: "relative",
-      }}
+      className={flexRowStyle({ justify: "center" })}
+      style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <img
-        src={shape.props.flipped ? shape.props.bkgUrl : shape.props.url}
-        style={{ width: shape.props.w, height: shape.props.h }}
-      />
-      {isEditing && (
-        <>
-          <Button
-            type="icon"
-            title="Put card on top of stack"
-            style={{ position: "absolute", left: -40, top: 0 }}
-            onPointerDown={() => move("top")}
-          >
-            <IconStackFront size={24} />
-          </Button>
-          <Button
-            type="icon"
-            title="Put card on bottom of stack"
-            style={{ position: "absolute", right: -40, top: 0 }}
-            onPointerDown={() => move("bottom")}
-          >
-            <IconStackBack size={24} />
-          </Button>
-          <Button
-            type="icon"
-            title="Shuffle to stack"
-            style={{ position: "absolute", left: -40, bottom: 0 }}
-            onPointerDown={() => move("shuffle")}
-          >
-            <IconStackMiddle size={24} />
-          </Button>
-          <Button
-            type="icon"
-            title="Flip"
-            style={{ position: "absolute", right: -40, bottom: 0 }}
-            onPointerDown={flip}
-          >
-            <FaReply size={16} />
-          </Button>
-        </>
-      )}
+      <Button
+        type="icon"
+        title="Put card on top of stack"
+        onPointerDown={() => move("top")}
+      >
+        <IconStackFront size={24} />
+      </Button>
+      <Button
+        type="icon"
+        title="Put card on bottom of stack"
+        onPointerDown={() => move("bottom")}
+      >
+        <IconStackBack size={24} />
+      </Button>
+      <Button
+        type="icon"
+        title="Shuffle to stack"
+        onPointerDown={() => move("shuffle")}
+      >
+        <IconStackMiddle size={24} />
+      </Button>
+      <Button type="icon" title="Flip" onPointerDown={flip}>
+        <FaReply size={16} />
+      </Button>
     </div>
   );
-});
-
-export const rpgCardShapeProps: ShapeProps<ICardShape> = {
-  w: T.number,
-  h: T.number,
-  owner: T.string,
-  bkgUrl: T.string,
-  url: T.string,
-  private: T.boolean,
-  flipped: T.boolean,
-  stack: T.any,
-  aid: T.string,
 };
 
-export class CardShapeUtil extends BaseBoxShapeUtil<ICardShape> {
-  static override type = "card" as const;
-  static override props = rpgCardShapeProps;
+export class RpgCardShapeUtil extends CustomShapeUtil<RpgCardShape> {
+  static override type = "rpg-card" as const;
+  static override props = shapeProps;
+  override actionsCount = 4;
 
-  override canResize = (_shape: ICardShape) => true;
-  override canEditInReadOnly = () => false;
-  override canEdit: TLShapeUtilFlag<ICardShape> = () => true;
-
-  getDefaultProps(): ICardShape["props"] {
-    return {
-      w: 40,
-      h: 40,
-      owner: "",
-      bkgUrl: "",
-      private: false,
-      url: "",
-      flipped: false,
-      stack: undefined,
-      aid: "",
-    };
-  }
-
-  getGeometry(shape: ICardShape) {
-    return new Rectangle2d({
-      width: shape.props.w,
-      height: shape.props.h,
-      isFilled: true,
+  override getDefaultProps(): RpgCardShape["props"] {
+    const theme = getDefaultColorTheme({
+      isDarkMode: this.editor.user.getIsDarkMode(),
     });
-  }
-
-  component(shape: ICardShape) {
-    const bounds = this.editor.getShapeGeometry(shape).bounds;
-    return <CardComponent bounds={bounds} shape={shape} key={shape.id} />;
-  }
-
-  indicator(shape: ICardShape) {
-    return <rect width={shape.props.w} height={shape.props.h} />;
-  }
-
-  override onResize: TLOnResizeHandler<ICardStackShape> = (shape, info) => {
-    return resizeBox(shape, info);
-  };
-
-  override onBeforeCreate: TLOnBeforeCreateHandler<ICardShape> = (next) => {
     return {
-      ...next,
-      props: { ...next.props, owner: this.editor.user.getId() },
+      w: 150,
+      h: 150,
+      _bkgUrl: "",
+      _flipped: false,
+      _stack: undefined,
+      _url: "",
+      _aid: "",
     };
-  };
+  }
+
+  override settingsComponent(shape: RpgCardShape): React.JSX.Element | null {
+    return null;
+  }
+
+  override mainComponent(shape: RpgCardShape): React.JSX.Element | null {
+    return <RpgCardMain shape={shape} />;
+  }
+
+  override actionComponent(shape: RpgCardShape): React.JSX.Element | null {
+    return <RpgCardActions shape={shape} />;
+  }
 }

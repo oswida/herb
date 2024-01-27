@@ -34,7 +34,7 @@ export class RpgClockShapeTool extends BaseBoxShapeTool {
   static override initial = "idle";
 }
 
-export const shapeProps: ShapeProps<RpgClockShape> = {
+const shapeProps: ShapeProps<RpgClockShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
@@ -166,15 +166,15 @@ export class RpgClockShapeUtil extends CustomShapeUtil<RpgClockShape> {
     };
   }
 
-  override settingsComponent(shape: RpgClockShape): React.JSX.Element {
+  override settingsComponent(shape: RpgClockShape): React.JSX.Element | null {
     return <RpgClockSettings shape={shape} />;
   }
 
-  override mainComponent(shape: RpgClockShape): React.JSX.Element {
+  override mainComponent(shape: RpgClockShape): React.JSX.Element | null {
     return <RpgClockMain shape={shape} />;
   }
 
-  override actionComponent(shape: RpgClockShape): React.JSX.Element {
+  override actionComponent(shape: RpgClockShape): React.JSX.Element | null {
     return <RpgClockActions shape={shape} />;
   }
 }

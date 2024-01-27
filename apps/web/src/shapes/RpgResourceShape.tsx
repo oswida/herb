@@ -53,7 +53,7 @@ export class RpgResourceShapeTool extends BaseBoxShapeTool {
   static override initial = "idle";
 }
 
-export const shapeProps: ShapeProps<RpgResourceShape> = {
+const shapeProps: ShapeProps<RpgResourceShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
@@ -247,15 +247,17 @@ export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
     };
   }
 
-  override settingsComponent(shape: RpgResourceShape): React.JSX.Element {
+  override settingsComponent(
+    shape: RpgResourceShape
+  ): React.JSX.Element | null {
     return <RpgResourceSettings shape={shape} />;
   }
 
-  override mainComponent(shape: RpgResourceShape): React.JSX.Element {
+  override mainComponent(shape: RpgResourceShape): React.JSX.Element | null {
     return <RpgResourceMain shape={shape} />;
   }
 
-  override actionComponent(shape: RpgResourceShape): React.JSX.Element {
+  override actionComponent(shape: RpgResourceShape): React.JSX.Element | null {
     return <RpgResourceActions shape={shape} />;
   }
 }

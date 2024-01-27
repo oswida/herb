@@ -26,11 +26,10 @@ import {
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
 import {
-  CardStackShapeTool,
-  CardStackShapeUtil,
-  MarkdownShapeUtil,
   RpgAttrShapeTool,
   RpgAttrShapeUtil,
+  RpgCardStackShapeTool,
+  RpgCardStackShapeUtil,
 } from "../../shapes";
 import { drawBoardViewRoottyle } from "./style.css";
 import { MainUI } from "./MainUi";
@@ -42,11 +41,11 @@ import {
   DiceRollerShapeTool,
   DiceRollerShapeUtil,
 } from "../../shapes/DiceRollerShape";
-import { DiceShapeUtil } from "../../shapes/DiceShape";
 import { UserNotAlowed } from "./UserNotAllowed";
 import { appPanelStyle } from "../../common";
-import { CardShapeUtil } from "../../shapes/CardShape";
 import { CustomSettings } from "../../component/CustomSettings";
+import { RpgDiceShapeUtil } from "../../shapes/DiceShape";
+import { RpgCardShapeUtil } from "../../shapes/CardShape";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -59,12 +58,11 @@ const CREATOR_URL = `${window.location.protocol}//${window.location.hostname}:${
 const customShapeUtils = [
   PdfShapeUtil,
   RpgClockShapeUtil,
-  MarkdownShapeUtil,
   RpgResourceShapeUtil,
   DiceRollerShapeUtil,
-  DiceShapeUtil,
-  CardStackShapeUtil,
-  CardShapeUtil,
+  RpgDiceShapeUtil,
+  RpgCardStackShapeUtil,
+  RpgCardShapeUtil,
   RpgAttrShapeUtil,
 ];
 
@@ -72,7 +70,7 @@ const customTools = [
   RpgClockShapeTool,
   RpgResourceShapeTool,
   DiceRollerShapeTool,
-  CardStackShapeTool,
+  RpgCardStackShapeTool,
   RpgAttrShapeTool,
 ];
 

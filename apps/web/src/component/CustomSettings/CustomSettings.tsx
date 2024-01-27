@@ -155,7 +155,7 @@ export const CustomSettings = () => {
     return util.settingsComponent(shape);
   }, [shape]);
 
-  if (!visible) return null;
+  if (!visible || !component) return null;
 
   return (
     <div

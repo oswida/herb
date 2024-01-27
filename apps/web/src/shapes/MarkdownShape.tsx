@@ -38,7 +38,7 @@ export class MarkdownShapeTool extends BaseBoxShapeTool {
   static override initial = "idle";
 }
 
-export const shapeProps: ShapeProps<MarkdownShape> = {
+const shapeProps: ShapeProps<MarkdownShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
@@ -216,15 +216,15 @@ export class MarkdownShapeUtil extends CustomShapeUtil<MarkdownShape> {
     };
   }
 
-  override settingsComponent(shape: MarkdownShape): React.JSX.Element {
+  override settingsComponent(shape: MarkdownShape): React.JSX.Element | null {
     return <MarkdownSettings shape={shape} />;
   }
 
-  override mainComponent(shape: MarkdownShape): React.JSX.Element {
+  override mainComponent(shape: MarkdownShape): React.JSX.Element | null {
     return <MarkdownMain shape={shape} />;
   }
 
-  override actionComponent(shape: MarkdownShape): React.JSX.Element {
+  override actionComponent(shape: MarkdownShape): React.JSX.Element | null {
     return <MarkdownActions shape={shape} />;
   }
 }

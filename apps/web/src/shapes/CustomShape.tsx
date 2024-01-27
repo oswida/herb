@@ -32,7 +32,7 @@ export class CustomShapeTool extends BaseBoxShapeTool {
 
 type BaseCustomProps = {
   shape: TLBaseShape<any, any>;
-  actions: (shape: any) => React.JSX.Element;
+  actions: (shape: any) => React.JSX.Element | null;
   editor: Editor;
 } & ComponentProps<"div">;
 
@@ -60,7 +60,7 @@ export const BaseCustomMain = track(
   }
 );
 
-export const shapeProps: ShapeProps<ICustomShape> = {
+const shapeProps: ShapeProps<ICustomShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
@@ -87,9 +87,9 @@ export abstract class CustomShapeUtil<
     };
   }
 
-  abstract mainComponent(shape: T): React.JSX.Element;
-  abstract actionComponent(shape: T): React.JSX.Element;
-  abstract settingsComponent(shape: T): React.JSX.Element;
+  abstract mainComponent(shape: T): React.JSX.Element | null;
+  abstract actionComponent(shape: T): React.JSX.Element | null;
+  abstract settingsComponent(shape: T): React.JSX.Element | null;
 
   getGeometry(shape: T) {
     return new Rectangle2d({
