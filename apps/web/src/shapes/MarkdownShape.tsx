@@ -29,6 +29,7 @@ export type MarkdownShape = TLBaseShape<
     bkg: string;
     url: string | undefined;
     _currentUrl: string | undefined;
+    owner: string;
   }
 >;
 
@@ -46,6 +47,7 @@ const shapeProps: ShapeProps<MarkdownShape> = {
   bkg: T.string,
   url: T.string,
   _currentUrl: T.string,
+  owner: T.string,
 };
 
 const MarkdownSettings = track(({ shape }: { shape: MarkdownShape }) => {
@@ -213,6 +215,7 @@ export class MarkdownShapeUtil extends CustomShapeUtil<MarkdownShape> {
       bkg: theme.background,
       url: "",
       _currentUrl: "",
+      owner: "",
     };
   }
 
@@ -228,15 +231,3 @@ export class MarkdownShapeUtil extends CustomShapeUtil<MarkdownShape> {
     return <MarkdownActions shape={shape} />;
   }
 }
-
-//   override onResize: TLOnResizeHandler<IMarkdownShape> = (shape, info) => {
-//     return resizeBox(shape, info);
-//   };
-
-//   override onBeforeCreate: TLOnBeforeCreateHandler<IMarkdownShape> = (next) => {
-//     return {
-//       ...next,
-//       props: { ...next.props, owner: this.editor.user.getId() },
-//     };
-//   };
-// }

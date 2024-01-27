@@ -34,6 +34,7 @@ export type RpgDiceRollerShape = TLBaseShape<
     label: string;
     color: string;
     background: string;
+    owner: string;
     _pool: Record<string, number>;
     _roll: Record<string, RollValue[]>;
     numericSix: boolean;
@@ -50,6 +51,7 @@ const shapeProps: ShapeProps<RpgDiceRollerShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
+  owner: T.string,
   color: T.string,
   background: T.string,
   _pool: T.dict(T.string, T.number),
@@ -276,6 +278,7 @@ export class RpgDiceRollerShapeUtil extends CustomShapeUtil<RpgDiceRollerShape> 
       w: 150,
       h: 150,
       label: "",
+      owner: "",
       color: theme.text,
       background: theme.background,
       _pool: {},

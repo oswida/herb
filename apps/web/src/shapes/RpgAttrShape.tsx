@@ -24,6 +24,7 @@ export type RpgAttrShape = TLBaseShape<
     dice: string;
     color: string;
     value: number;
+    owner: string;
   }
 >;
 
@@ -40,6 +41,7 @@ const shapeProps: ShapeProps<RpgAttrShape> = {
   dice: T.string,
   color: T.string,
   value: T.number,
+  owner: T.string,
 };
 
 const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
@@ -167,6 +169,7 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       dice: "",
       color: theme.text,
       value: 0,
+      owner: ""
     };
   }
 

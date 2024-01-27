@@ -40,6 +40,7 @@ export type RpgResourceShape = TLBaseShape<
     w: number;
     h: number;
     label: string;
+    owner: string;
     color: string;
     style: string;
     max: number;
@@ -57,6 +58,7 @@ const shapeProps: ShapeProps<RpgResourceShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
+  owner: T.string,
   color: T.string,
   _value: T.number,
   max: T.number,
@@ -240,6 +242,7 @@ export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
       w: 150,
       h: 150,
       label: "",
+      owner: "",
       color: theme.text,
       _value: 0,
       max: 5,

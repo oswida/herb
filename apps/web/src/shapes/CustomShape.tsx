@@ -6,6 +6,7 @@ import {
   ShapeProps,
   T,
   TLBaseShape,
+  TLOnBeforeCreateHandler,
   TLResizeInfo,
   TLShapeUtilFlag,
   resizeBox,
@@ -20,6 +21,7 @@ export type ICustomShape = TLBaseShape<
     w: number;
     h: number;
     label: string;
+    owner: string;
     // your props
   }
 >;
@@ -64,6 +66,7 @@ const shapeProps: ShapeProps<ICustomShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
+  owner: T.string,
 };
 
 export abstract class CustomShapeUtil<
@@ -84,6 +87,7 @@ export abstract class CustomShapeUtil<
       w: 150,
       h: 150,
       label: "",
+      owner: "",
     };
   }
 
@@ -130,5 +134,13 @@ export abstract class CustomShapeUtil<
     )
       return;
     return resizeBox(shape, info);
+  };
+
+  override onBeforeCreate: TLOnBeforeCreateHandler<T> = (next) => {
+    if (!Object.hasOwn(next, "owner")) return next;
+    return {
+      ...next,
+      props: { ...next.props, owner: this.editor.user.getId() },
+    };
   };
 }

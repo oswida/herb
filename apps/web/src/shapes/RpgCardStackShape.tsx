@@ -33,6 +33,7 @@ export type RpgCardStackShape = TLBaseShape<
     h: number;
     label: string;
     color: string;
+    owner: string;
     _cardBack: string;
     _cardBackUrl: string;
     _pool: AssetDesc[];
@@ -52,6 +53,7 @@ const shapeProps: ShapeProps<RpgCardStackShape> = {
   h: T.number,
   label: T.string,
   color: T.string,
+  owner: T.string,
   _cardBack: T.string,
   _cardBackUrl: T.string,
   _pool: T.arrayOf<AssetDesc>(T.any),
@@ -275,6 +277,7 @@ export class RpgCardStackShapeUtil extends CustomShapeUtil<RpgCardStackShape> {
       w: 150,
       h: 150,
       label: "",
+      owner: "",
       color: theme.text,
       _cardBack: "",
       _cardBackUrl: "",

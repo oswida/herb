@@ -22,6 +22,7 @@ export type RpgClockShape = TLBaseShape<
     w: number;
     h: number;
     label: string;
+    owner: string;
     color: string;
     parts: number;
     _count: number;
@@ -38,6 +39,7 @@ const shapeProps: ShapeProps<RpgClockShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
+  owner: T.string,
   color: T.string,
   parts: T.number,
   _count: T.number,
@@ -160,6 +162,7 @@ export class RpgClockShapeUtil extends CustomShapeUtil<RpgClockShape> {
       w: 150,
       h: 150,
       label: "",
+      owner: "",
       color: theme.text,
       _count: 6,
       parts: 6,
