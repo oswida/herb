@@ -45,6 +45,7 @@ export type RpgResourceShape = TLBaseShape<
     style: string;
     max: number;
     _value: number;
+    revActionColor: boolean;
   }
 >;
 
@@ -63,6 +64,7 @@ const shapeProps: ShapeProps<RpgResourceShape> = {
   _value: T.number,
   max: T.number,
   style: T.string,
+  revActionColor: T.boolean,
 };
 
 const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
@@ -72,6 +74,12 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
       style={{ padding: "5px", gap: "10px" }}
     >
       <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField
+        shape={shape}
+        field="revActionColor"
+        title="Reverse action colors"
+        vtype="boolean"
+      />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField shape={shape} field="max" title="Maximum value" vtype="number" />
       <CsIconSelect
@@ -188,6 +196,9 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
 
 const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
   const editor = useEditor();
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.getIsDarkMode(),
+  });
 
   const mod = (value: number) => {
     let cnt = shape.props._value + value;
@@ -207,23 +218,23 @@ const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
   return (
     <div
       className={flexRowStyle({ justify: "space" })}
-      style={{ flexWrap: "nowrap", gap: "10px", flex: 1 }}
+      style={{
+        flexWrap: "nowrap",
+        gap: "10px",
+        flex: 1,
+      }}
     >
-      <Button
-        type="icon"
-        title="Decrease"
-        onPointerDown={() => mod(-1)}
-        style={{ minHeight: "16px", minWidth: "16px" }}
-      >
-        <FaMinusCircle size={16} />
+      <Button type="icon" title="Decrease" onPointerDown={() => mod(-1)}>
+        <FaMinusCircle
+          size={16}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
-      <Button
-        type="icon"
-        title="Increase"
-        onPointerDown={() => mod(1)}
-        style={{ minHeight: "16px", minWidth: "16px" }}
-      >
-        <FaPlusCircle size={16} />
+      <Button type="icon" title="Increase" onPointerDown={() => mod(1)}>
+        <FaPlusCircle
+          size={16}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
     </div>
   );
@@ -247,6 +258,7 @@ export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
       _value: 0,
       max: 5,
       style: "square",
+      revActionColor: false,
     };
   }
 

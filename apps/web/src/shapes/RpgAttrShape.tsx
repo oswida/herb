@@ -33,6 +33,7 @@ export type RpgAttrShape = TLBaseShape<
     value: number;
     owner: string;
     font: string;
+    revActionColor: boolean;
   }
 >;
 
@@ -51,6 +52,7 @@ const shapeProps: ShapeProps<RpgAttrShape> = {
   value: T.number,
   owner: T.string,
   font: T.string,
+  revActionColor: T.boolean,
 };
 
 const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
@@ -60,6 +62,12 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
       style={{ padding: "5px", gap: "10px" }}
     >
       <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField
+        shape={shape}
+        field="revActionColor"
+        title="Reverse action colors"
+        vtype="boolean"
+      />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField
         shape={shape}
@@ -139,18 +147,32 @@ const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
       <Button type="icon" title="Decrease" onPointerDown={() => inc(-1)}>
-        <FaMinusCircle size={16} />
+        <FaMinusCircle
+          size={16}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
       <Button type="icon" title="Reset" onPointerDown={reset}>
-        <BiReset size={22} />
+        <BiReset
+          size={22}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
       {shape.props.dice !== "" && (
         <Button type="icon" title="Roll dice" onPointerDown={roll}>
-          <FaDice size={16} />
+          <FaDice
+            size={16}
+            fill={
+              shape.props.revActionColor ? theme.background : "currentColor"
+            }
+          />
         </Button>
       )}
       <Button type="icon" title="Increase" onPointerDown={() => inc(1)}>
-        <FaPlusCircle size={16} />
+        <FaPlusCircle
+          size={16}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
     </div>
   );
@@ -174,6 +196,7 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       value: 0,
       owner: "",
       font: "draw",
+      revActionColor: false,
     };
   }
 

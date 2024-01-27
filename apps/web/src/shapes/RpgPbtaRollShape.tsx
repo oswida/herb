@@ -34,6 +34,7 @@ export type RpgPbtaRollShape = TLBaseShape<
     rollInfo2: string;
     rollInfo3: string;
     font: string;
+    revActionColor: boolean;
   }
 >;
 
@@ -55,6 +56,7 @@ const shapeProps: ShapeProps<RpgPbtaRollShape> = {
   rollInfo2: T.string,
   rollInfo3: T.string,
   font: T.string,
+  revActionColor: T.boolean,
 };
 
 const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
@@ -88,6 +90,12 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       style={{ padding: "5px", gap: "10px" }}
     >
       <CsField shape={shape} field="color" title="Color" vtype="color" />
+      <CsField
+        shape={shape}
+        field="revActionColor"
+        title="Reverse action colors"
+        vtype="boolean"
+      />
       <CsField
         shape={shape}
         field="background"
@@ -198,7 +206,10 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
       style={{ flexWrap: "nowrap", gap: 15 }}
     >
       <Button type="icon" title="Roll" onPointerDown={roll}>
-        <FaDice size={16} />
+        <FaDice
+          size={16}
+          fill={shape.props.revActionColor ? theme.background : "currentColor"}
+        />
       </Button>
     </div>
   );
@@ -225,6 +236,7 @@ export class RpgPbtaRollShapeUtil extends CustomShapeUtil<RpgPbtaRollShape> {
       rollInfo2: "",
       rollInfo3: "",
       font: "draw",
+      revActionColor: false,
     };
   }
 
