@@ -69,9 +69,6 @@ const MarkdownSettings = track(({ shape }: { shape: MarkdownShape }) => {
     >
       <CsField shape={shape} field="color" title="Color" vtype="color" />
       <CsField shape={shape} field="bkg" title="Background" vtype="color" />
-      <Button type="normal" onPointerDown={setBkg}>
-        Set transparent background
-      </Button>
       <CsField shape={shape} field="label" title="Label" vtype="string" />
     </div>
   );

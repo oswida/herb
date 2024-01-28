@@ -11,7 +11,6 @@ import { useChat } from "../../hooks";
 import { DiceRollerSelector } from "./DiceRollerSelector";
 import React, { useEffect, useMemo, useRef } from "react";
 import { DiceRollerItem } from "./DiceRollerItem";
-import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import { rollNotationWithResults } from "../../common";
 
 export const DiceRollerPanel = track(({ isOwner }: { isOwner: boolean }) => {

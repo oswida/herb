@@ -1,11 +1,12 @@
 import React, { ComponentProps, useCallback, useMemo, useState } from "react";
 import { customSettingsRootStyle } from "./style.css";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   compactColors,
   customSettingsVisible,
   flexRowStyle,
   selectedCustomShape,
+  uiVisible,
 } from "../../common";
 import {
   Button,
@@ -13,6 +14,7 @@ import {
   Input,
   TLBaseShape,
   TLShapePartial,
+  getDefaultColorTheme,
   stopEventPropagation,
   track,
   useEditor,
@@ -38,6 +40,9 @@ export const CsField = ({
   const [value, setValue] = useState<string | number | boolean | null>(
     shape ? shape.props[field] : null
   );
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.getIsDarkMode(),
+  });
 
   const change = useCallback(
     (val: string | number | boolean | null) => {
@@ -80,13 +85,15 @@ export const CsField = ({
         />
       )}
       {vtype === "color" && (
-        <Compact
-          colors={compactColors}
-          data-color-mode={editor.user.getIsDarkMode() ? "dark" : undefined}
-          style={{ width: "180px" }}
-          color={value as string}
-          onChange={(color) => change(color.hex)}
-        />
+        <>
+          <Compact
+            colors={[...compactColors, theme.text, theme.background]}
+            data-color-mode={editor.user.getIsDarkMode() ? "dark" : undefined}
+            style={{ width: "180px" }}
+            color={value as string}
+            onChange={(color) => change(color.hex)}
+          />
+        </>
       )}
       {vtype === "boolean" && (
         <CheckItem checked={value as boolean} label={title} setValue={change} />
@@ -213,6 +220,7 @@ export const CustomSettings = () => {
   const visible = useAtomValue(customSettingsVisible);
   const shapeId = useAtomValue(selectedCustomShape);
   const editor = useEditor();
+  const uv = useAtomValue(uiVisible);
 
   const shape = useMemo(
     () => (shapeId ? editor.getShape(shapeId) : null),
@@ -237,7 +245,7 @@ export const CustomSettings = () => {
     );
   };
 
-  if (!visible) return null;
+  if (!visible || !uv) return null;
 
   return <Component />;
 };

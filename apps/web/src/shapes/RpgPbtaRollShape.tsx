@@ -12,7 +12,7 @@ import {
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useCallback, useMemo } from "react";
-import { flexColumnStyle, flexRowStyle } from "../common";
+import { diceRollerVisible, flexColumnStyle, flexRowStyle } from "../common";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
@@ -22,6 +22,7 @@ import {
   GiPerspectiveDiceThree,
   GiRuleBook,
 } from "react-icons/gi";
+import { useAtom } from "jotai";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -67,18 +68,6 @@ const shapeProps: ShapeProps<RpgPbtaRollShape> = {
 const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
   const editor = useEditor();
 
-  const setBkg = () => {
-    if (!shape) return;
-    const shapeUpdate: TLShapePartial<any> = {
-      id: shape.id,
-      type: shape.type,
-      props: {
-        background: "transparent",
-      },
-    };
-    editor.updateShapes([shapeUpdate]);
-  };
-
   const { addDialog } = useDefaultHelpers();
 
   const desc = useCallback(() => {
@@ -112,9 +101,6 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
         title="Background"
         vtype="color"
       />
-      <Button type="normal" onPointerDown={setBkg}>
-        Set transparent background
-      </Button>
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField
         shape={shape}
@@ -131,10 +117,6 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
 };
 
 const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
-  const fontWidth = useMemo(() => {
-    return shape.props.w / shape.props.label.length;
-  }, [shape.props.w, shape.props.label]);
-
   return (
     <div
       className={flexColumnStyle({})}
@@ -196,6 +178,7 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
   });
   const { rollSingleToChat } = useRoll(user, theme);
   const { addChatMessage } = useChat(editor);
+  const [visible, setVisible] = useAtom(diceRollerVisible);
 
   const findAttr = (label: string) => {
     return editor
@@ -228,6 +211,7 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
       msg.comment = `${shape.props.label}\n ${shape.props.rollInfo2}`;
     }
     addChatMessage(msg);
+    if (!visible) setVisible(true);
   };
 
   return (
