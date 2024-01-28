@@ -20,6 +20,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
   const [info1, setInfo1] = useState(shape.props.rollInfo1);
   const [info2, setInfo2] = useState(shape.props.rollInfo2);
   const [info3, setInfo3] = useState(shape.props.rollInfo3);
+  const [trigger, setTrigger] = useState(shape.props.triggerInfo);
   const theme = getDefaultColorTheme({
     isDarkMode: editor.user.getIsDarkMode(),
   });
@@ -32,6 +33,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
         rollInfo1: info1,
         rollInfo2: info2,
         rollInfo3: info3,
+        triggerInfo: trigger,
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -46,9 +48,19 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
+          <div>Trigger</div>
+          <textarea
+            rows={4}
+            cols={15}
+            className="tlui-embed-dialog__input"
+            placeholder="Enter description..."
+            defaultValue={trigger}
+            onChange={(e) => setTrigger(e.target.value)}
+            style={{ color: theme.text }}
+          />
           <div>Fail (6-)</div>
           <textarea
-            rows={5}
+            rows={4}
             cols={15}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
@@ -58,7 +70,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           />
           <div>Weak hit (7-9)</div>
           <textarea
-            rows={5}
+            rows={4}
             cols={15}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
@@ -68,7 +80,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           />
           <div>Strong hit (10+)</div>
           <textarea
-            rows={5}
+            rows={4}
             cols={15}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."

@@ -4,21 +4,22 @@ import {
   ShapeProps,
   T,
   TLBaseShape,
+  TLShapeId,
   TLShapePartial,
-  TLShapeUtilFlag,
   getDefaultColorTheme,
   getUserPreferences,
   track,
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useCallback } from "react";
-import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import { flexColumnStyle, flexRowStyle } from "../common";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
+import { flexColumnStyle, flexRowStyle, selectedCustomShape } from "../common";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
+import { GiDiceSixFacesThree } from "react-icons/gi";
+import { useAtomValue } from "jotai";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -33,6 +34,7 @@ export type RpgPbtaRollShape = TLBaseShape<
     rollInfo1: string;
     rollInfo2: string;
     rollInfo3: string;
+    triggerInfo: string;
     font: string;
     revActionColor: boolean;
   }
@@ -57,11 +59,14 @@ const shapeProps: ShapeProps<RpgPbtaRollShape> = {
   rollInfo3: T.string,
   font: T.string,
   revActionColor: T.boolean,
+  triggerInfo: T.string,
 };
 
-const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
+const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
   const editor = useEditor();
+
   const setBkg = () => {
+    if (!shape) return;
     const shapeUpdate: TLShapePartial<any> = {
       id: shape.id,
       type: shape.type,
@@ -75,6 +80,7 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
   const { addDialog } = useDefaultHelpers();
 
   const desc = useCallback(() => {
+    if (!shape) return;
     addDialog({
       id: "rpg-pbta-roll-desc",
       component: ({ onClose }) => <PbtaInfo onClose={onClose} shape={shape} />,
@@ -83,6 +89,8 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       },
     });
   }, [shape]);
+
+  if (!shape) return null;
 
   return (
     <div
@@ -118,10 +126,12 @@ const RpgPbtaRollSettings = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       </Button>
     </div>
   );
-});
+};
 
 const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
-  const editor = useEditor();
+  const lineH = useMemo(() => {
+    return shape.props.h / 6;
+  }, [shape.props.h, shape]);
 
   return (
     <div
@@ -138,7 +148,9 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       }}
     >
       <svg
-        height={shape.props.h - 20}
+        height={
+          shape.props.triggerInfo !== "" ? shape.props.h / 2 : shape.props.h
+        }
         width={shape.props.w - 20}
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -147,13 +159,24 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
           dominantBaseline="middle"
           x="50%"
           y="60%"
-          fontSize={shape.props.h - 20}
+          fontSize={shape.props.triggerInfo !== "" ? lineH * 1.5 : lineH * 3}
           fontFamily={`var(--tl-font-${shape.props.font})`}
           fill="currentColor"
         >
           {shape.props.label}
         </text>
       </svg>
+      {shape.props.triggerInfo !== "" && (
+        <div
+          style={{
+            fontFamily: `var(--tl-font-${shape.props.font})`,
+            wordWrap: "break-word",
+            overflow: "clip",
+          }}
+        >
+          {shape.props.triggerInfo}
+        </div>
+      )}
     </div>
   );
 });
@@ -206,8 +229,8 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
       style={{ flexWrap: "nowrap", gap: 15 }}
     >
       <Button type="icon" title="Roll" onPointerDown={roll}>
-        <FaDice
-          size={16}
+        <GiDiceSixFacesThree
+          size={20}
           fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
         />
       </Button>
@@ -237,6 +260,7 @@ export class RpgPbtaRollShapeUtil extends CustomShapeUtil<RpgPbtaRollShape> {
       rollInfo3: "",
       font: "draw",
       revActionColor: false,
+      triggerInfo: "",
     };
   }
 
