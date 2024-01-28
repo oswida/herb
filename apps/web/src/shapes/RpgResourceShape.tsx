@@ -190,7 +190,7 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
           <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
         ))}
       </div>
-      {shape.props.label}
+      {shape.props.label !== "" && <div>{shape.props.label}</div>}
     </div>
   );
 });
