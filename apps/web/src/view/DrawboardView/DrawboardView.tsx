@@ -143,8 +143,9 @@ export const DrawboardView = () => {
       setEd(editor);
       editor.addListener("update", () => {
         const shape = editor.getOnlySelectedShape();
+        setCustomPanelVisible(false);
+        setSelectedCustomShape(null);
         if (!shape) {
-          setCustomPanelVisible(false);
           setSelectedCustomShape(null);
           return;
         }

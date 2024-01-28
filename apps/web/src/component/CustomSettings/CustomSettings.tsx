@@ -14,6 +14,7 @@ import {
   TLBaseShape,
   TLShapePartial,
   stopEventPropagation,
+  track,
   useEditor,
 } from "@tldraw/tldraw";
 import { Compact } from "@uiw/react-color";
@@ -218,22 +219,25 @@ export const CustomSettings = () => {
     [shapeId]
   );
 
-  const component = useMemo(() => {
+  const Component = () => {
     if (!shape) return null;
     const util = editor.getShapeUtil(shape) as any;
-    return util.settingsComponent(shape);
-  }, [shape]);
+    const comp = util.settingsComponent(shape);
+    if (!comp) return comp;
 
-  if (!visible || !component) return null;
+    return (
+      <div
+        className={customSettingsRootStyle}
+        onWheelCapture={stopEventPropagation}
+        onPointerDown={stopEventPropagation}
+        onPointerUp={stopEventPropagation}
+      >
+        {comp}
+      </div>
+    );
+  };
 
-  return (
-    <div
-      className={customSettingsRootStyle}
-      onWheelCapture={stopEventPropagation}
-      onPointerDown={stopEventPropagation}
-      onPointerUp={stopEventPropagation}
-    >
-      {component}
-    </div>
-  );
+  if (!visible) return null;
+
+  return <Component />;
 };
