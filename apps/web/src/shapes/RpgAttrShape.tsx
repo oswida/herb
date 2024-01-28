@@ -12,15 +12,9 @@ import {
 import React from "react";
 import { CustomShapeUtil } from "./CustomShape";
 import { flexColumnStyle, flexRowStyle, updateShapeFields } from "../common";
-import {
-  FaDice,
-  FaMinusCircle,
-  FaPlusCircle,
-  FaReplyAll,
-} from "react-icons/fa";
+import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { useChat, useRoll } from "../hooks";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
-import { BiReset } from "react-icons/bi";
 import { actionButtonStyle } from "./styles.css";
 
 export type RpgAttrShape = TLBaseShape<
@@ -35,6 +29,7 @@ export type RpgAttrShape = TLBaseShape<
     owner: string;
     font: string;
     revActionColor: boolean;
+    actionsUp?: boolean;
   }
 >;
 
@@ -54,6 +49,7 @@ const shapeProps: ShapeProps<RpgAttrShape> = {
   owner: T.string,
   font: T.string,
   revActionColor: T.boolean,
+  actionsUp: T.optional(T.boolean),
 };
 
 const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
@@ -78,6 +74,12 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
       />
       <CsFontSelect shape={shape} title="Font" field="font" />
       <CsField shape={shape} field="value" title="Value" vtype="number" />
+      <CsField
+        shape={shape}
+        field="actionsUp"
+        title="Action at top"
+        vtype="boolean"
+      />
     </div>
   );
 });

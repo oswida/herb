@@ -17,7 +17,11 @@ import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
-import { GiDiceSixFacesThree } from "react-icons/gi";
+import {
+  GiDiceSixFacesThree,
+  GiPerspectiveDiceThree,
+  GiRuleBook,
+} from "react-icons/gi";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -145,37 +149,40 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         borderRadius: 10,
       }}
     >
-      <svg
-        height={
-          shape.props.triggerInfo !== "" ? shape.props.h / 3 : shape.props.h
-        }
-        width={shape.props.w - 14}
-        style={{ minHeight: fontWidth }}
-        xmlns="http://www.w3.org/2000/svg"
+      <div
+        style={{
+          width: "100%",
+          fontSize: "1.5rem",
+          textAlign: "center",
+          fontFamily: `var(--tl-font-${shape.props.font})`,
+        }}
       >
-        <text
-          textAnchor="middle"
-          dominantBaseline="middle"
-          x="50%"
-          y="50%"
-          fontSize={fontWidth}
-          fontFamily={`var(--tl-font-${shape.props.font})`}
-          fill="currentColor"
-        >
-          {shape.props.label}
-        </text>
-      </svg>
+        {shape.props.label}
+      </div>
+
       {shape.props.triggerInfo !== "" && (
-        <div
-          style={{
-            fontFamily: `var(--tl-font-${shape.props.font})`,
-            wordWrap: "break-word",
-            overflow: "hidden",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          {shape.props.triggerInfo}
-        </div>
+        <>
+          <div
+            style={{
+              width: "90%",
+              height: "1px",
+              backgroundColor: shape.props.color,
+            }}
+          ></div>
+          <div
+            style={{
+              fontFamily: `var(--tl-font-${shape.props.font})`,
+              wordWrap: "break-word",
+              overflow: "hidden",
+              whiteSpace: "pre-wrap",
+              width: "100%",
+              paddingLeft: 10,
+              paddingRight: 10,
+            }}
+          >
+            {shape.props.triggerInfo}
+          </div>
+        </>
       )}
     </div>
   );

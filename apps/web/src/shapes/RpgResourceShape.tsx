@@ -46,6 +46,7 @@ export type RpgResourceShape = TLBaseShape<
     max: number;
     _value: number;
     revActionColor: boolean;
+    actionsUp?: boolean;
   }
 >;
 
@@ -65,6 +66,7 @@ const shapeProps: ShapeProps<RpgResourceShape> = {
   max: T.number,
   style: T.string,
   revActionColor: T.boolean,
+  actionsUp: T.boolean,
 };
 
 const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
@@ -98,6 +100,12 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
         }}
       />
       <CsField shape={shape} field="_value" title="Value" vtype="number" />
+      <CsField
+        shape={shape}
+        field="actionsUp"
+        title="Action at top"
+        vtype="boolean"
+      />
     </div>
   );
 });
@@ -257,6 +265,7 @@ export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
       max: 5,
       style: "square",
       revActionColor: false,
+      actionsUp: false,
     };
   }
 

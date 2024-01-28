@@ -47,11 +47,11 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
         <Dialog.CloseButton />
       </Dialog.Header>
       <Dialog.Body>
-        <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
+        <div className={flexColumnStyle({})} style={{ minWidth: 350 }}>
           <div>Trigger</div>
           <textarea
             rows={4}
-            cols={20}
+            cols={30}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
             defaultValue={trigger}

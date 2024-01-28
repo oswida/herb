@@ -22,6 +22,7 @@ export type ICustomShape = TLBaseShape<
     h: number;
     label: string;
     owner: string;
+    actionsUp?: boolean;
     // your props
   }
 >;
@@ -55,8 +56,13 @@ export const BaseCustomMain = track(
         }}
         {...rest}
       >
+        {shape.props.actionsUp && (
+          <div style={{ visibility: !isSelected ? "hidden" : undefined }}>
+            {actions(shape)}
+          </div>
+        )}
         {children}
-        {isSelected && actions(shape)}
+        {isSelected && !shape.props.actionsUp && actions(shape)}
       </div>
     );
   }
@@ -67,6 +73,7 @@ const shapeProps: ShapeProps<ICustomShape> = {
   h: T.number,
   label: T.string,
   owner: T.string,
+  actionsUp: T.boolean,
 };
 
 export abstract class CustomShapeUtil<
