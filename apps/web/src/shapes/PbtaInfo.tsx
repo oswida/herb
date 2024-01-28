@@ -51,7 +51,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           <div>Trigger</div>
           <textarea
             rows={4}
-            cols={15}
+            cols={20}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
             defaultValue={trigger}
@@ -61,7 +61,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           <div>Fail (6-)</div>
           <textarea
             rows={4}
-            cols={15}
+            cols={20}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
             defaultValue={info1}
@@ -71,7 +71,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           <div>Weak hit (7-9)</div>
           <textarea
             rows={4}
-            cols={15}
+            cols={20}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
             defaultValue={info2}
@@ -81,7 +81,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
           <div>Strong hit (10+)</div>
           <textarea
             rows={4}
-            cols={15}
+            cols={20}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
             defaultValue={info3}

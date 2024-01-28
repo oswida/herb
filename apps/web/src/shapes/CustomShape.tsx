@@ -81,6 +81,8 @@ export abstract class CustomShapeUtil<
   override canResize = (_shape: T) => true; // override if needed
   override canEditInReadOnly = () => false;
   override canEdit: TLShapeUtilFlag<T> = () => true; // override if needed
+  override canBind = () => true;
+  override canSnap: TLShapeUtilFlag<T> = () => true;
 
   // override
   getDefaultProps(): T["props"] {

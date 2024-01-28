@@ -127,9 +127,9 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
 };
 
 const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
-  const lineH = useMemo(() => {
-    return shape.props.h / 6;
-  }, [shape.props.h, shape]);
+  const fontWidth = useMemo(() => {
+    return shape.props.w / shape.props.label.length;
+  }, [shape.props.w, shape.props.label]);
 
   return (
     <div
@@ -141,23 +141,24 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         width: shape.props.w,
         height: shape.props.h,
         alignItems: "center",
-        padding: 10,
+        padding: 7,
         borderRadius: 10,
       }}
     >
       <svg
         height={
-          shape.props.triggerInfo !== "" ? shape.props.h / 2 : shape.props.h
+          shape.props.triggerInfo !== "" ? shape.props.h / 3 : shape.props.h
         }
-        width={shape.props.w - 20}
+        width={shape.props.w - 14}
+        style={{ minHeight: fontWidth }}
         xmlns="http://www.w3.org/2000/svg"
       >
         <text
           textAnchor="middle"
           dominantBaseline="middle"
           x="50%"
-          y="60%"
-          fontSize={shape.props.triggerInfo !== "" ? lineH * 1.5 : lineH * 3}
+          y="50%"
+          fontSize={fontWidth}
           fontFamily={`var(--tl-font-${shape.props.font})`}
           fill="currentColor"
         >
@@ -169,7 +170,8 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
           style={{
             fontFamily: `var(--tl-font-${shape.props.font})`,
             wordWrap: "break-word",
-            overflow: "clip",
+            overflow: "hidden",
+            whiteSpace: "pre-wrap",
           }}
         >
           {shape.props.triggerInfo}
@@ -212,11 +214,11 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
     const total = msg.roll?.total;
     if (!total) return;
     if (total <= 6) {
-      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo1}`;
+      msg.comment = `${shape.props.label}\n ${shape.props.rollInfo1}`;
     } else if (total >= 10) {
-      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo3}`;
+      msg.comment = `${shape.props.label}\n ${shape.props.rollInfo3}`;
     } else {
-      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo2}`;
+      msg.comment = `${shape.props.label}\n ${shape.props.rollInfo2}`;
     }
     addChatMessage(msg);
   };
