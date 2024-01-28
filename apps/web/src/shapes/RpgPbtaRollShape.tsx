@@ -4,7 +4,6 @@ import {
   ShapeProps,
   T,
   TLBaseShape,
-  TLShapeId,
   TLShapePartial,
   getDefaultColorTheme,
   getUserPreferences,
@@ -12,14 +11,13 @@ import {
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { memo, useCallback, useEffect, useMemo } from "react";
-import { flexColumnStyle, flexRowStyle, selectedCustomShape } from "../common";
+import React, { useCallback, useMemo } from "react";
+import { flexColumnStyle, flexRowStyle } from "../common";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
 import { GiDiceSixFacesThree } from "react-icons/gi";
-import { useAtomValue } from "jotai";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -214,11 +212,11 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
     const total = msg.roll?.total;
     if (!total) return;
     if (total <= 6) {
-      msg.comment = `${shape.props.label}: ${shape.props.rollInfo1}`;
+      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo1}`;
     } else if (total >= 10) {
-      msg.comment = `${shape.props.label}: ${shape.props.rollInfo3}`;
+      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo3}`;
     } else {
-      msg.comment = `${shape.props.label}: ${shape.props.rollInfo2}`;
+      msg.comment = `${shape.props.label}:\n ${shape.props.rollInfo2}`;
     }
     addChatMessage(msg);
   };

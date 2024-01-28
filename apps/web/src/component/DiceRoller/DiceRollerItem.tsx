@@ -68,6 +68,7 @@ export const DiceRollerItem = (props: Props) => {
               color: "var(--color-grid)",
               fontSize: "12px",
               marginTop: "5px",
+              whiteSpace: "pre-wrap",
             }}
           >
             {props.item.comment}

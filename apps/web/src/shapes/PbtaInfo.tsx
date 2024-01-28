@@ -56,7 +56,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             placeholder="Enter description..."
             defaultValue={trigger}
             onChange={(e) => setTrigger(e.target.value)}
-            style={{ color: theme.text }}
+            style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
           <div>Fail (6-)</div>
           <textarea
@@ -66,7 +66,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             placeholder="Enter description..."
             defaultValue={info1}
             onChange={(e) => setInfo1(e.target.value)}
-            style={{ color: theme.text }}
+            style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
           <div>Weak hit (7-9)</div>
           <textarea
@@ -76,7 +76,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             placeholder="Enter description..."
             defaultValue={info2}
             onChange={(e) => setInfo2(e.target.value)}
-            style={{ color: theme.text }}
+            style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
           <div>Strong hit (10+)</div>
           <textarea
@@ -86,7 +86,7 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             placeholder="Enter description..."
             defaultValue={info3}
             onChange={(e) => setInfo3(e.target.value)}
-            style={{ color: theme.text }}
+            style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
         </div>
       </Dialog.Body>
