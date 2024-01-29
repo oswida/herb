@@ -11,18 +11,15 @@ import {
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { diceRollerVisible, flexColumnStyle, flexRowStyle } from "../common";
 import { CsField, CsFontSelect } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
-import {
-  GiDiceSixFacesThree,
-  GiPerspectiveDiceThree,
-  GiRuleBook,
-} from "react-icons/gi";
 import { useAtom } from "jotai";
+import { FaDice } from "react-icons/fa";
+import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -32,14 +29,16 @@ export type RpgPbtaRollShape = TLBaseShape<
     label: string;
     owner: string;
     color: string;
+    font: string;
     background: string;
+    revActionColor: boolean;
     modifierLabel: string;
     rollInfo1: string;
     rollInfo2: string;
     rollInfo3: string;
     triggerInfo: string;
-    font: string;
-    revActionColor: boolean;
+    hasOwnModifier?: boolean;
+    ownModifierValue?: number;
   }
 >;
 
@@ -63,12 +62,16 @@ const shapeProps: ShapeProps<RpgPbtaRollShape> = {
   font: T.string,
   revActionColor: T.boolean,
   triggerInfo: T.string,
+  hasOwnModifier: T.optional(T.boolean),
+  ownModifierValue: T.optional(T.number),
 };
 
 const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
   const editor = useEditor();
-
   const { addDialog } = useDefaultHelpers();
+  const theme = getDefaultColorTheme({
+    isDarkMode: editor.user.getIsDarkMode(),
+  });
 
   const desc = useCallback(() => {
     if (!shape) return;
@@ -81,6 +84,18 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
     });
   }, [shape]);
 
+  const resetColors = useCallback(() => {
+    const shapeUpdate: TLShapePartial<any> = {
+      id: shape.id,
+      type: shape.type,
+      props: {
+        color: "var(--color-text)",
+        background: "var(--color-background)",
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  }, [shape]);
+
   if (!shape) return null;
 
   return (
@@ -91,22 +106,25 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
       <CsField shape={shape} field="color" title="Color" vtype="color" />
       <CsField
         shape={shape}
-        field="revActionColor"
-        title="Colorize actions"
-        vtype="boolean"
-      />
-      <CsField
-        shape={shape}
         field="background"
         title="Background"
         vtype="color"
       />
+      <Button type="normal" onPointerDown={resetColors}>
+        Reset colors
+      </Button>
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField
         shape={shape}
         field="modifierLabel"
         title="Attribute label"
         vtype="string"
+      />
+      <CsField
+        shape={shape}
+        field="hasOwnModifier"
+        title="Has own modifier"
+        vtype="boolean"
       />
       <CsFontSelect field="font" title="Font" shape={shape} />
       <Button type="normal" onPointerDown={desc}>
@@ -117,60 +135,6 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
 };
 
 const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
-  return (
-    <div
-      className={flexColumnStyle({})}
-      style={{
-        justifyContent: "center",
-        color: shape.props.color,
-        backgroundColor: shape.props.background,
-        width: shape.props.w,
-        height: shape.props.h,
-        alignItems: "center",
-        padding: 7,
-        borderRadius: 10,
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          fontSize: "1.5rem",
-          textAlign: "center",
-          fontFamily: `var(--tl-font-${shape.props.font})`,
-        }}
-      >
-        {shape.props.label}
-      </div>
-
-      {shape.props.triggerInfo !== "" && (
-        <>
-          <div
-            style={{
-              width: "90%",
-              height: "1px",
-              backgroundColor: shape.props.color,
-            }}
-          ></div>
-          <div
-            style={{
-              fontFamily: `var(--tl-font-${shape.props.font})`,
-              wordWrap: "break-word",
-              overflow: "hidden",
-              whiteSpace: "pre-wrap",
-              width: "100%",
-              paddingLeft: 10,
-              paddingRight: 10,
-            }}
-          >
-            {shape.props.triggerInfo}
-          </div>
-        </>
-      )}
-    </div>
-  );
-});
-
-const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
   const editor = useEditor();
   const user = getUserPreferences();
   const theme = getDefaultColorTheme({
@@ -193,12 +157,21 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
 
   const roll = () => {
     let mod = "";
+    let v = 0;
     if (shape.props.modifierLabel !== "") {
       const attr = findAttr(shape.props.modifierLabel);
       if (attr && (attr.props as any).value) {
-        const v = (attr.props as any).value as number;
-        mod = v >= 0 ? `+${v}` : `${v}`;
+        v = (attr.props as any).value as number;
       }
+    }
+    if (
+      shape.props.hasOwnModifier &&
+      shape.props.ownModifierValue !== undefined
+    ) {
+      v = v + shape.props.ownModifierValue;
+    }
+    if (v !== 0) {
+      mod = v > 0 ? `+${v}` : `${v}`;
     }
     const msg = rollSingleToChat(`2d6${mod}`, false, shape.props.label);
     const total = msg.roll?.total;
@@ -214,25 +187,127 @@ const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
     if (!visible) setVisible(true);
   };
 
+  const mod = useCallback(
+    (val: number) => {
+      const shapeUpdate: TLShapePartial<any> = {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          ownModifierValue:
+            shape.props.ownModifierValue !== undefined
+              ? shape.props.ownModifierValue + val
+              : val,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+    },
+    [shape]
+  );
+
   return (
     <div
-      className={flexRowStyle({ justify: "center" })}
-      style={{ flexWrap: "nowrap", gap: 15 }}
+      className={flexColumnStyle({})}
+      style={{
+        justifyContent: "center",
+        color: shape.props.color,
+        backgroundColor: shape.props.background,
+        width: shape.props.w,
+        height: shape.props.h,
+        alignItems: "center",
+        padding: 7,
+        borderRadius: 10,
+        border: `solid 1px ${shape.props.color}`,
+      }}
     >
-      <Button type="icon" title="Roll" onPointerDown={roll}>
-        <GiDiceSixFacesThree
-          size={20}
-          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
-        />
-      </Button>
+      <div
+        style={{
+          width: "100%",
+          fontSize: "1.5rem",
+          textAlign: "center",
+          fontFamily: `var(--tl-font-${shape.props.font})`,
+        }}
+      >
+        {shape.props.label}
+      </div>
+
+      {shape.props.triggerInfo !== "" && (
+        <>
+          <div
+            style={{
+              width: "90%",
+              height: "1px",
+              backgroundColor: shape.props.color,
+            }}
+          />
+          <div
+            style={{
+              fontFamily: `var(--tl-font-${shape.props.font})`,
+              fontSize: "0.9rem",
+              wordWrap: "break-word",
+              overflow: "hidden",
+              whiteSpace: "pre-wrap",
+              width: "100%",
+              paddingLeft: 10,
+              paddingRight: 10,
+            }}
+          >
+            {shape.props.triggerInfo}
+          </div>
+        </>
+      )}
+
+      <div
+        style={{
+          width: "90%",
+          height: "1px",
+          backgroundColor: shape.props.color,
+        }}
+      />
+      <div
+        className={flexRowStyle({ justify: "space" })}
+        style={{ flex: 1, width: "90%" }}
+      >
+        <div
+          className={flexRowStyle({ justify: "start" })}
+          style={{ flex: 1, flexGrow: 1, gap: 5 }}
+        >
+          {shape.props.hasOwnModifier === true && (
+            <>
+              <Button type="icon" onPointerDown={() => mod(-1)}>
+                <BiMinusCircle fill={shape.props.color} size={20} />
+              </Button>
+              <div
+                style={{
+                  fontFamily: `var(--tl-font-${shape.props.font})`,
+                  fontSize: "2rem",
+                }}
+              >
+                {shape.props.ownModifierValue !== undefined
+                  ? shape.props.ownModifierValue
+                  : 0}
+              </div>
+              <Button type="icon" onPointerDown={() => mod(1)}>
+                <BiPlusCircle fill={shape.props.color} size={20} />
+              </Button>
+            </>
+          )}
+        </div>
+        <Button type="icon" title="Roll" onPointerDown={roll}>
+          <FaDice size={32} fill={shape.props.color} />
+        </Button>
+      </div>
     </div>
   );
+});
+
+const RpgPbtaRollActions = ({ shape }: { shape: RpgPbtaRollShape }) => {
+  return null;
 };
 
 export class RpgPbtaRollShapeUtil extends CustomShapeUtil<RpgPbtaRollShape> {
   static override type = "rpg-pbta-roll" as const;
   static override props = shapeProps;
-  override actionsCount = 1;
+  override actionsHeight = 0;
 
   override getDefaultProps(): RpgPbtaRollShape["props"] {
     const theme = getDefaultColorTheme({
@@ -252,6 +327,8 @@ export class RpgPbtaRollShapeUtil extends CustomShapeUtil<RpgPbtaRollShape> {
       font: "draw",
       revActionColor: false,
       triggerInfo: "",
+      hasOwnModifier: false,
+      ownModifierValue: 0,
     };
   }
 

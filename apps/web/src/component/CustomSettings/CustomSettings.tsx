@@ -87,7 +87,11 @@ export const CsField = ({
       {vtype === "color" && (
         <>
           <Compact
-            colors={[...compactColors, theme.text, theme.background]}
+            colors={[
+              ...compactColors,
+              "var(--color-text)",
+              "var(--color-background)",
+            ]}
             data-color-mode={editor.user.getIsDarkMode() ? "dark" : undefined}
             style={{ width: "180px" }}
             color={value as string}
