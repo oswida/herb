@@ -78,12 +78,12 @@ const customTools = [
 
 const customIcons = {
   timer: "/icons/timer.svg",
-  "rpg-clock": "/icons/rpg-clock.svg",
+  "rpg-clock": "/icons/pie-chart.svg",
   "rpg-resource": "/icons/rpg-resource.svg",
-  "rpg-dice": "/icons/cubes.svg",
-  "rpg-cards": "/icons/cards.svg",
+  "rpg-dice": "/icons/dice-6.svg",
+  "rpg-cards": "/icons/card-ace.svg",
   "rpg-attr": "/icons/rpg-attr.svg",
-  "rpg-pbta-roll": "/icons/rule-book.svg",
+  "rpg-pbta-roll": "/icons/pbta-move.svg",
 };
 
 const customPrefix = "rpg";

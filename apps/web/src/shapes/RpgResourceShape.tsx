@@ -4,7 +4,7 @@ import {
   ShapeProps,
   T,
   TLBaseShape,
-  getDefaultColorTheme,
+  TLShapePartial,
   track,
   useEditor,
 } from "@tldraw/tldraw";
@@ -42,11 +42,10 @@ export type RpgResourceShape = TLBaseShape<
     label: string;
     owner: string;
     color: string;
+    background: string;
     style: string;
     max: number;
     _value: number;
-    revActionColor: boolean;
-    actionsUp?: boolean;
   }
 >;
 
@@ -62,14 +61,26 @@ const shapeProps: ShapeProps<RpgResourceShape> = {
   label: T.string,
   owner: T.string,
   color: T.string,
+  background: T.string,
   _value: T.number,
   max: T.number,
   style: T.string,
-  revActionColor: T.boolean,
-  actionsUp: T.boolean,
 };
 
 const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
+  const editor = useEditor();
+  const resetColors = useCallback(() => {
+    const shapeUpdate: TLShapePartial<any> = {
+      id: shape.id,
+      type: shape.type,
+      props: {
+        color: "var(--color-text)",
+        background: "var(--color-background)",
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  }, [shape]);
+
   return (
     <div
       className={flexColumnStyle({})}
@@ -78,10 +89,13 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
       <CsField shape={shape} field="color" title="Color" vtype="color" />
       <CsField
         shape={shape}
-        field="revActionColor"
-        title="Colorize actions"
-        vtype="boolean"
+        field="background"
+        title="Background"
+        vtype="color"
       />
+      <Button type="normal" onPointerDown={resetColors}>
+        Reset colors
+      </Button>
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField shape={shape} field="max" title="Maximum value" vtype="number" />
       <CsIconSelect
@@ -100,17 +114,12 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
         }}
       />
       <CsField shape={shape} field="_value" title="Value" vtype="number" />
-      <CsField
-        shape={shape}
-        field="actionsUp"
-        title="Action at top"
-        vtype="boolean"
-      />
     </div>
   );
 });
 
 const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
+  const editor = useEditor();
   const items = useMemo(() => {
     const retv: boolean[] = [];
     for (let i = 1; i <= shape.props.max; i++) {
@@ -121,7 +130,7 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
   }, [shape, shape.props._value]);
 
   const boxWidth = useMemo(() => {
-    let w = shape.props.w;
+    let w = shape.props.w - 80;
     return Math.max((w - 4 * (shape.props.max - 1)) / shape.props.max, 16);
   }, [shape.props.w]);
 
@@ -181,31 +190,6 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
     [shape.props.style, boxWidth, shape.props.color]
   );
 
-  return (
-    <div
-      className={flexColumnStyle({})}
-      style={{
-        justifyContent: "center",
-        color: shape.props.color,
-        alignItems: "center",
-      }}
-    >
-      <div
-        className={flexRowStyle({ justify: "center" })}
-        style={{ width: "100%", flexWrap: "nowrap", gap: 4 }}
-      >
-        {items.map((v, i) => (
-          <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
-        ))}
-      </div>
-      {shape.props.label !== "" && <div>{shape.props.label}</div>}
-    </div>
-  );
-});
-
-const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
-  const editor = useEditor();
-
   const mod = (value: number) => {
     let cnt = shape.props._value + value;
     if (cnt > shape.props.max) cnt = shape.props.max;
@@ -223,49 +207,53 @@ const RpgResourceActions = ({ shape }: { shape: RpgResourceShape }) => {
 
   return (
     <div
-      className={flexRowStyle({ justify: "space" })}
+      className={flexColumnStyle({})}
       style={{
-        flexWrap: "nowrap",
-        gap: "10px",
-        flex: 1,
+        justifyContent: "center",
+        color: shape.props.color,
+        background: shape.props.background,
+        alignItems: "center",
+        width: shape.props.w,
+        height: shape.props.h,
+        borderRadius: 10,
       }}
+      title={`${shape.props._value}/${shape.props.max}`}
     >
-      <Button type="icon" title="Decrease" onPointerDown={() => mod(-1)}>
-        <FaMinusCircle
-          size={16}
-          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
-        />
-      </Button>
-      <Button type="icon" title="Increase" onPointerDown={() => mod(1)}>
-        <FaPlusCircle
-          size={16}
-          fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
-        />
-      </Button>
+      <div
+        className={flexRowStyle({ justify: "center" })}
+        style={{ width: "100%", flexWrap: "nowrap", gap: 4 }}
+      >
+        <Button type="icon" onPointerDown={() => mod(-1)}>
+          <FaMinusCircle size={16} fill={shape.props.color} />
+        </Button>
+        {items.map((v, i) => (
+          <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
+        ))}
+        <Button type="icon" onPointerDown={() => mod(1)}>
+          <FaPlusCircle size={16} fill={shape.props.color} />
+        </Button>
+      </div>
+      {shape.props.label !== "" && <div>{shape.props.label}</div>}
     </div>
   );
-};
+});
 
 export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
   static override type = "rpg-resource" as const;
   static override props = shapeProps;
-  override actionsCount = 3;
+  override actionsCount = 0;
 
   override getDefaultProps(): RpgResourceShape["props"] {
-    const theme = getDefaultColorTheme({
-      isDarkMode: this.editor.user.getIsDarkMode(),
-    });
     return {
-      w: 150,
-      h: 150,
+      w: 200,
+      h: 50,
       label: "",
       owner: "",
-      color: theme.text,
+      color: "var(--color-text)",
+      background: "var(--color-background)",
       _value: 0,
       max: 5,
       style: "square",
-      revActionColor: false,
-      actionsUp: false,
     };
   }
 
@@ -280,6 +268,6 @@ export class RpgResourceShapeUtil extends CustomShapeUtil<RpgResourceShape> {
   }
 
   override actionComponent(shape: RpgResourceShape): React.JSX.Element | null {
-    return <RpgResourceActions shape={shape} />;
+    return null;
   }
 }

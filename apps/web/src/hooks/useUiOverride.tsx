@@ -148,7 +148,7 @@ export const useUiOverride = (
       tools.rpgPbtaRoll = {
         id: "rpg-pbta-roll",
         icon: "rpg-pbta-roll",
-        label: "PBTA Roll" as any,
+        label: "PBTA Move" as any,
         readonlyOk: false,
         onSelect: () => {
           editor.setCurrentTool("rpg-pbta-roll");
