@@ -18,8 +18,9 @@ import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
 import { useAtom } from "jotai";
-import { FaDice } from "react-icons/fa";
+import { ImDice } from "react-icons/im";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
+import { cardButtonStyle } from "./styles.css";
 
 export type RpgPbtaRollShape = TLBaseShape<
   "rpg-pbta-roll",
@@ -265,7 +266,7 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
       />
       <div
         className={flexRowStyle({ justify: "space" })}
-        style={{ flex: 1, width: "90%" }}
+        style={{ flex: 1, width: "90%", color: shape.props.color }}
       >
         <div
           className={flexRowStyle({ justify: "start" })}
@@ -292,8 +293,19 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
             </>
           )}
         </div>
-        <Button type="icon" title="Roll" onPointerDown={roll}>
-          <FaDice size={32} fill={shape.props.color} />
+        <Button
+          type="icon"
+          title="Roll"
+          onPointerDown={roll}
+          className={cardButtonStyle}
+          style={{
+            borderRadius: 7,
+            borderColor: shape.props.color,
+            width: 40,
+            height: 40,
+          }}
+        >
+          <ImDice size={28} fill={shape.props.color} />
         </Button>
       </div>
     </div>

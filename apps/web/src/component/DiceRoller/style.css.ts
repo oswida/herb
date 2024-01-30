@@ -90,7 +90,7 @@ export const diceValueStyle = style({
 });
 
 export const diceMarkerStyle = style({
-  padding: "5px",
+  padding: "4px",
   borderRadius: "50%",
   display: "flex",
   alignItems: "center",

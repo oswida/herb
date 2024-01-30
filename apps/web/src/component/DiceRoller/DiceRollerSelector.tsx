@@ -224,6 +224,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
         style={{
           gap: "0px",
           padding: "0px 10px",
+          alignItems: "center",
         }}
       >
         <Button
@@ -232,7 +233,16 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
           onPointerDown={roll}
           disabled={notation.trim() === ""}
         >
-          <FaDiceD20 size={20} fill={"var(--color-accent)"} />
+          <FaDiceD20 size={24} fill={"var(--color-accent)"} />
+          <div
+            style={{
+              color: "var(--color-accent)",
+              marginLeft: 5,
+              marginRight: 5,
+            }}
+          >
+            ROLL
+          </div>
           <div
             style={{
               fontSize: 14,
@@ -240,7 +250,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
               wordWrap: "break-word",
               color: "var(--color-text)",
               marginLeft: "10px",
-              maxWidth: "200px",
+              maxWidth: "160px",
             }}
           >
             {notation}
@@ -287,7 +297,11 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
         </div>
 
         <div className={flexRowStyle({})} style={{ gap: "0px" }}>
-          <Button type="normal" title="Switch dice type" onPointerDown={switchDice}>
+          <Button
+            type="normal"
+            title="Switch dice type"
+            onPointerDown={switchDice}
+          >
             <FaDice size={18} />
           </Button>
           <Button type="normal" title="Reset pool" onPointerDown={reset}>

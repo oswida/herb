@@ -17,7 +17,7 @@ const Ms = ({ title, children }: { title: string; children: ReactNode }) => {
       className={diceMarkerStyle}
       style={{
         backgroundColor: "var(--color-primary)",
-        color: "#ddd",
+        color: "#eee",
       }}
     >
       {children}
@@ -31,13 +31,13 @@ export const RollMarker = ({ id }: { id?: string }) => {
     case "trophy_dark":
       return (
         <Ms title="Trophy Dark">
-          <BsDice5Fill fill="black" />
+          <BsDice5Fill fill="black" size={16} />
         </Ms>
       );
     case "trophy_light":
       return (
         <Ms title="Trophy Light">
-          <BsDice5Fill fill="white" />
+          <BsDice5Fill fill="white" size={16} />
         </Ms>
       );
     case "fate":
@@ -55,37 +55,37 @@ export const RollMarker = ({ id }: { id?: string }) => {
     case "d4":
       return (
         <Ms title="d4">
-          <D4Icon />
+          <D4Icon size="18px" />
         </Ms>
       );
     case "d6":
       return (
         <Ms title="d6">
-          <D6Icon />
+          <D6Icon size="20px" />
         </Ms>
       );
     case "d8":
       return (
         <Ms title="d8">
-          <D8Icon />
+          <D8Icon size="20px" />
         </Ms>
       );
     case "d10":
       return (
         <Ms title="d10">
-          <D10Icon />
+          <D10Icon size="20px" />
         </Ms>
       );
     case "d12":
       return (
         <Ms title="d12">
-          <D12Icon />
+          <D12Icon size="20px" />
         </Ms>
       );
     case "d20":
       return (
         <Ms title="d20">
-          <D20Icon />
+          <D20Icon size="20px" />
         </Ms>
       );
     case "d100":

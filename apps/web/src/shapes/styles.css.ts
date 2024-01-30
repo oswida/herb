@@ -6,3 +6,12 @@ export const actionButtonStyle = style({
   width: 30,
   height: 30,
 });
+
+export const cardButtonStyle = style({
+  selectors: {
+    "&:hover": {
+      fillOpacity: 0.8,
+      border: "solid 1px",
+    },
+  },
+});
