@@ -22,7 +22,11 @@ import {
   FaSquare,
   FaStar,
 } from "react-icons/fa";
-import { CsField, CsIconSelect } from "../component/CustomSettings";
+import {
+  CsField,
+  CsIconSelect,
+  CsResetColors,
+} from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import {
   BsDroplet,
@@ -68,19 +72,6 @@ const shapeProps: ShapeProps<RpgResourceShape> = {
 };
 
 const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
-  const editor = useEditor();
-  const resetColors = useCallback(() => {
-    const shapeUpdate: TLShapePartial<any> = {
-      id: shape.id,
-      type: shape.type,
-      props: {
-        color: "var(--color-text)",
-        background: "var(--color-background)",
-      },
-    };
-    editor.updateShapes([shapeUpdate]);
-  }, [shape]);
-
   return (
     <div
       className={flexColumnStyle({})}
@@ -93,9 +84,7 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
         title="Background"
         vtype="color"
       />
-      <Button type="normal" onPointerDown={resetColors}>
-        Reset colors
-      </Button>
+      <CsResetColors shape={shape} />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField shape={shape} field="max" title="Maximum value" vtype="number" />
       <CsIconSelect
@@ -120,6 +109,11 @@ const RpgResourceSettings = track(({ shape }: { shape: RpgResourceShape }) => {
 
 const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
   const editor = useEditor();
+
+  const isSelected = useMemo(() => {
+    return shape.id === editor.getOnlySelectedShape()?.id;
+  }, [editor, shape, editor.getOnlySelectedShape()]);
+
   const items = useMemo(() => {
     const retv: boolean[] = [];
     for (let i = 1; i <= shape.props.max; i++) {
@@ -223,17 +217,24 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
         className={flexRowStyle({ justify: "center" })}
         style={{ width: "100%", flexWrap: "nowrap", gap: 4 }}
       >
-        <Button type="icon" onPointerDown={() => mod(-1)}>
+        <Button
+          type="icon"
+          onPointerDown={() => mod(-1)}
+          style={{ visibility: !isSelected ? "hidden" : undefined }}
+        >
           <FaMinusCircle size={16} fill={shape.props.color} />
         </Button>
         {items.map((v, i) => (
           <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
         ))}
-        <Button type="icon" onPointerDown={() => mod(1)}>
+        <Button
+          type="icon"
+          onPointerDown={() => mod(1)}
+          style={{ visibility: !isSelected ? "hidden" : undefined }}
+        >
           <FaPlusCircle size={16} fill={shape.props.color} />
         </Button>
       </div>
-      {shape.props.label !== "" && <div>{shape.props.label}</div>}
     </div>
   );
 });

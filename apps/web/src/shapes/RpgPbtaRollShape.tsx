@@ -13,7 +13,7 @@ import {
 } from "@tldraw/tldraw";
 import React, { useCallback } from "react";
 import { diceRollerVisible, flexColumnStyle, flexRowStyle } from "../common";
-import { CsField, CsFontSelect } from "../component/CustomSettings";
+import { CsField, CsFontSelect, CsResetColors } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
@@ -85,17 +85,7 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
     });
   }, [shape]);
 
-  const resetColors = useCallback(() => {
-    const shapeUpdate: TLShapePartial<any> = {
-      id: shape.id,
-      type: shape.type,
-      props: {
-        color: "var(--color-text)",
-        background: "var(--color-background)",
-      },
-    };
-    editor.updateShapes([shapeUpdate]);
-  }, [shape]);
+  
 
   if (!shape) return null;
 
@@ -111,9 +101,7 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
         title="Background"
         vtype="color"
       />
-      <Button type="normal" onPointerDown={resetColors}>
-        Reset colors
-      </Button>
+      <CsResetColors shape={shape} />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsField
         shape={shape}

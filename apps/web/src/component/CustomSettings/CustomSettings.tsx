@@ -220,6 +220,27 @@ export const CsFontSelect = ({
   );
 };
 
+export const CsResetColors = ({ shape }: { shape: TLBaseShape<any, any> }) => {
+  const editor = useEditor();
+  const resetColors = useCallback(() => {
+    const shapeUpdate: TLShapePartial<any> = {
+      id: shape.id,
+      type: shape.type,
+      props: {
+        color: "var(--color-text)",
+        background: "var(--color-background)",
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  }, [shape]);
+
+  return (
+    <Button type="normal" onPointerDown={resetColors}>
+      Reset colors
+    </Button>
+  );
+};
+
 export const CustomSettings = () => {
   const visible = useAtomValue(customSettingsVisible);
   const shapeId = useAtomValue(selectedCustomShape);
