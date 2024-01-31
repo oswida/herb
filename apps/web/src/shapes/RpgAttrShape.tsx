@@ -1,27 +1,22 @@
 import {
   BaseBoxShapeTool,
   Button,
-  Rectangle2d,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapePartial,
-  getDefaultColorTheme,
-  getUserPreferences,
   track,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useCallback, useMemo } from "react";
 import { CustomShapeUtil } from "./CustomShape";
 import { flexColumnStyle, flexRowStyle, updateShapeFields } from "../common";
-import { FaDice, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
-import { useChat, useRoll } from "../hooks";
+import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import {
   CsField,
   CsFontSelect,
   CsResetColors,
 } from "../component/CustomSettings";
-import { actionButtonStyle } from "./styles.css";
 
 export type RpgAttrShape = TLBaseShape<
   "rpg-attr",
@@ -29,7 +24,6 @@ export type RpgAttrShape = TLBaseShape<
     w: number;
     h: number;
     label: string;
-    dice: string;
     color: string;
     background: string;
     value: number;
@@ -49,7 +43,6 @@ const shapeProps: ShapeProps<RpgAttrShape> = {
   w: T.number,
   h: T.number,
   label: T.string,
-  dice: T.string,
   color: T.string,
   background: T.string,
   value: T.number,
@@ -86,12 +79,6 @@ const RpgAttrSettings = track(({ shape }: { shape: RpgAttrShape }) => {
       />
       <CsResetColors shape={shape} />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
-      <CsField
-        shape={shape}
-        field="dice"
-        title="Dice notation"
-        vtype="string"
-      />
       <CsFontSelect shape={shape} title="Font" field="font" />
       <CsField shape={shape} field="value" title="Value" vtype="number" />
       <CsField
@@ -208,82 +195,6 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
   );
 });
 
-// const RpgAttrActions = ({ shape }: { shape: RpgAttrShape }) => {
-//   const editor = useEditor();
-//   const user = getUserPreferences();
-//   const theme = getDefaultColorTheme({
-//     isDarkMode: editor.user.getIsDarkMode(),
-//   });
-//   const { rollSingleToChat } = useRoll(user, theme);
-//   const { addChatMessage } = useChat(editor);
-
-//   const inc = (value: number) => {
-//     const val = shape.props.value + value;
-//     updateShapeFields(editor, shape, { value: val });
-//   };
-
-//   const reset = () => {
-//     updateShapeFields(editor, shape, { value: 0 });
-//   };
-
-//   const roll = () => {
-//     if (shape.props.dice === "") return;
-//     const v =
-//       shape.props.value > 0 ? `+${shape.props.value}` : `${shape.props.value}`;
-//     const msg = rollSingleToChat(
-//       `${shape.props.dice}${v}`,
-//       false,
-//       shape.props.label
-//     );
-//     addChatMessage(msg);
-//   };
-
-//   return (
-//     <div
-//       className={flexRowStyle({ justify: "center" })}
-//       style={{ flexWrap: "nowrap", gap: "2px" }}
-//     >
-//       <Button
-//         type="icon"
-//         title="Decrease"
-//         onPointerDown={() => inc(-1)}
-//         className={actionButtonStyle}
-//       >
-//         <FaMinusCircle
-//           size={16}
-//           fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
-//         />
-//       </Button>
-//       {shape.props.dice !== "" && (
-//         <Button
-//           type="icon"
-//           title="Roll dice"
-//           onPointerDown={roll}
-//           className={actionButtonStyle}
-//         >
-//           <FaDice
-//             size={16}
-//             fill={
-//               shape.props.revActionColor ? shape.props.color : "currentColor"
-//             }
-//           />
-//         </Button>
-//       )}
-//       <Button
-//         type="icon"
-//         title="Increase"
-//         onPointerDown={() => inc(1)}
-//         className={actionButtonStyle}
-//       >
-//         <FaPlusCircle
-//           size={16}
-//           fill={shape.props.revActionColor ? shape.props.color : "currentColor"}
-//         />
-//       </Button>
-//     </div>
-//   );
-// };
-
 export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
   static override type = "rpg-attr" as const;
   static override props = shapeProps;
@@ -294,7 +205,6 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       w: 150,
       h: 150,
       label: "",
-      dice: "",
       color: "var(--color-text)",
       value: 0,
       owner: "",
@@ -303,18 +213,6 @@ export class RpgAttrShapeUtil extends CustomShapeUtil<RpgAttrShape> {
       background: "var(--color-background)",
     };
   }
-
-  // override getGeometry(shape: RpgAttrShape) {
-  //   return new Rectangle2d({
-  //     width: shape.props.actionsVertical ? shape.props.w : shape.props.w + 80,
-  //     height: shape.props.actionsVertical ? shape.props.h + 80 : shape.props.h,
-  //     isFilled: true,
-  //   });
-  // }
-
-  // override indicator(shape: RpgAttrShape) {
-  //   return <rect width={shape.props.w} height={shape.props.h} />;
-  // }
 
   override settingsComponent(shape: RpgAttrShape): React.JSX.Element | null {
     return <RpgAttrSettings shape={shape} />;
