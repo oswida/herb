@@ -6,6 +6,7 @@ import {
   TLBaseShape,
   TLShapeId,
   TLShapePartial,
+  TLShapeUtilFlag,
   getDefaultColorTheme,
   track,
   useDefaultHelpers,
@@ -63,7 +64,11 @@ const RpgCardMain = track(({ shape }: { shape: RpgCardShape }) => {
     >
       <img
         src={shape.props._flipped ? shape.props._bkgUrl : shape.props._url}
-        style={{ width: shape.props.w, height: shape.props.h }}
+        style={{
+          width: shape.props.w,
+          height: shape.props.h,
+          borderRadius: 10,
+        }}
       />
     </div>
   );
@@ -176,6 +181,7 @@ const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
 export class RpgCardShapeUtil extends CustomShapeUtil<RpgCardShape> {
   static override type = "rpg-card" as const;
   static override props = shapeProps;
+  override isAspectRatioLocked: TLShapeUtilFlag<RpgCardShape> = () => true;
   override actionsCount = 4;
 
   override getDefaultProps(): RpgCardShape["props"] {

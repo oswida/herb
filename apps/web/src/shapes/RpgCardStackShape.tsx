@@ -6,6 +6,7 @@ import {
   TLBaseShape,
   TLShapeId,
   TLShapePartial,
+  TLShapeUtilFlag,
   createShapeId,
   getDefaultColorTheme,
   track,
@@ -20,7 +21,7 @@ import { CardStackPool } from "./CardStackPool";
 import { AssetDesc, useAssets } from "../hooks";
 import { Confirmation } from "../component/Confirmation";
 import { GiCardPick, GiCardExchange, GiCardDraw } from "react-icons/gi";
-import { CsField } from "../component/CustomSettings";
+import { CsField, CsResetColors } from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { RpgCardShape } from "./CardShape";
 import { CardStackBack } from "./CardStackBack";
@@ -33,6 +34,7 @@ export type RpgCardStackShape = TLBaseShape<
     h: number;
     label: string;
     color: string;
+    background: string;
     owner: string;
     _cardBack: string;
     _cardBackUrl: string;
@@ -53,6 +55,7 @@ const shapeProps: ShapeProps<RpgCardStackShape> = {
   h: T.number,
   label: T.string,
   color: T.string,
+  background: T.string,
   owner: T.string,
   _cardBack: T.string,
   _cardBackUrl: T.string,
@@ -91,13 +94,20 @@ const RpgCardStackSettings = track(
         style={{ padding: "5px", gap: "10px" }}
       >
         <CsField shape={shape} field="color" title="Color" vtype="color" />
+        <CsField
+          shape={shape}
+          field="background"
+          title="Background"
+          vtype="color"
+        />
+        <CsResetColors shape={shape} />
         <CsField shape={shape} field="label" title="Label" vtype="string" />
         <Button
           type="normal"
           onPointerDown={selectPool}
           style={{ gap: "20px" }}
         >
-          <GiCardPick size="24" />
+          <GiCardPick size="20" />
           Edit card pool
         </Button>
         <Button
@@ -105,7 +115,7 @@ const RpgCardStackSettings = track(
           onPointerDown={selectBack}
           style={{ gap: "20px" }}
         >
-          <BsFileImage size="24" />
+          <BsFileImage size="16" />
           Set card back
         </Button>
       </div>
@@ -114,17 +124,18 @@ const RpgCardStackSettings = track(
 );
 
 const RpgCardStackMain = track(({ shape }: { shape: RpgCardStackShape }) => {
-  const editor = useEditor();
-
   return (
     <div
       className={flexColumnStyle({})}
       style={{
         justifyContent: "center",
         color: shape.props.color,
+        backgroundColor:
+          shape.props._cardBackUrl === "" ? shape.props.background : undefined,
         alignItems: "center",
         width: shape.props.w,
         height: shape.props.h,
+        borderRadius: 10,
       }}
     >
       <span>
@@ -134,7 +145,11 @@ const RpgCardStackMain = track(({ shape }: { shape: RpgCardStackShape }) => {
       {shape.props._cardBackUrl !== "" && (
         <img
           src={shape.props._cardBackUrl}
-          style={{ width: shape.props.w, height: shape.props.h }}
+          style={{
+            width: shape.props.w,
+            height: shape.props.h,
+            borderRadius: 10,
+          }}
         />
       )}
       {shape.props._cardBack === "" && (
@@ -268,17 +283,16 @@ export class RpgCardStackShapeUtil extends CustomShapeUtil<RpgCardStackShape> {
   static override type = "rpg-card-stack" as const;
   static override props = shapeProps;
   override actionsCount = 3;
+  override isAspectRatioLocked: TLShapeUtilFlag<RpgCardStackShape> = () => true;
 
   override getDefaultProps(): RpgCardStackShape["props"] {
-    const theme = getDefaultColorTheme({
-      isDarkMode: this.editor.user.getIsDarkMode(),
-    });
     return {
       w: 150,
       h: 150,
       label: "",
       owner: "",
-      color: theme.text,
+      color: "var(--color-text)",
+      background: "var(--color-background)",
       _cardBack: "",
       _cardBackUrl: "",
       _current: [],
