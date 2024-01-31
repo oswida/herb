@@ -21,6 +21,8 @@ import {
 } from "@tldraw/tldraw";
 import { Compact } from "@uiw/react-color";
 import { CheckItem } from "../CheckItem";
+import { PiCubeTransparent } from "react-icons/pi";
+import { MdOutlineColorLens, MdOutlineColorize } from "react-icons/md";
 
 type CsProps = {
   shape: TLBaseShape<any, any>;
@@ -234,10 +236,31 @@ export const CsResetColors = ({ shape }: { shape: TLBaseShape<any, any> }) => {
     editor.updateShapes([shapeUpdate]);
   }, [shape]);
 
+  const transparent = useCallback(() => {
+    const shapeUpdate: TLShapePartial<any> = {
+      id: shape.id,
+      type: shape.type,
+      props: {
+        background: "transparent",
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  }, [shape]);
+
   return (
-    <Button type="normal" onPointerDown={resetColors}>
-      Reset colors
-    </Button>
+    <div className={flexRowStyle({})}>
+      <div> Color reset</div>
+      <Button type="icon" onPointerDown={resetColors} title="Theme colors">
+        <MdOutlineColorLens size={16} />
+      </Button>
+      <Button
+        type="icon"
+        onPointerDown={transparent}
+        title="Transparent background"
+      >
+        <PiCubeTransparent size={16} />
+      </Button>
+    </div>
   );
 };
 
