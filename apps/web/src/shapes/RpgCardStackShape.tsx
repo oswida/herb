@@ -14,7 +14,7 @@ import {
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { flexColumnStyle, flexRowStyle, shuffleArray } from "../common";
 import { FaReplyAll } from "react-icons/fa";
 import { CardStackPool } from "./CardStackPool";
@@ -41,6 +41,7 @@ export type RpgCardStackShape = TLBaseShape<
     _pool: AssetDesc[];
     _current: AssetDesc[];
     _shapeIds: TLShapeId[];
+    hidePrivateCards?: boolean;
   }
 >;
 
@@ -62,11 +63,17 @@ const shapeProps: ShapeProps<RpgCardStackShape> = {
   _pool: T.arrayOf<AssetDesc>(T.any),
   _current: T.arrayOf<AssetDesc>(T.any),
   _shapeIds: T.arrayOf<TLShapeId>(T.any),
+  hidePrivateCards: T.optional(T.boolean),
 };
 
 const RpgCardStackSettings = track(
   ({ shape }: { shape: RpgCardStackShape }) => {
     const { addDialog } = useDefaultHelpers();
+    const editor = useEditor();
+    const isOwner = useMemo(() => {
+      console.log(shape.props.owner, editor.user.getId());
+      return shape.props.owner === editor.user.getId();
+    }, [shape]);
 
     const selectPool = useCallback(() => {
       addDialog({
@@ -102,6 +109,14 @@ const RpgCardStackSettings = track(
         />
         <CsResetColors shape={shape} />
         <CsField shape={shape} field="label" title="Label" vtype="string" />
+        {isOwner && (
+          <CsField
+            shape={shape}
+            field="hidePrivateCards"
+            title="Hide private cards"
+            vtype="boolean"
+          />
+        )}
         <Button
           type="normal"
           onPointerDown={selectPool}
@@ -199,6 +214,9 @@ const RpgCardStackActions = ({ shape }: { shape: RpgCardStackShape }) => {
             _flipped: false,
             _stack: shape.id,
             _aid: asset.id,
+            private: shape.props.hidePrivateCards ? true : false,
+            revealed: false,
+            owner: editor.user.getId(),
           },
         },
       ]);
@@ -290,7 +308,7 @@ export class RpgCardStackShapeUtil extends CustomShapeUtil<RpgCardStackShape> {
       w: 150,
       h: 150,
       label: "",
-      owner: "",
+      owner: this.editor.user.getId(),
       color: "var(--color-text)",
       background: "var(--color-background)",
       _cardBack: "",
@@ -298,6 +316,7 @@ export class RpgCardStackShapeUtil extends CustomShapeUtil<RpgCardStackShape> {
       _current: [],
       _pool: [],
       _shapeIds: [],
+      hidePrivateCards: false,
     };
   }
 

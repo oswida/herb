@@ -146,11 +146,11 @@ export abstract class CustomShapeUtil<
     return resizeBox(shape, info);
   };
 
-  override onBeforeCreate: TLOnBeforeCreateHandler<T> = (next) => {
-    if (!Object.hasOwn(next, "owner")) return next;
-    return {
-      ...next,
-      props: { ...next.props, owner: this.editor.user.getId() },
-    };
-  };
+  // override onBeforeCreate: TLOnBeforeCreateHandler<T> = (next) => {
+  //   if (!Object.hasOwn(next, "owner")) return next;
+  //   return {
+  //     ...next,
+  //     props: { ...next.props, owner: this.editor.user.getId() },
+  //   };
+  // };
 }

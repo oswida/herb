@@ -12,9 +12,9 @@ import {
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React from "react";
+import React, { useMemo } from "react";
 import { flexColumnStyle, flexRowStyle, shuffleArray } from "../common";
-import { FaReply } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash, FaReply } from "react-icons/fa";
 import { Confirmation } from "../component/Confirmation";
 import {
   IconStackFront,
@@ -23,6 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { CustomShapeUtil } from "./CustomShape";
 import { RpgCardStackShape } from "./RpgCardStackShape";
+import { BiShow } from "react-icons/bi";
 
 export type RpgCardShape = TLBaseShape<
   "rpg-card",
@@ -34,6 +35,9 @@ export type RpgCardShape = TLBaseShape<
     _flipped: boolean;
     _stack: TLShapeId | undefined;
     _aid?: string;
+    owner: string;
+    private: boolean;
+    revealed: boolean;
   }
 >;
 
@@ -51,9 +55,23 @@ const shapeProps: ShapeProps<RpgCardShape> = {
   _flipped: T.boolean,
   _stack: T.any,
   _aid: T.string,
+  owner: T.string,
+  private: T.boolean,
+  revealed: T.boolean,
 };
 
 const RpgCardMain = track(({ shape }: { shape: RpgCardShape }) => {
+  const editor = useEditor();
+  const isOwner = useMemo(() => {
+    return shape.props.owner === editor.user.getId();
+  }, [shape]);
+
+  const shown = useMemo(() => {
+    if (isOwner || !shape.props.private) return true;
+    if (shape.props.private && shape.props.revealed) return true;
+    return false;
+  }, [isOwner, shape.props.private, shape.props.revealed]);
+
   return (
     <div
       className={flexColumnStyle({})}
@@ -62,14 +80,26 @@ const RpgCardMain = track(({ shape }: { shape: RpgCardShape }) => {
         alignItems: "center",
       }}
     >
-      <img
-        src={shape.props._flipped ? shape.props._bkgUrl : shape.props._url}
-        style={{
-          width: shape.props.w,
-          height: shape.props.h,
-          borderRadius: 10,
-        }}
-      />
+      {shown && (
+        <img
+          src={shape.props._flipped ? shape.props._bkgUrl : shape.props._url}
+          style={{
+            width: shape.props.w,
+            height: shape.props.h,
+            borderRadius: 10,
+          }}
+        />
+      )}
+      {!shown && (
+        <img
+          src={shape.props._bkgUrl}
+          style={{
+            width: shape.props.w,
+            height: shape.props.h,
+            borderRadius: 10,
+          }}
+        />
+      )}
     </div>
   );
 });
@@ -77,6 +107,9 @@ const RpgCardMain = track(({ shape }: { shape: RpgCardShape }) => {
 const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
   const editor = useEditor();
   const { addDialog } = useDefaultHelpers();
+  const isOwner = useMemo(() => {
+    return shape.props.owner === editor.user.getId();
+  }, [shape]);
 
   const move = (action: string) => {
     let title = "";
@@ -145,6 +178,19 @@ const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
     editor.updateShapes([shapeUpdate]);
   };
 
+  const reveal = () => {
+    const shapeUpdate: TLShapePartial<RpgCardShape> = {
+      id: shape.id,
+      type: "rpg-card",
+      props: {
+        revealed: !shape.props.revealed,
+      },
+    };
+    editor.updateShapes([shapeUpdate]);
+  };
+
+  if (!isOwner && shape.props.private) return null;
+
   return (
     <div
       className={flexRowStyle({ justify: "center" })}
@@ -174,6 +220,20 @@ const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
       <Button type="icon" title="Flip" onPointerDown={flip}>
         <FaReply size={16} />
       </Button>
+      {shape.props.private && (
+        <>
+          {!shape.props.revealed && (
+            <Button type="icon" title="Reveal" onPointerDown={reveal}>
+              <FaRegEyeSlash size={16} fill="var(--color-accent)" />
+            </Button>
+          )}
+          {shape.props.revealed && (
+            <Button type="icon" title="Hide" onPointerDown={reveal}>
+              <FaRegEye size={16} />
+            </Button>
+          )}
+        </>
+      )}
     </div>
   );
 };
@@ -182,12 +242,9 @@ export class RpgCardShapeUtil extends CustomShapeUtil<RpgCardShape> {
   static override type = "rpg-card" as const;
   static override props = shapeProps;
   override isAspectRatioLocked: TLShapeUtilFlag<RpgCardShape> = () => true;
-  override actionsCount = 4;
+  override actionsCount = 5;
 
   override getDefaultProps(): RpgCardShape["props"] {
-    const theme = getDefaultColorTheme({
-      isDarkMode: this.editor.user.getIsDarkMode(),
-    });
     return {
       w: 150,
       h: 150,
@@ -196,6 +253,9 @@ export class RpgCardShapeUtil extends CustomShapeUtil<RpgCardShape> {
       _stack: undefined,
       _url: "",
       _aid: "",
+      owner: "",
+      private: false,
+      revealed: false,
     };
   }
 
