@@ -11,9 +11,13 @@ import {
   useDefaultHelpers,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { diceRollerVisible, flexColumnStyle, flexRowStyle } from "../common";
-import { CsField, CsFontSelect, CsResetColors } from "../component/CustomSettings";
+import {
+  CsField,
+  CsFontSelect,
+  CsResetColors,
+} from "../component/CustomSettings";
 import { CustomShapeUtil } from "./CustomShape";
 import { useChat, useRoll } from "../hooks";
 import { PbtaInfo } from "./PbtaInfo";
@@ -84,8 +88,6 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
       },
     });
   }, [shape]);
-
-  
 
   if (!shape) return null;
 
@@ -193,6 +195,10 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
     [shape]
   );
 
+  const info = useMemo(() => {
+    return `6-: ${shape.props.rollInfo1}\n7-9: ${shape.props.rollInfo2}\n10+:${shape.props.rollInfo3}`;
+  }, [shape.props.rollInfo1, shape.props.rollInfo2, shape.props.rollInfo3]);
+
   return (
     <div
       className={flexColumnStyle({})}
@@ -206,6 +212,7 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         padding: 7,
         borderRadius: 10,
         border: `solid 1px ${shape.props.color}`,
+        position: "relative",
       }}
     >
       <div
@@ -283,7 +290,7 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         </div>
         <Button
           type="icon"
-          title="Roll"
+          title={info}
           onPointerDown={roll}
           className={cardButtonStyle}
           style={{
