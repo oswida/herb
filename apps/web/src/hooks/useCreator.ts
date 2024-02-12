@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { Editor } from "@tldraw/tldraw";
-import { useAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 
 export const useCreator = (userId: string, creatorApiUrl: string) => {

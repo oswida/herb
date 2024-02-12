@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
-import type { Editor, TLAsset, TLAssetId } from "@tldraw/tldraw";
+import type { Editor, TLAsset, TLAssetId, TLUiToast } from "@tldraw/tldraw";
 import {
   AssetRecordType,
   MediaHelpers,
   getHashForString,
   isGifAnimated,
 } from "@tldraw/tldraw";
-import { generateSerialKeys } from "../common";
+import { generateSerialKeys, globalErr } from "../common";
+import { useSetAtom } from "jotai";
 
 export const useAssetHandler = (roomId: string, baseUrl: string) => {
+  const setGlobalErr = useSetAtom(globalErr);
+
   const registerHostedImages = (editor: Editor) => {
     editor.registerExternalAssetHandler(
       "file",
@@ -23,7 +26,21 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
         await fetch(url, {
           method: "POST",
           body: file,
-        });
+        })
+          .then((resp) => {
+            if (!resp.ok) {
+              setGlobalErr(
+                "Cannot upload file. It is possible that this room has reached upload limit."
+              );
+              return;
+            }
+          })
+          .catch((err) => {
+            setGlobalErr(
+              "Cannot upload file. It is possible that this room has reached upload limit."
+            );
+            return;
+          });
 
         const assetId: TLAssetId = AssetRecordType.createId(
           getHashForString(url)

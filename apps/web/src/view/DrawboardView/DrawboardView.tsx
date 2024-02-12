@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
 import type { Editor } from "@tldraw/tldraw";
-import { Button, Canvas, Tldraw } from "@tldraw/tldraw";
+import { Button, Canvas, Tldraw, useDefaultHelpers } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
@@ -9,6 +9,7 @@ import * as React from "react";
 import {
   currentRoom,
   customSettingsVisible,
+  globalErr,
   roomData,
   selectedCustomShape,
   uiVisible,
@@ -90,8 +91,10 @@ const customPrefix = "rpg";
 
 export const DrawboardView = () => {
   const navigate = useNavigate();
+
   const [visible] = useAtom(uiVisible);
   const params = useParams();
+
   const { registerHostedImages } = useAssetHandler(
     params.roomId ?? "unknown",
     UPLOAD_BASE_URL

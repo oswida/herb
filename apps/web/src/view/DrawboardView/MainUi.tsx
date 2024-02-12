@@ -10,6 +10,7 @@ import {
   assetListVisible,
   currentRoom,
   diceRollerVisible,
+  globalErr,
   roomPresence,
   uiVisible,
 } from "../../common/state";
@@ -25,7 +26,7 @@ import { Settings } from "../../component/Settings";
 import * as React from "react";
 import useClipboard from "react-use-clipboard";
 import { flexRowStyle } from "../../common";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Users } from "../../component/Users";
 
 interface Props {
@@ -61,6 +62,7 @@ export const MainUI = ({
   const room = useAtomValue(currentRoom);
   const [copyUser, setCopyUser] = useClipboard(user.id);
   const [copyRoom, setCopyRoom] = useClipboard(room ? room : "");
+  const [gErr, setGErr] = useAtom(globalErr);
 
   const userCopy = () => {
     setCopyUser();
@@ -107,6 +109,16 @@ export const MainUI = ({
     });
   };
 
+  useEffect(() => {
+    if (gErr === "") return;
+    addToast({
+      id: "1",
+      title: "Error",
+      description: gErr,
+    });
+    setGErr("");
+  }, [gErr]);
+
   if (!isUserAllowed) return null;
 
   return (
@@ -137,16 +149,16 @@ export const MainUI = ({
         >
           <FaDiceD20 size={16} />
         </Button>
+        <Button
+          type="tool"
+          data-state={al ? "selected" : undefined}
+          onPointerDown={() => setAl(!al)}
+          title="Asset list"
+        >
+          <MdLibraryBooks size={20} />
+        </Button>
         {isOwner && (
           <>
-            <Button
-              type="tool"
-              data-state={al ? "selected" : undefined}
-              onPointerDown={() => setAl(!al)}
-              title="Asset list"
-            >
-              <MdLibraryBooks size={20} />
-            </Button>
             <Button
               type="tool"
               onPointerDown={allow}

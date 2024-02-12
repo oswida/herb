@@ -23,3 +23,5 @@ export const assetFilter = atom<string>("");
 
 export const customSettingsVisible = atom<boolean>(false);
 export const selectedCustomShape = atom<TLShapeId | null>(null);
+
+export const globalErr = atom<string>("");

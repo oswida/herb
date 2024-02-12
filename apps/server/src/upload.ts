@@ -8,6 +8,8 @@ import {
 } from "node:fs";
 import mime from "mime";
 import type { Request, Response } from "express";
+import fastFolderSizeSync from "fast-folder-size/sync";
+import { loadConfig } from "./config";
 
 // /api/upload
 
@@ -39,10 +41,20 @@ export const processUploadPost = (request: Request, response: Response) => {
     mkdirSync(`upload/${request.params.fileType}/${request.params.roomId}`);
   }
 
-  const file = openSync(
-    `upload/${request.params.fileType}/${request.params.roomId}/${request.params.filename}`,
-    "w"
-  );
+  const config = loadConfig();
+  const dir = `upload/${request.params.fileType}/${request.params.roomId}`;
+  let folderSize = fastFolderSizeSync(dir);
+  if (folderSize) {
+    folderSize = folderSize / 1000000;
+    if (folderSize > config.maxUploadMbPerRoom) {
+      response.sendStatus(400);
+      return;
+    }
+  }
+
+  const fileName = `${dir}/${request.params.filename}`;
+
+  const file = openSync(fileName, "w");
   request.on("data", (chunk) => {
     writeSync(file, chunk);
   });
