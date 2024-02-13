@@ -1,4 +1,4 @@
-import { Editor, JsonArray, JsonObject } from "@tldraw/tldraw";
+import { Editor, JsonArray } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { ChatMsg, compressData64, decompressData64 } from "../common";
 

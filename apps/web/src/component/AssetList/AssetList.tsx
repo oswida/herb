@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   assetFilter,
   assetListVisible,
@@ -24,7 +18,6 @@ import {
   TLImageShape,
   getHashForString,
   stopEventPropagation,
-  track,
   useDialogs,
   useEditor,
 } from "@tldraw/tldraw";
@@ -109,15 +102,15 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
         switch (atype) {
           case "image":
             {
-              const size = await MediaHelpers.getImageSizeFromSrc(url);
+              const img = await MediaHelpers.loadImage(url);
               editor.createShapes<TLImageShape>([
                 {
                   type: "image",
-                  x: center.x - size.w / 2,
-                  y: center.y - size.h / 2,
+                  x: center.x - img.width / 2,
+                  y: center.y - img.height / 2,
                   props: {
-                    w: size.w,
-                    h: size.h,
+                    w: img.width,
+                    h: img.height,
                     assetId: aid,
                   },
                 },

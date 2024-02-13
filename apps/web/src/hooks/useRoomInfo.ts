@@ -1,6 +1,5 @@
 import { useAtom, useAtomValue } from "jotai";
 import { currentRoom, roomData, roomPresence } from "../common";
-import { Editor } from "@tldraw/tldraw";
 import { useCallback, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTlDrawData } from "./useTldrawData";
@@ -15,9 +14,6 @@ export const useRoomInfo = (roomApiUrl: string) => {
         method: "GET",
       }).then((res) => res.json()),
     networkMode: "online",
-    // refetchOnMount: true,
-    // refetchOnReconnect: true,
-    // refetchOnWindowFocus: true,
     staleTime: 0,
   });
   const [rdata, setRdata] = useAtom(roomData);

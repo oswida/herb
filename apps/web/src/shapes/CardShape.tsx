@@ -7,7 +7,6 @@ import {
   TLShapeId,
   TLShapePartial,
   TLShapeUtilFlag,
-  getDefaultColorTheme,
   track,
   useDefaultHelpers,
   useEditor,
@@ -23,7 +22,6 @@ import {
 } from "@tabler/icons-react";
 import { CustomShapeUtil } from "./CustomShape";
 import { RpgCardStackShape } from "./RpgCardStackShape";
-import { BiShow } from "react-icons/bi";
 
 export type RpgCardShape = TLBaseShape<
   "rpg-card",

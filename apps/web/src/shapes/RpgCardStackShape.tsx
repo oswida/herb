@@ -8,7 +8,6 @@ import {
   TLShapePartial,
   TLShapeUtilFlag,
   createShapeId,
-  getDefaultColorTheme,
   track,
   uniqueId,
   useDefaultHelpers,

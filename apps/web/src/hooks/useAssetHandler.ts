@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type -- comment */
-import type { Editor, TLAsset, TLAssetId, TLUiToast } from "@tldraw/tldraw";
+import type { Editor, TLAsset, TLAssetId } from "@tldraw/tldraw";
 import {
   AssetRecordType,
   MediaHelpers,
@@ -49,7 +49,7 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
         let size: {
           w: number;
           h: number;
-        };
+        } = { w: 0, h: 0 };
         let isAnimated: boolean;
         let shapeType: "image" | "video";
 
@@ -63,12 +63,16 @@ export const useAssetHandler = (roomId: string, baseUrl: string) => {
           ].includes(file.type)
         ) {
           shapeType = "image";
-          size = await MediaHelpers.getImageSizeFromSrc(url);
+          const img = await MediaHelpers.loadImage(url);
+          size.w = img.width;
+          size.h = img.height;
           isAnimated = file.type === "image/gif" && (await isGifAnimated(file));
         } else {
           shapeType = "video";
           isAnimated = true;
-          size = await MediaHelpers.getVideoSizeFromSrc(url);
+          const vd = await MediaHelpers.loadVideo(url);
+          size.w = vd.width;
+          size.h = vd.height;
         }
 
         const asset: TLAsset = AssetRecordType.create({

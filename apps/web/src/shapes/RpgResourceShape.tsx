@@ -4,7 +4,6 @@ import {
   ShapeProps,
   T,
   TLBaseShape,
-  TLShapePartial,
   track,
   useEditor,
 } from "@tldraw/tldraw";

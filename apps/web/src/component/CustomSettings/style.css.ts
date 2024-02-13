@@ -1,6 +1,5 @@
 import { style } from "@vanilla-extract/css";
 import { appPanelStyle } from "../../common";
-import { recipe } from "@vanilla-extract/recipes";
 
 export const customSettingsRootStyle = style([
   appPanelStyle,

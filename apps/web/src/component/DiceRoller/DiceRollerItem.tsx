@@ -1,8 +1,8 @@
-import React, { forwardRef, useCallback } from "react";
+import React, { useCallback } from "react";
 import { diceRollerItemStyle } from "./style.css";
 import { ChatMsg, flexRowStyle, roomPresence } from "../../common";
 import { FaUserSecret } from "react-icons/fa";
-import { Button, getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
+import { getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
 import { useChat } from "../../hooks";
 import { RollResultItem } from "./RollResultItem";
 import { useAtomValue } from "jotai";

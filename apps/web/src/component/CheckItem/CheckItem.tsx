@@ -1,6 +1,5 @@
 import React from "react";
 import { flexRowStyle } from "../../common";
-import { FaCheckSquare, FaSquare } from "react-icons/fa";
 import { BsCheckSquare, BsSquare } from "react-icons/bs";
 import { Button } from "@tldraw/tldraw";
 

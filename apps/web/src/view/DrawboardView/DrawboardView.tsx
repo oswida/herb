@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
 import type { Editor } from "@tldraw/tldraw";
-import { Button, Canvas, Tldraw, useDefaultHelpers } from "@tldraw/tldraw";
+import { Button, Canvas, Tldraw } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
@@ -9,7 +9,6 @@ import * as React from "react";
 import {
   currentRoom,
   customSettingsVisible,
-  globalErr,
   roomData,
   selectedCustomShape,
   uiVisible,

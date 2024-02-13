@@ -1,14 +1,12 @@
 import {
   Button,
   Dialog,
-  Input,
   TLInstancePresence,
   TLUiDialogProps,
   useEditor,
 } from "@tldraw/tldraw";
-import { flexColumnStyle, flexRowStyle } from "../../common";
-import React, { useMemo, useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { flexColumnStyle } from "../../common";
+import React, { useMemo } from "react";
 import { WebsocketProvider } from "y-websocket";
 
 type Props = TLUiDialogProps & {

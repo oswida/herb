@@ -57,7 +57,8 @@ export const useAssets = (editor: Editor, filter: string) => {
       for (let i = 0; i < filenames.length; i++) {
         if (filenames[i].trim() === "") continue;
         const url = `${UPLOAD_BASE_URL}/image/${roomId}/${filenames[i]}`;
-        const value = await MediaHelpers.getImageSizeFromSrc(url);
+        const img = await MediaHelpers.loadImage(url);
+        const value = { w: img.width, h: img.height };
         retv.push({ size: value, url: url });
       }
       return retv;
@@ -85,16 +86,16 @@ export const useAssets = (editor: Editor, filter: string) => {
       switch (atype) {
         case "image":
           {
-            const size = await MediaHelpers.getImageSizeFromSrc(url);
+            const img = await MediaHelpers.loadImage(url);
             editor.createShapes<TLImageShape>([
               {
                 id: sid,
                 type: "image",
-                x: center.x - size.w / 2,
-                y: center.y - size.h / 2,
+                x: center.x - img.width / 2,
+                y: center.y - img.height / 2,
                 props: {
-                  w: size.w,
-                  h: size.h,
+                  w: img.width,
+                  h: img.height,
                   assetId: aid,
                 },
               },

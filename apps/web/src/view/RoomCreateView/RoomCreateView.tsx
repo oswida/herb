@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import { useCreator, useTlDrawData } from "../../hooks";
-import useLocalStorage from "use-local-storage";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const CREATOR_URL = `${window.location.protocol}//${window.location.hostname}:${port}/api/creator`;

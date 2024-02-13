@@ -1,14 +1,5 @@
-import {
-  Button,
-  Dialog,
-  Input,
-  TLUiDialogProps,
-  getUserPreferences,
-  setUserPreferences,
-  useEditor,
-} from "@tldraw/tldraw";
-import { flexColumnStyle } from "../../common";
-import React, { useEffect, useState } from "react";
+import { Button, Dialog, TLUiDialogProps } from "@tldraw/tldraw";
+import React from "react";
 
 type Props = TLUiDialogProps & {
   title: string;

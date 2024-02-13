@@ -10,7 +10,7 @@ import {
   track,
   useEditor,
 } from "@tldraw/tldraw";
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FaHome } from "react-icons/fa";
