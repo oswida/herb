@@ -155,6 +155,16 @@ export const useUiOverride = (
         },
       };
 
+      tools.rpgGen = {
+        id: "rpg-gen",
+        icon: "rpg-gen",
+        label: "Item Generator" as any,
+        readonlyOk: false,
+        onSelect: () => {
+          editor.setCurrentTool("rpg-gen");
+        },
+      };
+
       return tools;
     },
     toolbar(_app, toolbar, { tools }) {
@@ -164,6 +174,7 @@ export const useUiOverride = (
       toolbar.push(toolbarItem(tools.rpgDice));
       toolbar.push(toolbarItem(tools.rpgCards));
       toolbar.push(toolbarItem(tools.rpgPbtaRoll));
+      toolbar.push(toolbarItem(tools.rpgGen));
       return toolbar;
     },
     keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {

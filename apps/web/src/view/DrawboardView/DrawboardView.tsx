@@ -32,6 +32,8 @@ import {
   RpgCardStackShapeUtil,
   RpgDiceRollerShapeTool,
   RpgDiceRollerShapeUtil,
+  RpgGenShapeTool,
+  RpgGenShapeUtil,
   RpgPbtaRollShapeTool,
   RpgPbtaRollShapeUtil,
 } from "../../shapes";
@@ -65,6 +67,7 @@ const customShapeUtils = [
   RpgCardShapeUtil,
   RpgAttrShapeUtil,
   RpgPbtaRollShapeUtil,
+  RpgGenShapeUtil,
 ];
 
 const customTools = [
@@ -74,6 +77,7 @@ const customTools = [
   RpgCardStackShapeTool,
   RpgAttrShapeTool,
   RpgPbtaRollShapeTool,
+  RpgGenShapeTool,
 ];
 
 const customIcons = {
@@ -84,6 +88,7 @@ const customIcons = {
   "rpg-cards": "/icons/card-ace.svg",
   "rpg-attr": "/icons/rpg-attr.svg",
   "rpg-pbta-roll": "/icons/pbta-move.svg",
+  "rpg-gen": "/icons/rpg-gen.svg",
 };
 
 const customPrefix = "rpg";
