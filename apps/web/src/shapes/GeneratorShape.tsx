@@ -24,6 +24,7 @@ import { CustomShapeUtil } from "./CustomShape";
 import { FaRandom } from "react-icons/fa";
 import { GenList } from "./GenList";
 import { DiceRoll, DiceRoller } from "@dice-roller/rpg-dice-roller";
+import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 
 export type RpgGenShape = TLBaseShape<
   "rpg-gen",
@@ -39,6 +40,7 @@ export type RpgGenShape = TLBaseShape<
     pairs: boolean;
     pairSeparator: string;
     items_second: string[];
+    count: number;
   }
 >;
 
@@ -60,6 +62,7 @@ const shapeProps: ShapeProps<RpgGenShape> = {
   pairs: T.boolean,
   pairSeparator: T.string,
   items_second: T.arrayOf(T.string),
+  count: T.number,
 };
 
 const RpgGenSettings = track(({ shape }: { shape: RpgGenShape }) => {
@@ -106,6 +109,23 @@ const RpgGenSettings = track(({ shape }: { shape: RpgGenShape }) => {
 });
 
 const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
+  const editor = useEditor();
+  const mod = useCallback(
+    (val: number) => {
+      let v = shape.props.count + val;
+      if (v < 1) v = 1;
+      const shapeUpdate: TLShapePartial<any> = {
+        id: shape.id,
+        type: shape.type,
+        props: {
+          count: v,
+        },
+      };
+      editor.updateShapes([shapeUpdate]);
+    },
+    [shape]
+  );
+
   return (
     <div
       className={flexColumnStyle({})}
@@ -133,6 +153,22 @@ const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
       >
         {shape.props.label}
       </div>
+      <div className={flexRowStyle({})}>
+        <Button type="icon" onPointerDown={() => mod(-1)}>
+          <BiMinusCircle fill={shape.props.color} size={16} />
+        </Button>
+        <div
+          style={{
+            fontFamily: `var(--tl-font-${shape.props.font})`,
+            fontSize: "1rem",
+          }}
+        >
+          {shape.props.count}
+        </div>
+        <Button type="icon" onPointerDown={() => mod(1)}>
+          <BiPlusCircle fill={shape.props.color} size={16} />
+        </Button>
+      </div>
     </div>
   );
 });
@@ -143,15 +179,22 @@ const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
   const gen = () => {
     if (shape.props.items.length === 0) return;
     const roller = new DiceRoller();
-    const r = roller.roll(`1d${shape.props.items.length}`) as DiceRoll;
-    const item = shape.props.items[r.total - 1];
-    let item2 = "";
-    if (shape.props.pairs && shape.props.items_second.length > 0) {
-      const r2 = roller.roll(
-        `1d${shape.props.items_second.length}`
-      ) as DiceRoll;
-      item2 = shape.props.items_second[r2.total - 1];
+
+    const result: string[] = [];
+
+    for (let i = 0; i < shape.props.count; i++) {
+      const r = roller.roll(`1d${shape.props.items.length}`) as DiceRoll;
+      const item = shape.props.items[r.total - 1];
+      let item2 = "";
+      if (shape.props.pairs && shape.props.items_second.length > 0) {
+        const r2 = roller.roll(
+          `1d${shape.props.items_second.length}`
+        ) as DiceRoll;
+        item2 = shape.props.items_second[r2.total - 1];
+      }
+      result.push(`${item}${shape.props.pairSeparator}${item2}`);
     }
+
     const sid: TLShapeId = createShapeId(uniqueId());
     const pos = {
       x: shape.x + shape.props.w + Math.random() * 40,
@@ -159,14 +202,12 @@ const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
     };
     editor.createShape({
       id: sid,
-      type: "geo",
+      type: "text",
       x: pos.x,
       y: pos.y,
       props: {
-        geo: "rectangle",
-        fill: "solid",
         font: shape.props.font,
-        text: `${item}${shape.props.pairSeparator}${item2}`,
+        text: result.join("\n"),
         align: "middle",
         size: "s",
         w: shape.props.w,
@@ -204,6 +245,7 @@ export class RpgGenShapeUtil extends CustomShapeUtil<RpgGenShape> {
       pairs: false,
       items_second: [],
       pairSeparator: " ",
+      count: 1,
     };
   }
 
