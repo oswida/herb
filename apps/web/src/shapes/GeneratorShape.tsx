@@ -37,6 +37,7 @@ export type RpgGenShape = TLBaseShape<
     font: string;
     items: string[];
     pairs: boolean;
+    pairSeparator: string;
     items_second: string[];
   }
 >;
@@ -57,6 +58,7 @@ const shapeProps: ShapeProps<RpgGenShape> = {
   font: T.string,
   items: T.arrayOf(T.string),
   pairs: T.boolean,
+  pairSeparator: T.string,
   items_second: T.arrayOf(T.string),
 };
 
@@ -90,6 +92,12 @@ const RpgGenSettings = track(({ shape }: { shape: RpgGenShape }) => {
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsFontSelect shape={shape} title="Font" field="font" />
       <CsField shape={shape} field="pairs" title="Pairs" vtype="boolean" />
+      <CsField
+        shape={shape}
+        field="pairSeparator"
+        title="Pair separator"
+        vtype="string"
+      />
       <Button type="normal" onPointerDown={editList}>
         Edit item list
       </Button>
@@ -142,7 +150,7 @@ const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
       const r2 = roller.roll(
         `1d${shape.props.items_second.length}`
       ) as DiceRoll;
-      item2 = ` ${shape.props.items_second[r2.total - 1]}`;
+      item2 = shape.props.items_second[r2.total - 1];
     }
     const sid: TLShapeId = createShapeId(uniqueId());
     const pos = {
@@ -158,7 +166,7 @@ const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
         geo: "rectangle",
         fill: "solid",
         font: shape.props.font,
-        text: `${item}${item2}`,
+        text: `${item}${shape.props.pairSeparator}${item2}`,
         align: "middle",
         size: "s",
         w: shape.props.w,
@@ -195,6 +203,7 @@ export class RpgGenShapeUtil extends CustomShapeUtil<RpgGenShape> {
       items: [],
       pairs: false,
       items_second: [],
+      pairSeparator: " ",
     };
   }
 
