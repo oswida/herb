@@ -33,13 +33,11 @@ export type RpgGenShape = TLBaseShape<
     h: number;
     label: string;
     color: string;
-    background: string;
+    backgroundUrl: string;
     owner: string;
     font: string;
-    items: string[];
-    pairs: boolean;
-    pairSeparator: string;
-    items_second: string[];
+    items: string[][];
+    separator: string;
     count: number;
   }
 >;
@@ -55,13 +53,11 @@ const shapeProps: ShapeProps<RpgGenShape> = {
   h: T.number,
   label: T.string,
   color: T.string,
-  background: T.string,
+  backgroundUrl: T.string,
   owner: T.string,
   font: T.string,
-  items: T.arrayOf(T.string),
-  pairs: T.boolean,
-  pairSeparator: T.string,
-  items_second: T.arrayOf(T.string),
+  separator: T.string,
+  items: T.arrayOf(T.arrayOf(T.string)),
   count: T.number,
 };
 
@@ -85,20 +81,13 @@ const RpgGenSettings = track(({ shape }: { shape: RpgGenShape }) => {
       style={{ padding: "5px", gap: "10px" }}
     >
       <CsField shape={shape} field="color" title="Color" vtype="color" />
-      <CsField
-        shape={shape}
-        field="background"
-        title="Background"
-        vtype="color"
-      />
       <CsResetColors shape={shape} />
       <CsField shape={shape} field="label" title="Label" vtype="string" />
       <CsFontSelect shape={shape} title="Font" field="font" />
-      <CsField shape={shape} field="pairs" title="Pairs" vtype="boolean" />
       <CsField
         shape={shape}
-        field="pairSeparator"
-        title="Pair separator"
+        field="separator"
+        title="Item separator - \n for newline"
         vtype="string"
       />
       <Button type="normal" onPointerDown={editList}>
@@ -132,7 +121,6 @@ const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
       style={{
         justifyContent: "center",
         color: shape.props.color,
-        backgroundColor: shape.props.background,
         width: shape.props.w,
         height: shape.props.h,
         minHeight: shape.props.h,
@@ -175,44 +163,42 @@ const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
 
 const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
   const editor = useEditor();
-
   const gen = () => {
     if (shape.props.items.length === 0) return;
     const roller = new DiceRoller();
 
-    const result: string[] = [];
-
     for (let i = 0; i < shape.props.count; i++) {
-      const r = roller.roll(`1d${shape.props.items.length}`) as DiceRoll;
-      const item = shape.props.items[r.total - 1];
-      let item2 = "";
-      if (shape.props.pairs && shape.props.items_second.length > 0) {
-        const r2 = roller.roll(
-          `1d${shape.props.items_second.length}`
-        ) as DiceRoll;
-        item2 = shape.props.items_second[r2.total - 1];
+      const result: string[] = [];
+      for (let c = 0; c < shape.props.items.length; c++) {
+        const category = shape.props.items[c];
+        const r = roller.roll(`1d${category.length}`) as DiceRoll;
+        const item = category[r.total - 1];
+        result.push(item);
       }
-      result.push(`${item}${shape.props.pairSeparator}${item2}`);
-    }
 
-    const sid: TLShapeId = createShapeId(uniqueId());
-    const pos = {
-      x: shape.x + shape.props.w + Math.random() * 40,
-      y: shape.y + shape.props.h + Math.random() * 10,
-    };
-    editor.createShape({
-      id: sid,
-      type: "text",
-      x: pos.x,
-      y: pos.y,
-      props: {
-        font: shape.props.font,
-        text: result.join("\n"),
-        align: "middle",
-        size: "s",
-        w: shape.props.w,
-      },
-    });
+      const sid: TLShapeId = createShapeId(uniqueId());
+      const pos = {
+        x: shape.x + shape.props.w + Math.random() * 40,
+        y: shape.y + shape.props.h + Math.random() * 10,
+      };
+      editor.createShape({
+        id: sid,
+        type: "geo",
+        x: pos.x,
+        y: pos.y,
+        props: {
+          geo: "rectangle",
+          font: shape.props.font,
+          text: result.join(
+            shape.props.separator === "\\n" ? "\n" : shape.props.separator
+          ),
+          align: "middle",
+          verticalAlign: "middle",
+          size: "s",
+          w: shape.props.w,
+        },
+      });
+    }
   };
 
   return (
@@ -240,11 +226,9 @@ export class RpgGenShapeUtil extends CustomShapeUtil<RpgGenShape> {
       color: "var(--color-text)",
       owner: "",
       font: "draw",
-      background: "var(--color-background)",
+      backgroundUrl: "",
       items: [],
-      pairs: false,
-      items_second: [],
-      pairSeparator: " ",
+      separator: " ",
       count: 1,
     };
   }

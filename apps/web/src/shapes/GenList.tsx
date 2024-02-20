@@ -17,8 +17,9 @@ type Props = TLUiDialogProps & {
 
 export const GenList = track(({ shape, onClose }: Props) => {
   const editor = useEditor();
-  const [items, setItems] = useState(shape.props.items);
-  const [items2, setItems2] = useState(shape.props.items_second);
+  const [items, setItems] = useState(
+    shape.props.items.map((it) => it.join("\n")).join("\n---\n")
+  );
   const theme = getDefaultColorTheme({
     isDarkMode: editor.user.getIsDarkMode(),
   });
@@ -28,8 +29,7 @@ export const GenList = track(({ shape, onClose }: Props) => {
       id: shape.id,
       type: "rpg-gen",
       props: {
-        items: items,
-        items_second: items2,
+        items: items.split("\n---\n").map((it) => it.split("\n")),
       },
     };
     editor.updateShapes([shapeUpdate]);
@@ -44,30 +44,22 @@ export const GenList = track(({ shape, onClose }: Props) => {
       </Dialog.Header>
       <Dialog.Body>
         <div className={flexColumnStyle({})} style={{ minWidth: 350 }}>
-          <div>Item list (each line is a single item)</div>
+          <div>
+            Item list. <br />
+            Each line is a single item.
+            <br />
+            You can separate item categories by line <br />
+            starting with at least three minuses (---).
+          </div>
           <textarea
-            rows={10}
-            cols={30}
+            rows={20}
+            cols={40}
             className="tlui-embed-dialog__input"
             placeholder="Enter description..."
-            defaultValue={items.join("\n")}
-            onChange={(e) => setItems(e.target.value.split("\n"))}
+            defaultValue={items}
+            onChange={(e) => setItems(e.target.value)}
             style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
-          {shape.props.pairs && (
-            <>
-              <div>Second item list (each line is a single item)</div>
-              <textarea
-                rows={10}
-                cols={30}
-                className="tlui-embed-dialog__input"
-                placeholder="Enter description..."
-                defaultValue={items2.join("\n")}
-                onChange={(e) => setItems2(e.target.value.split("\n"))}
-                style={{ color: theme.text, whiteSpace: "pre-wrap" }}
-              />
-            </>
-          )}
         </div>
       </Dialog.Body>
       <Dialog.Footer>
