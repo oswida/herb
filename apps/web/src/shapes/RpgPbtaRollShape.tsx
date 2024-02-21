@@ -1,10 +1,10 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapePartial,
+  TldrawUiButton,
   getDefaultColorTheme,
   getUserPreferences,
   track,
@@ -118,9 +118,9 @@ const RpgPbtaRollSettings = ({ shape }: { shape: RpgPbtaRollShape }) => {
         vtype="boolean"
       />
       <CsFontSelect field="font" title="Font" shape={shape} />
-      <Button type="normal" onPointerDown={desc}>
+      <TldrawUiButton type="normal" onPointerDown={desc}>
         Set roll descriptions
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };
@@ -269,9 +269,9 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
         >
           {shape.props.hasOwnModifier === true && (
             <>
-              <Button type="icon" onPointerDown={() => mod(-1)}>
+              <TldrawUiButton type="icon" onPointerDown={() => mod(-1)}>
                 <BiMinusCircle fill={shape.props.color} size={20} />
-              </Button>
+              </TldrawUiButton>
               <div
                 style={{
                   fontFamily: `var(--tl-font-${shape.props.font})`,
@@ -282,13 +282,13 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
                   ? shape.props.ownModifierValue
                   : 0}
               </div>
-              <Button type="icon" onPointerDown={() => mod(1)}>
+              <TldrawUiButton type="icon" onPointerDown={() => mod(1)}>
                 <BiPlusCircle fill={shape.props.color} size={20} />
-              </Button>
+              </TldrawUiButton>
             </>
           )}
         </div>
-        <Button
+        <TldrawUiButton
           type="icon"
           title={info}
           onPointerDown={roll}
@@ -301,7 +301,7 @@ const RpgPbtaRollMain = track(({ shape }: { shape: RpgPbtaRollShape }) => {
           }}
         >
           <ImDice size={28} fill={shape.props.color} />
-        </Button>
+        </TldrawUiButton>
       </div>
     </div>
   );

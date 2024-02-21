@@ -1,9 +1,13 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLShapePartial,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useState } from "react";
@@ -68,13 +72,13 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Dice roller pool</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Dice roller pool</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})} style={{ maxWidth: 150 }}>
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of white d6 dice"
             label={"d6 white" as any}
@@ -83,7 +87,7 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
               setD6White(Number.parseInt(value))
             }
           />
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of black d6 dice"
             label={"d6 black" as any}
@@ -93,14 +97,14 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
             }
           />
 
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of d4 dice"
             label={"d4 " as any}
             defaultValue={d4.toString()}
             onValueChange={(value: string) => setD4(Number.parseInt(value))}
           />
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of d8 dice"
             label={"d8 " as any}
@@ -108,14 +112,14 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
             onValueChange={(value: string) => setD8(Number.parseInt(value))}
           />
 
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of d10 dice"
             label={"d10" as any}
             defaultValue={d10.toString()}
             onValueChange={(value: string) => setD10(Number.parseInt(value))}
           />
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input short_input"
             placeholder="number of d12 dice"
             label={"d12" as any}
@@ -123,14 +127,14 @@ export const DiceRollerPool = ({ shape, onClose }: Props) => {
             onValueChange={(value: string) => setD12(Number.parseInt(value))}
           />
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button type="normal" onClick={update}>
+          <TldrawUiButton type="normal" onClick={update}>
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };

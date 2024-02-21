@@ -1,4 +1,12 @@
-import { Button, Dialog, TLUiDialogProps } from "@tldraw/tldraw";
+import {
+  TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+} from "@tldraw/tldraw";
 import React from "react";
 
 type Props = TLUiDialogProps & {
@@ -15,25 +23,25 @@ export const Confirmation = (props: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>{props.title}</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>{props.title}</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         {props.message.split("\n").map((it) => (
           <div key={it}>{it}</div>
         ))}
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button onPointerDown={activate} type="normal">
+          <TldrawUiButton onPointerDown={activate} type="normal">
             Ok
-          </Button>
-          <Button type="normal" onPointerDown={props.onClose}>
+          </TldrawUiButton>
+          <TldrawUiButton type="normal" onPointerDown={props.onClose}>
             Cancel
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };

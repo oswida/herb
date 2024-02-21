@@ -1,8 +1,12 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   getDefaultColorTheme,
   getUserPreferences,
   useEditor,
@@ -48,19 +52,19 @@ export const DiceDialog = (props: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>
           <div className={flexRowStyle({})}>
             {props.private && <FaUserSecret fill="var(--color-accent)" />}
             Roll {props.notation}
           </div>
-        </Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+        </TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})}>
           {props.isCustom && (
-            <Input
+            <TldrawUiInput
               className="tlui-embed-dialog__input"
               placeholder="Custom dice notation"
               autofocus
@@ -70,7 +74,7 @@ export const DiceDialog = (props: Props) => {
             />
           )}
           {props.hasMod && (
-            <Input
+            <TldrawUiInput
               className="tlui-embed-dialog__input"
               placeholder="Roll modifier value"
               autofocus
@@ -80,7 +84,7 @@ export const DiceDialog = (props: Props) => {
             />
           )}
           {props.hasComment && (
-            <Input
+            <TldrawUiInput
               className="tlui-embed-dialog__input"
               placeholder="Roll comment"
               autofocus
@@ -90,14 +94,14 @@ export const DiceDialog = (props: Props) => {
             />
           )}
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button onPointerDown={roll} type="normal">
+          <TldrawUiButton onPointerDown={roll} type="normal">
             Roll
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };

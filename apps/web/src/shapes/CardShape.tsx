@@ -1,12 +1,12 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapeId,
   TLShapePartial,
   TLShapeUtilFlag,
+  TldrawUiButton,
   track,
   useDefaultHelpers,
   useEditor,
@@ -52,7 +52,7 @@ const shapeProps: ShapeProps<RpgCardShape> = {
   _bkgUrl: T.string,
   _flipped: T.boolean,
   _stack: T.any,
-  _aid: T.string,
+  _aid: T.optional(T.string),
   owner: T.string,
   private: T.boolean,
   revealed: T.boolean,
@@ -194,41 +194,41 @@ const RpgCardActions = ({ shape }: { shape: RpgCardShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button
+      <TldrawUiButton
         type="icon"
         title="Put card on top of stack"
         onPointerDown={() => move("top")}
       >
         <IconStackFront size={24} />
-      </Button>
-      <Button
+      </TldrawUiButton>
+      <TldrawUiButton
         type="icon"
         title="Put card on bottom of stack"
         onPointerDown={() => move("bottom")}
       >
         <IconStackBack size={24} />
-      </Button>
-      <Button
+      </TldrawUiButton>
+      <TldrawUiButton
         type="icon"
         title="Shuffle to stack"
         onPointerDown={() => move("shuffle")}
       >
         <IconStackMiddle size={24} />
-      </Button>
-      <Button type="icon" title="Flip" onPointerDown={flip}>
+      </TldrawUiButton>
+      <TldrawUiButton type="icon" title="Flip" onPointerDown={flip}>
         <FaReply size={16} />
-      </Button>
+      </TldrawUiButton>
       {shape.props.private && (
         <>
           {!shape.props.revealed && (
-            <Button type="icon" title="Reveal" onPointerDown={reveal}>
+            <TldrawUiButton type="icon" title="Reveal" onPointerDown={reveal}>
               <FaRegEyeSlash size={16} fill="var(--color-accent)" />
-            </Button>
+            </TldrawUiButton>
           )}
           {shape.props.revealed && (
-            <Button type="icon" title="Hide" onPointerDown={reveal}>
+            <TldrawUiButton type="icon" title="Hide" onPointerDown={reveal}>
               <FaRegEye size={16} />
-            </Button>
+            </TldrawUiButton>
           )}
         </>
       )}

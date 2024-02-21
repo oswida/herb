@@ -12,10 +12,10 @@ import { useAtom, useAtomValue } from "jotai";
 import { AssetItem } from "./AssetItem";
 import {
   AssetRecordType,
-  Button,
-  Input,
   MediaHelpers,
   TLImageShape,
+  TldrawUiButton,
+  TldrawUiInput,
   getHashForString,
   stopEventPropagation,
   useDialogs,
@@ -213,15 +213,15 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
       </div>
 
       <div className={flexRowStyle({})}>
-        <Input
+        <TldrawUiInput
           className="tlui-embed-dialog__input"
           placeholder="Filter..."
           defaultValue={filter}
           onValueChange={(value) => filterChange(value)}
         />
-        <Button type="icon" onPointerDown={clearFilter}>
+        <TldrawUiButton type="icon" onPointerDown={clearFilter}>
           <FaBackspace size={16} />
-        </Button>
+        </TldrawUiButton>
       </div>
       <div className={assetListStyle}>
         {items.map((it, idx) => (
@@ -237,15 +237,15 @@ export const AssetList = ({ roomId }: { roomId: string }) => {
         className={flexRowStyle({ justify: "center" })}
         style={{ gap: "10px" }}
       >
-        <Button
+        <TldrawUiButton
           type="normal"
           onPointerDown={() => (sel ? insertAsset(sel) : undefined)}
         >
           Insert
-        </Button>
-        <Button type="normal" onPointerDown={() => deleteAsset(sel)}>
+        </TldrawUiButton>
+        <TldrawUiButton type="normal" onPointerDown={() => deleteAsset(sel)}>
           Delete
-        </Button>
+        </TldrawUiButton>
       </div>
     </div>
   );

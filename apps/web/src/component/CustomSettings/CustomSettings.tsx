@@ -9,11 +9,12 @@ import {
   uiVisible,
 } from "../../common";
 import {
-  Button,
-  DropdownMenu,
-  Input,
   TLBaseShape,
   TLShapePartial,
+  TldrawUiButton,
+  TldrawUiButtonIcon,
+  TldrawUiIcon,
+  TldrawUiInput,
   getDefaultColorTheme,
   stopEventPropagation,
   track,
@@ -22,7 +23,7 @@ import {
 import { Compact } from "@uiw/react-color";
 import { CheckItem } from "../CheckItem";
 import { PiCubeTransparent } from "react-icons/pi";
-import { MdOutlineColorLens, MdOutlineColorize } from "react-icons/md";
+import { MdOutlineColorLens } from "react-icons/md";
 
 type CsProps = {
   shape: TLBaseShape<any, any>;
@@ -71,7 +72,7 @@ export const CsField = ({
     <div {...rest}>
       {vtype !== "boolean" && <div>{title}</div>}
       {vtype === "string" && (
-        <Input
+        <TldrawUiInput
           className="tlui-embed-dialog__input"
           placeholder={field}
           defaultValue={`${shape.props[field]}`}
@@ -79,7 +80,7 @@ export const CsField = ({
         />
       )}
       {vtype === "number" && (
-        <Input
+        <TldrawUiInput
           className="tlui-embed-dialog__input"
           placeholder={field}
           defaultValue={`${shape.props[field]}`}
@@ -145,14 +146,14 @@ export const CsIconSelect = ({
       <div>{title}</div>
       <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
         {Object.keys(dict).map((it) => (
-          <Button
+          <TldrawUiButton
             key={it}
             type="icon"
             data-state={it === value ? "hinted" : undefined}
             onPointerDown={() => change(it)}
           >
             {dict[it]}
-          </Button>
+          </TldrawUiButton>
         ))}
       </div>
     </div>
@@ -192,31 +193,35 @@ export const CsFontSelect = ({
   return (
     <div {...rest}>
       <div>{title}</div>
-      <div className={flexRowStyle({})} style={{ flexWrap: "wrap" }}>
-        <Button
+      <div className={flexRowStyle({})} style={{ flexWrap: "wrap", gap: 2 }}>
+        <TldrawUiButton
           type="icon"
-          icon="font-draw"
           data-state={value === "draw" ? "hinted" : undefined}
           onPointerDown={() => change("draw")}
-        />
-        <Button
+        >
+          <TldrawUiIcon icon="font-draw" />
+        </TldrawUiButton>
+        <TldrawUiButton
           type="icon"
-          icon="font-sans"
           data-state={value === "sans" ? "hinted" : undefined}
           onPointerDown={() => change("sans")}
-        />
-        <Button
+        >
+          <TldrawUiIcon icon="font-sans" />
+        </TldrawUiButton>
+        <TldrawUiButton
           type="icon"
-          icon="font-serif"
           data-state={value === "serif" ? "hinted" : undefined}
           onPointerDown={() => change("serif")}
-        />
-        <Button
+        >
+          <TldrawUiIcon icon="font-serif" />
+        </TldrawUiButton>
+        <TldrawUiButton
           type="icon"
-          icon="font-mono"
           data-state={value === "mono" ? "hinted" : undefined}
           onPointerDown={() => change("mono")}
-        />
+        >
+          <TldrawUiIcon icon="font-mono" />
+        </TldrawUiButton>
       </div>
     </div>
   );
@@ -250,16 +255,20 @@ export const CsResetColors = ({ shape }: { shape: TLBaseShape<any, any> }) => {
   return (
     <div className={flexRowStyle({})}>
       <div> Color reset</div>
-      <Button type="icon" onPointerDown={resetColors} title="Theme colors">
+      <TldrawUiButton
+        type="icon"
+        onPointerDown={resetColors}
+        title="Theme colors"
+      >
         <MdOutlineColorLens size={16} />
-      </Button>
-      <Button
+      </TldrawUiButton>
+      <TldrawUiButton
         type="icon"
         onPointerDown={transparent}
         title="Transparent background"
       >
         <PiCubeTransparent size={16} />
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import {
-  Button,
-  Icon,
+  TldrawUiButton,
+  TldrawUiIcon,
   getUserPreferences,
   useDialogs,
   useEditor,
@@ -125,51 +125,55 @@ export const MainUI = ({
     <div className={actionsRootStyle}>
       <div className={actionsPanelStyle}>
         <div className={actionsInfoStyle}>
-          <Button type="normal" title={user.id} onPointerDown={userCopy}>
+          <TldrawUiButton
+            type="normal"
+            title={user.id}
+            onPointerDown={userCopy}
+          >
             <span
               style={{ color: user.color ? user.color : "var(--color-text)" }}
             >
               {user.name}
             </span>
-          </Button>
+          </TldrawUiButton>
         </div>
-        <Button
+        <TldrawUiButton
           type="tool"
           data-state={uv ? "selected" : undefined}
           onPointerDown={() => setUv(!uv)}
           title="Draw tools"
         >
-          <Icon icon="tool-pencil" />
-        </Button>
-        <Button
+          <TldrawUiIcon icon="tool-pencil" />
+        </TldrawUiButton>
+        <TldrawUiButton
           type="tool"
           data-state={dv ? "selected" : undefined}
           onPointerDown={() => setDv(!dv)}
           title="Dice roller"
         >
           <FaDiceD20 size={16} />
-        </Button>
-        <Button
+        </TldrawUiButton>
+        <TldrawUiButton
           type="tool"
           data-state={al ? "selected" : undefined}
           onPointerDown={() => setAl(!al)}
           title="Asset list"
         >
           <MdLibraryBooks size={20} />
-        </Button>
+        </TldrawUiButton>
         {isOwner && (
           <>
-            <Button
+            <TldrawUiButton
               type="tool"
               onPointerDown={allow}
               title="Accept user to room"
             >
               <FaUserPlus size={16} />
-            </Button>
+            </TldrawUiButton>
           </>
         )}
 
-        <Button
+        <TldrawUiButton
           type="tool"
           title="Settings"
           onPointerDown={() => {
@@ -182,14 +186,18 @@ export const MainUI = ({
           }}
         >
           <FaCogs size={16} />
-        </Button>
+        </TldrawUiButton>
 
         <div className={actionsInfoStyle}>
-          <Button type="normal" title={roomInfo} onPointerDown={roomCopy}>
+          <TldrawUiButton
+            type="normal"
+            title={roomInfo}
+            onPointerDown={roomCopy}
+          >
             <div className={flexRowStyle({})}>
               <FaChalkboard size={20} />
             </div>
-          </Button>
+          </TldrawUiButton>
           {/* {isOwner && (
             <Button
               type="normal"

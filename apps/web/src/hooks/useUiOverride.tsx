@@ -1,9 +1,7 @@
 import {
   Editor,
   TLUiOverrides,
-  menuGroup,
-  menuItem,
-  menuSubmenu,
+  TldrawUiMenuItem,
   toolbarItem,
 } from "@tldraw/tldraw";
 import { useInsertJson } from "./useInsertJson";
@@ -19,81 +17,77 @@ export const useUiOverride = (
   baseUrl: string,
   roomProvider: WebsocketProvider
 ) => {
-  const insertPdf = useInsertFile(editor, "pdf", roomId, baseUrl);
-  const insertHandout = useInsertFile(editor, "handout", roomId, baseUrl);
-  const insertJson = useInsertJson(editor);
-  const { backupPage } = useBackup(editor);
-
   const uiOverrides: TLUiOverrides = {
-    menu(editor, menu, helpers) {
-      const items = [
-        menuItem({
-          id: "upload-pdf",
-          label: "PDF document" as any,
-          readonlyOk: false,
-          onSelect: () => {
-            insertPdf();
-          },
-        }),
-        menuItem({
-          id: "upload-handout",
-          label: "Markdown file" as any,
-          readonlyOk: false,
-          onSelect: () => {
-            insertHandout();
-          },
-        }),
-      ];
+    // menu(editor, menu, helpers) {
+    //   const items = [
+    //     menuItem({
+    //       id: "upload-pdf",
+    //       label: "PDF document" as any,
+    //       readonlyOk: false,
+    //       onSelect: () => {
+    //         insertPdf();
+    //       },
+    //     }),
+    //     menuItem({
+    //       id: "upload-handout",
+    //       label: "Markdown file" as any,
+    //       readonlyOk: false,
+    //       onSelect: () => {
+    //         insertHandout();
+    //       },
+    //     }),
+    //   ];
 
-      const sub = menuSubmenu("upload-other-sub", "Upload" as any, ...items);
-      const grp = menuGroup("upload-other", sub);
-      if (grp) {
-        menu.push(grp);
-      }
+    //   const sub = menuSubmenu("upload-other-sub", "Upload" as any, ...items);
+    //   const grp = menuGroup("upload-other", sub);
+    //   if (grp) {
+    //     menu.push(grp);
+    //   }
 
-      const bkpItems = [
-        menuItem({
-          id: "backup-page",
-          label: "Backup page" as any,
-          readonlyOk: false,
-          onSelect: () => {
-            backupPage();
-          },
-        }),
-        menuItem({
-          id: "upload-json",
-          label: "Restore JSON" as any,
-          readonlyOk: false,
-          onSelect: () => {
-            insertJson();
-          },
-        }),
-      ];
+    //   const bkpItems = [
+    //     menuItem({
+    //       id: "backup-page",
+    //       label: "Backup page" as any,
+    //       readonlyOk: false,
+    //       onSelect: () => {
+    //         backupPage();
+    //       },
+    //     }),
+    //     menuItem({
+    //       id: "upload-json",
+    //       label: "Restore JSON" as any,
+    //       readonlyOk: false,
+    //       onSelect: () => {
+    //         insertJson();
+    //       },
+    //     }),
+    //   ];
 
-      const bsub = menuSubmenu("backup-sub", "Backup" as any, ...bkpItems);
-      const bgrp = menuGroup("backup-restore", bsub);
-      if (bgrp) {
-        menu.push(bgrp);
-      }
+    //   const bsub = menuSubmenu("backup-sub", "Backup" as any, ...bkpItems);
+    //   const bgrp = menuGroup("backup-restore", bsub);
+    //   if (bgrp) {
+    //     menu.push(bgrp);
+    //   }
 
-      menu.push(
-        menuItem({
-          id: "follow-user",
-          label: "Follow user" as any,
-          readonlyOk: false,
-          onSelect: () => {
-            helpers.addDialog({
-              component: ({ onClose }) => (
-                <Follow onClose={onClose} roomProvider={roomProvider} />
-              ),
-              onClose: () => {},
-            });
-          },
-        })
-      );
+    //   menu.push(
+    //     menuItem({
+    //       id: "follow-user",
+    //       label: "Follow user" as any,
+    //       readonlyOk: false,
+    //       onSelect: () => {
+    //         helpers.addDialog({
+    //           component: () => (
+    //             <Follow onClose={onClose} roomProvider={roomProvider} />
+    //           ),
+    //           onClose: () => {},
+    //         });
+    //       },
+    //     })
+    //   );
 
-      return menu;
-    },
+    //   return menu;
+    // },
+
     tools(editor, tools) {
       tools.rpgClock = {
         id: "rpg-clock",
@@ -176,14 +170,6 @@ export const useUiOverride = (
       toolbar.push(toolbarItem(tools.rpgPbtaRoll));
       toolbar.push(toolbarItem(tools.rpgGen));
       return toolbar;
-    },
-    keyboardShortcutsMenu(_app, keyboardShortcutsMenu, { tools }) {
-      // Add the tool item from the context to the keyboard shortcuts dialog.
-      // const toolsGroup = keyboardShortcutsMenu.find(
-      // 	(group) => group.id === 'shortcuts-dialog.tools'
-      // ) as TLUiMenuGroup
-      // toolsGroup.children.push(menuItem(tools.card))
-      return keyboardShortcutsMenu;
     },
   };
 

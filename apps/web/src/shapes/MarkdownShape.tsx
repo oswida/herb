@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapePartial,
+  TldrawUiButton,
   getDefaultColorTheme,
   track,
   useEditor,
@@ -45,8 +45,8 @@ const shapeProps: ShapeProps<MarkdownShape> = {
   label: T.string,
   color: T.string,
   bkg: T.string,
-  url: T.string,
-  _currentUrl: T.string,
+  url: T.optional(T.string),
+  _currentUrl: T.optional(T.string),
   owner: T.string,
 };
 
@@ -134,7 +134,7 @@ const MarkdownMain = track(({ shape }: { shape: MarkdownShape }) => {
         components={{
           a: (url) => {
             return (
-              <Button
+              <TldrawUiButton
                 type="normal"
                 style={{
                   color: "var(--color-accent)",
@@ -144,7 +144,7 @@ const MarkdownMain = track(({ shape }: { shape: MarkdownShape }) => {
                 onPointerDown={() => open(url.href)}
               >
                 {url.children}
-              </Button>
+              </TldrawUiButton>
             );
           },
         }}
@@ -175,7 +175,7 @@ const MarkdownActions = ({ shape }: { shape: MarkdownShape }) => {
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
       {shape.props._currentUrl !== "" && (
-        <Button
+        <TldrawUiButton
           type="icon"
           style={{
             position: "absolute",
@@ -189,7 +189,7 @@ const MarkdownActions = ({ shape }: { shape: MarkdownShape }) => {
             size={16}
             fill={shape.props.color}
           />
-        </Button>
+        </TldrawUiButton>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Button, Canvas, Input, Tldraw } from "@tldraw/tldraw";
+import { Tldraw, TldrawUiButton, TldrawUiInput } from "@tldraw/tldraw";
 import { appPanelStyle, flexColumnStyle } from "../../common";
 import * as React from "react";
 import { drawBoardViewRoottyle } from "../DrawboardView/style.css";
@@ -30,7 +30,7 @@ export const RoomCreateView = () => {
   return (
     <div className={drawBoardViewRoottyle}>
       <Tldraw autoFocus inferDarkMode hideUi>
-        <Canvas />
+        {/* <Canvas /> */}
         <div
           className={appPanelStyle}
           style={{
@@ -48,22 +48,22 @@ export const RoomCreateView = () => {
           >
             <h3 style={{ alignSelf: "center" }}>HERB</h3>
             <span>Existing room</span>
-            <Input
+            <TldrawUiInput
               className="tlui-embed-dialog__input"
               placeholder="Room id to connect"
               onValueChange={(value) => setRoom(value)}
             />
-            <Button type="normal" onClick={go}>
+            <TldrawUiButton type="normal" onClick={go}>
               Connect
-            </Button>
+            </TldrawUiButton>
             {isCreator && (
               <>
                 <hr
                   style={{ width: "100%", borderColor: "var(--color-text-3)" }}
                 ></hr>
-                <Button type="normal" onClick={create}>
+                <TldrawUiButton type="normal" onClick={create}>
                   Create new room
-                </Button>
+                </TldrawUiButton>
               </>
             )}
           </div>

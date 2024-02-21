@@ -1,12 +1,12 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapeId,
   TLShapePartial,
   TLShapeUtilFlag,
+  TldrawUiButton,
   createShapeId,
   track,
   uniqueId,
@@ -116,22 +116,22 @@ const RpgCardStackSettings = track(
             vtype="boolean"
           />
         )}
-        <Button
+        <TldrawUiButton
           type="normal"
           onPointerDown={selectPool}
           style={{ gap: "20px" }}
         >
           <GiCardPick size="20" />
           Edit card pool
-        </Button>
-        <Button
+        </TldrawUiButton>
+        <TldrawUiButton
           type="normal"
           onPointerDown={selectBack}
           style={{ gap: "20px" }}
         >
           <BsFileImage size="16" />
           Set card back
-        </Button>
+        </TldrawUiButton>
       </div>
     );
   }
@@ -283,15 +283,15 @@ const RpgCardStackActions = ({ shape }: { shape: RpgCardStackShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button type="icon" title="Draw" onPointerDown={drawCard}>
+      <TldrawUiButton type="icon" title="Draw" onPointerDown={drawCard}>
         <GiCardDraw size="20" fill="var(--color-accent)" />
-      </Button>
-      <Button type="icon" title="Shuffle" onPointerDown={shuffle}>
+      </TldrawUiButton>
+      <TldrawUiButton type="icon" title="Shuffle" onPointerDown={shuffle}>
         <GiCardExchange size="18" />
-      </Button>
-      <Button type="icon" title="Reset stack" onPointerDown={reset}>
+      </TldrawUiButton>
+      <TldrawUiButton type="icon" title="Reset stack" onPointerDown={reset}>
         <FaReplyAll size={16} />
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };

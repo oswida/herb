@@ -1,8 +1,11 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   useDefaultHelpers,
 } from "@tldraw/tldraw";
 import { flexColumnStyle, flexRowStyle } from "../../common";
@@ -58,11 +61,11 @@ export const Users = ({
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Allowed users</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Allowed users</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div>Waiting for acceptance</div>
         <div
           className={flexColumnStyle({})}
@@ -71,13 +74,13 @@ export const Users = ({
           {blockedList.map((it) => (
             <div className={flexRowStyle({ justify: "space" })} key={it}>
               <div>{it}</div>
-              <Button
+              <TldrawUiButton
                 type="icon"
                 title="Accept user"
                 onPointerDown={() => accept(it)}
               >
                 <FaPlus />
-              </Button>
+              </TldrawUiButton>
             </div>
           ))}
         </div>
@@ -89,19 +92,19 @@ export const Users = ({
           {allowedUsers.map((it) => (
             <div className={flexRowStyle({ justify: "space" })} key={it}>
               <div>{it}</div>
-              <Button
+              <TldrawUiButton
                 type="icon"
                 title="Kick user"
                 onPointerDown={() => kick(it)}
               >
                 <FaMinus />
-              </Button>
+              </TldrawUiButton>
             </div>
           ))}
         </div>
         <div>Change room secret</div>
         <div className={flexRowStyle({})}>
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input"
             placeholder=""
             autofocus
@@ -109,11 +112,11 @@ export const Users = ({
               setSecret(value);
             }}
           />
-          <Button type="normal" onPointerDown={change}>
+          <TldrawUiButton type="normal" onPointerDown={change}>
             Change
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Body>
+      </TldrawUiDialogBody>
     </>
   );
 };

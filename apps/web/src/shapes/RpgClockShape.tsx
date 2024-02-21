@@ -1,10 +1,10 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapePartial,
+  TldrawUiButton,
   getDefaultColorTheme,
   track,
   useEditor,
@@ -130,22 +130,22 @@ const RpgClockActions = ({ shape }: { shape: RpgClockShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button
+      <TldrawUiButton
         type="icon"
         title="Decrease"
         onPointerDown={() => mod(-1)}
         style={{ minHeight: "16px", minWidth: "16px" }}
       >
         <FaMinusCircle size={16} />
-      </Button>
-      <Button
+      </TldrawUiButton>
+      <TldrawUiButton
         type="icon"
         title="Increase"
         onPointerDown={() => mod(1)}
         style={{ minHeight: "16px", minWidth: "16px" }}
       >
         <FaPlusCircle size={16} />
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };

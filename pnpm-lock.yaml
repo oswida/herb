@@ -136,8 +136,8 @@ importers:
         specifier: ^5.8.4
         version: 5.8.4(react-dom@18.2.0)(react@18.2.0)
       '@tldraw/tldraw':
-        specifier: 2.0.0-canary.9d895aab1356
-        version: 2.0.0-canary.9d895aab1356(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 2.0.0-canary.a8ca235eafb5
+        version: 2.0.0-canary.a8ca235eafb5(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
       '@types/node':
         specifier: ^20.10.0
         version: 20.10.0
@@ -2568,21 +2568,21 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@tldraw/editor@2.0.0-canary.9d895aab1356(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-pvCHOD5AR8vicVw32hiKAA6fWC+mwJcqLsqUEhLewBxKHxXP3RWm8eFP0ee6KbPT2G6RB5C8zsuDpHZ7PvIJmQ==}
+  /@tldraw/editor@2.0.0-canary.a8ca235eafb5(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-66qsDwh4+r+SV/+uagoqVHkDwiiM9gMjBlpHaRXEIhHFIphMI0AZu/etNt0179XTHJeJ85fJe0d6xOX1KETZxw==}
     peerDependencies:
       react: ^18
       react-dom: ^18
     dependencies:
-      '@tldraw/state': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/store': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/tlschema': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/utils': 2.0.0-canary.9d895aab1356
-      '@tldraw/validate': 2.0.0-canary.9d895aab1356
+      '@tldraw/state': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/store': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/tlschema': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/utils': 2.0.0-canary.a8ca235eafb5
+      '@tldraw/validate': 2.0.0-canary.a8ca235eafb5
       '@types/core-js': 2.5.8
       '@use-gesture/react': 10.3.0(react@18.2.0)
       classnames: 2.5.1
-      core-js: 3.35.1
+      core-js: 3.36.0
       eventemitter3: 4.0.7
       idb: 7.1.1
       is-plain-object: 5.0.0
@@ -2593,28 +2593,28 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@tldraw/state@2.0.0-canary.9d895aab1356(react@18.2.0):
-    resolution: {integrity: sha512-/Y31GLyZtz+14J9dheQeENnWwtz0Wxi8Cipod9L6JWKNc3Ruy6PxQIy8Dszt6n0845t7zuyl7q6WfdRPwyAlaA==}
+  /@tldraw/state@2.0.0-canary.a8ca235eafb5(react@18.2.0):
+    resolution: {integrity: sha512-jAyO53NMDfZGW7E80XI/2+CIech663rnKWWR3Y5wEfHYTKKWJT74hVsnlXnq9HTohSnhSc0ZTmnIemonU4c/lA==}
     peerDependencies:
       react: ^18
     dependencies:
       react: 18.2.0
     dev: false
 
-  /@tldraw/store@2.0.0-canary.9d895aab1356(react@18.2.0):
-    resolution: {integrity: sha512-MHKebtV2qbzDojgBWBV7D3t2JV24RXuFM4t8wfRuXAJ7oinapjq88RisdcVJ1DeRupkFAwi4QHYr0qjdaTuGxw==}
+  /@tldraw/store@2.0.0-canary.a8ca235eafb5(react@18.2.0):
+    resolution: {integrity: sha512-xfUVptJsAoF7bt6jSbpV9uyr4RQzhzlzoUhUs0VAdmDb69EeYH5nQyjH1C8pn7AoCiLgMtoZcrkO1EQMVc3YEw==}
     peerDependencies:
       react: ^18
     dependencies:
-      '@tldraw/state': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/utils': 2.0.0-canary.9d895aab1356
+      '@tldraw/state': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/utils': 2.0.0-canary.a8ca235eafb5
       lodash.isequal: 4.5.0
       nanoid: 4.0.2
       react: 18.2.0
     dev: false
 
-  /@tldraw/tldraw@2.0.0-canary.9d895aab1356(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ihFTzpPcyi7fITjEtlcTa92POcB9ds2L4A4xBFEqQq0gA1yqmxSgC1/QmOV0/+UMqIYS1Q5ifbzlBHRQw35byQ==}
+  /@tldraw/tldraw@2.0.0-canary.a8ca235eafb5(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-aKCf4YEkAeHwswEZvhcvWti3oy+uTpc8Xfnh6sl7TNJwD8uMMBwG7UtA5fOeSBx4k2dCIsaNc2LIU8VaF5QpTQ==}
     peerDependencies:
       react: ^18
       react-dom: ^18
@@ -2627,7 +2627,7 @@ packages:
       '@radix-ui/react-select': 1.2.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-slider': 1.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-toast': 1.1.5(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
-      '@tldraw/editor': 2.0.0-canary.9d895aab1356(react-dom@18.2.0)(react@18.2.0)
+      '@tldraw/editor': 2.0.0-canary.a8ca235eafb5(react-dom@18.2.0)(react@18.2.0)
       canvas-size: 1.2.6
       classnames: 2.5.1
       hotkeys-js: 3.13.7
@@ -2639,27 +2639,27 @@ packages:
       - '@types/react-dom'
     dev: false
 
-  /@tldraw/tlschema@2.0.0-canary.9d895aab1356(react@18.2.0):
-    resolution: {integrity: sha512-D6Qw5KirYzsZhVLgnDprvFyc7NCWlKChnvsW2zW7f83rBOoPQ89o/c9fZxRbkAGDJZw/lDTRe0dYZDtlzcq4ag==}
+  /@tldraw/tlschema@2.0.0-canary.a8ca235eafb5(react@18.2.0):
+    resolution: {integrity: sha512-51j/d5rf3+z39H/QbuyRb6AUlHAsK7ZYorAXzVKFauakl8lqm7RfuPNkux/N6+dfAVeRN5GXr84S54+z01RpVQ==}
     peerDependencies:
       react: ^18
     dependencies:
-      '@tldraw/state': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/store': 2.0.0-canary.9d895aab1356(react@18.2.0)
-      '@tldraw/utils': 2.0.0-canary.9d895aab1356
-      '@tldraw/validate': 2.0.0-canary.9d895aab1356
+      '@tldraw/state': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/store': 2.0.0-canary.a8ca235eafb5(react@18.2.0)
+      '@tldraw/utils': 2.0.0-canary.a8ca235eafb5
+      '@tldraw/validate': 2.0.0-canary.a8ca235eafb5
       nanoid: 4.0.2
       react: 18.2.0
     dev: false
 
-  /@tldraw/utils@2.0.0-canary.9d895aab1356:
-    resolution: {integrity: sha512-kozsxvioTTbuKFhPAiu1jQEXUWbuZfz+fzrXsDdNVJFzWrMGfBHwbG5lj04OdEsZP2NtdJjTEV7J5ny0T9t1Zg==}
+  /@tldraw/utils@2.0.0-canary.a8ca235eafb5:
+    resolution: {integrity: sha512-29UkQIVucaJI+q8ARZtZt4aEv39gnTwQzc0SIatQaPBaWBnUYPAjPFZcvbpXqbiT+0GSEn3WuJmdusCIhDdQ2Q==}
     dev: false
 
-  /@tldraw/validate@2.0.0-canary.9d895aab1356:
-    resolution: {integrity: sha512-i3LvK4PFmobR+6gww+dEH1izd8mHTjTcQYjP7YXjXnMvP9Xgkd7+gdWe3EKHEDRGCrC7FbHaeBMB1S2Z1RASXw==}
+  /@tldraw/validate@2.0.0-canary.a8ca235eafb5:
+    resolution: {integrity: sha512-ls/HPkaWYxjsQe6nf7cSqmOBRxjt56yvST8Q8MnJVpoj1lV0vwHkJSYHfX1UEMAQcMmnKh1hZLjVAOSUISWqyA==}
     dependencies:
-      '@tldraw/utils': 2.0.0-canary.9d895aab1356
+      '@tldraw/utils': 2.0.0-canary.a8ca235eafb5
     dev: false
 
   /@tootallnate/once@2.0.0:
@@ -4462,8 +4462,8 @@ packages:
       toggle-selection: 1.0.6
     dev: false
 
-  /core-js@3.35.1:
-    resolution: {integrity: sha512-IgdsbxNyMskrTFxa9lWHyMwAJU5gXOPP+1yO+K59d50VLVAIDAbs7gIv705KzALModfK3ZrSZTPNpC0PQgIZuw==}
+  /core-js@3.36.0:
+    resolution: {integrity: sha512-mt7+TUBbTFg5+GngsAxeKBTl5/VS0guFeJacYge9OmHb+m058UwwIm41SE9T4Den7ClatV57B6TYTuJ0CX1MAw==}
     requiresBuild: true
     dev: false
 
@@ -9114,8 +9114,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-remove-scroll-bar@2.3.4(@types/react@18.2.21)(react@18.2.0):
-    resolution: {integrity: sha512-63C4YQBUt0m6ALadE9XV56hV8BgJWDmmTPY758iIJjfQKt2nYwoUrPk0LXRXcB/yIj82T1/Ixfdpdk68LwIB0A==}
+  /react-remove-scroll-bar@2.3.5(@types/react@18.2.21)(react@18.2.0):
+    resolution: {integrity: sha512-3cqjOqg6s0XbOjWvmasmqHch+RLxIEk2r/70rzGXuz3iIGQsQheEQyqYCBb5EECoD01Vo2SIbDqW4paLeLTASw==}
     engines: {node: '>=10'}
     peerDependencies:
       '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -9142,7 +9142,7 @@ packages:
     dependencies:
       '@types/react': 18.2.21
       react: 18.2.0
-      react-remove-scroll-bar: 2.3.4(@types/react@18.2.21)(react@18.2.0)
+      react-remove-scroll-bar: 2.3.5(@types/react@18.2.21)(react@18.2.0)
       react-style-singleton: 2.2.1(@types/react@18.2.21)(react@18.2.0)
       tslib: 2.6.2
       use-callback-ref: 1.3.1(@types/react@18.2.21)(react@18.2.0)

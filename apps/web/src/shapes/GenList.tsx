@@ -1,8 +1,12 @@
 import {
-  Button,
-  Dialog,
   TLShapePartial,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
   getDefaultColorTheme,
   track,
   useEditor,
@@ -38,11 +42,11 @@ export const GenList = track(({ shape, onClose }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Generator items</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Generator items</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})} style={{ minWidth: 350 }}>
           <div>
             Item list. <br />
@@ -61,14 +65,14 @@ export const GenList = track(({ shape, onClose }: Props) => {
             style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button type="normal" onClick={update}>
+          <TldrawUiButton type="normal" onClick={update}>
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 });

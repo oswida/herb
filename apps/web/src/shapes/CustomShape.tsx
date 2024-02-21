@@ -73,7 +73,7 @@ const shapeProps: ShapeProps<ICustomShape> = {
   h: T.number,
   label: T.string,
   owner: T.string,
-  actionsUp: T.boolean,
+  actionsUp: T.optional(T.boolean),
 };
 
 export abstract class CustomShapeUtil<

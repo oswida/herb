@@ -1,11 +1,11 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapeId,
   TLShapePartial,
+  TldrawUiButton,
   createShapeId,
   track,
   uniqueId,
@@ -90,9 +90,9 @@ const RpgGenSettings = track(({ shape }: { shape: RpgGenShape }) => {
         title="Item separator - \n for newline"
         vtype="string"
       />
-      <Button type="normal" onPointerDown={editList}>
+      <TldrawUiButton type="normal" onPointerDown={editList}>
         Edit item list
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 });
@@ -142,9 +142,9 @@ const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
         {shape.props.label}
       </div>
       <div className={flexRowStyle({})}>
-        <Button type="icon" onPointerDown={() => mod(-1)}>
+        <TldrawUiButton type="icon" onPointerDown={() => mod(-1)}>
           <BiMinusCircle fill={shape.props.color} size={16} />
-        </Button>
+        </TldrawUiButton>
         <div
           style={{
             fontFamily: `var(--tl-font-${shape.props.font})`,
@@ -153,9 +153,9 @@ const RpgGenMain = track(({ shape }: { shape: RpgGenShape }) => {
         >
           {shape.props.count}
         </div>
-        <Button type="icon" onPointerDown={() => mod(1)}>
+        <TldrawUiButton type="icon" onPointerDown={() => mod(1)}>
           <BiPlusCircle fill={shape.props.color} size={16} />
-        </Button>
+        </TldrawUiButton>
       </div>
     </div>
   );
@@ -206,9 +206,9 @@ const RpgGenActions = ({ shape }: { shape: RpgGenShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button type="icon" title="Generate" onPointerDown={gen}>
+      <TldrawUiButton type="icon" title="Generate" onPointerDown={gen}>
         <FaRandom size={16} />
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };

@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- because */
-import type { Editor } from "@tldraw/tldraw";
-import { Button, Canvas, Tldraw } from "@tldraw/tldraw";
+import type { Editor, TLUiEventSource } from "@tldraw/tldraw";
+import {
+  DefaultMainMenu,
+  DefaultMainMenuContent,
+  Tldraw,
+  TldrawUi,
+  TldrawUiButton,
+  TldrawUiMenuGroup,
+  TldrawUiMenuItem,
+  TldrawUiMenuSubmenu,
+} from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
@@ -26,6 +35,8 @@ import {
 import { useUiOverride } from "../../hooks/useUiOverride";
 import { AssetList } from "../../component/AssetList";
 import {
+  MarkdownShapeTool,
+  MarkdownShapeUtil,
   RpgAttrShapeTool,
   RpgAttrShapeUtil,
   RpgCardStackShapeTool,
@@ -48,6 +59,7 @@ import { appPanelStyle } from "../../common";
 import { CustomSettings } from "../../component/CustomSettings";
 import { RpgDiceShapeUtil } from "../../shapes/DiceShape";
 import { RpgCardShapeUtil } from "../../shapes/CardShape";
+import { MainMenu } from "./MainMenu";
 
 const port = import.meta.env.DEV ? 5001 : window.location.port;
 const websockSchema = window.location.protocol === "https:" ? "wss" : "ws";
@@ -68,6 +80,7 @@ const customShapeUtils = [
   RpgAttrShapeUtil,
   RpgPbtaRollShapeUtil,
   RpgGenShapeUtil,
+  MarkdownShapeUtil,
 ];
 
 const customTools = [
@@ -78,6 +91,7 @@ const customTools = [
   RpgAttrShapeTool,
   RpgPbtaRollShapeTool,
   RpgGenShapeTool,
+  MarkdownShapeTool,
 ];
 
 const customIcons = {
@@ -176,7 +190,6 @@ export const DrawboardView = () => {
     return (
       <div className={drawBoardViewRoottyle}>
         <Tldraw autoFocus inferDarkMode hideUi>
-          <Canvas />
           <div
             className={appPanelStyle}
             style={{
@@ -192,9 +205,9 @@ export const DrawboardView = () => {
             }}
           >
             <h3>Room not found</h3>
-            <Button type="normal" onPointerDown={() => navigate("/")}>
+            <TldrawUiButton type="normal" onPointerDown={() => navigate("/")}>
               Main page
-            </Button>
+            </TldrawUiButton>
           </div>
         </Tldraw>
       </div>
@@ -220,6 +233,13 @@ export const DrawboardView = () => {
         ]}
         assetUrls={{ icons: customIcons }}
         components={{
+          MainMenu: () => (
+            <MainMenu
+              roomId={room ? room : ""}
+              baseUrl={UPLOAD_BASE_URL}
+              roomProvider={roomProvider}
+            />
+          ),
           OnTheCanvas: () => (
             <UserNotAlowed
               isUserAllowed={isUserAllowed}

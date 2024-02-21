@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import { VscRequestChanges } from "react-icons/vsc";
 import {
-  Button,
+  TldrawUiButton,
   getDefaultColorTheme,
   getUserPreferences,
   useDialogs,
@@ -227,7 +227,7 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
           alignItems: "center",
         }}
       >
-        <Button
+        <TldrawUiButton
           title="Roll"
           type="normal"
           onPointerDown={roll}
@@ -255,11 +255,15 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
           >
             {notation}
           </div>
-        </Button>
+        </TldrawUiButton>
 
-        <Button title="Custom roll" onPointerDown={rollCustom} type="normal">
+        <TldrawUiButton
+          title="Custom roll"
+          onPointerDown={rollCustom}
+          type="normal"
+        >
           <FaDiceD6 size={20} />
-        </Button>
+        </TldrawUiButton>
       </div>
 
       {/* Actions */}
@@ -270,47 +274,55 @@ export const DiceRollerSelector = ({ isOwner }: { isOwner: boolean }) => {
         }}
       >
         <div className={flexRowStyle({})} style={{ gap: "0px" }}>
-          <Button
+          <TldrawUiButton
             type="tool"
             title="Private roll"
             data-state={mPrivate ? "selected" : undefined}
             onPointerDown={() => setMPrivate(!mPrivate)}
           >
             <FaUserSecret size={16} />
-          </Button>
-          <Button
+          </TldrawUiButton>
+          <TldrawUiButton
             type="tool"
             title="With modifier"
             data-state={mMod ? "selected" : undefined}
             onPointerDown={() => setMMod(!mMod)}
           >
             <VscRequestChanges size={16} />
-          </Button>
-          <Button
+          </TldrawUiButton>
+          <TldrawUiButton
             type="tool"
             title="With comment"
             data-state={mComment ? "selected" : undefined}
             onPointerDown={() => setMComment(!mComment)}
           >
             <FaCommentDots size={16} />
-          </Button>
+          </TldrawUiButton>
         </div>
 
         <div className={flexRowStyle({})} style={{ gap: "0px" }}>
-          <Button
+          <TldrawUiButton
             type="normal"
             title="Switch dice type"
             onPointerDown={switchDice}
           >
             <FaDice size={18} />
-          </Button>
-          <Button type="normal" title="Reset pool" onPointerDown={reset}>
+          </TldrawUiButton>
+          <TldrawUiButton
+            type="normal"
+            title="Reset pool"
+            onPointerDown={reset}
+          >
             <FaReply size={16} />
-          </Button>
+          </TldrawUiButton>
           {isOwner && (
-            <Button title="Clear list" onPointerDown={clear} type="normal">
+            <TldrawUiButton
+              title="Clear list"
+              onPointerDown={clear}
+              type="normal"
+            >
               <FaTrashAlt size={16} />
-            </Button>
+            </TldrawUiButton>
           )}
         </div>
       </div>

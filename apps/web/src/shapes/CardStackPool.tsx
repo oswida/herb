@@ -1,9 +1,13 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLShapePartial,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   uniqueId,
   useEditor,
 } from "@tldraw/tldraw";
@@ -94,11 +98,11 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Card stack pool</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Card stack pool</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexRowStyle({})} style={{ alignItems: "start" }}>
           <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
             <div>Assets</div>
@@ -113,27 +117,31 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
               ))}
             </div>
             <div className={flexRowStyle({})}>
-              <Input
+              <TldrawUiInput
                 className="tlui-embed-dialog__input"
                 placeholder="Filter..."
                 defaultValue={filter}
                 onValueChange={(value) => setFilter(value)}
               />
-              <Button type="icon" onPointerDown={() => setFilter("")}>
+              <TldrawUiButton type="icon" onPointerDown={() => setFilter("")}>
                 <FaBackspace size={16} />
-              </Button>
+              </TldrawUiButton>
             </div>
             <div className={flexRowStyle({ justify: "center" })}>
-              <Button
+              <TldrawUiButton
                 type="icon"
                 onPointerDown={addAssets}
                 title="Add assets to pool"
               >
                 <FaArrowRight size={16} />
-              </Button>
-              <Button type="icon" onPointerDown={addAll} title="Add all">
+              </TldrawUiButton>
+              <TldrawUiButton
+                type="icon"
+                onPointerDown={addAll}
+                title="Add all"
+              >
                 <FaAlignRight size={16} />
-              </Button>
+              </TldrawUiButton>
             </div>
           </div>
           <div className={flexColumnStyle({})}>
@@ -149,31 +157,31 @@ export const CardStackPool = ({ shape, onClose }: Props) => {
               ))}
             </div>
             <div className={flexRowStyle({ justify: "center" })}>
-              <Button
+              <TldrawUiButton
                 type="icon"
                 onPointerDown={removeAssets}
                 title="Remove item"
               >
                 <FaArrowLeft size={16} />
-              </Button>
-              <Button
+              </TldrawUiButton>
+              <TldrawUiButton
                 type="icon"
                 onPointerDown={() => setPool([])}
                 title="Clear pool"
               >
                 <FaTrashAlt size={16} />
-              </Button>
+              </TldrawUiButton>
             </div>
           </div>
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button type="normal" onClick={update}>
+          <TldrawUiButton type="normal" onClick={update}>
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };

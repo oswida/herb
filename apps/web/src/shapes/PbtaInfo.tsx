@@ -1,8 +1,12 @@
 import {
-  Button,
-  Dialog,
   TLShapePartial,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
   getDefaultColorTheme,
   track,
   useEditor,
@@ -42,11 +46,11 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Pbta roll info</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Pbta roll info</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})} style={{ minWidth: 350 }}>
           <div>Trigger</div>
           <textarea
@@ -89,14 +93,14 @@ export const PbtaInfo = track(({ shape, onClose }: Props) => {
             style={{ color: theme.text, whiteSpace: "pre-wrap" }}
           />
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button type="normal" onClick={update}>
+          <TldrawUiButton type="normal" onClick={update}>
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 });

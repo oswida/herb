@@ -1,7 +1,7 @@
 import React from "react";
 import { flexRowStyle } from "../../common";
 import { BsCheckSquare, BsSquare } from "react-icons/bs";
-import { Button } from "@tldraw/tldraw";
+import { TldrawUiButton } from "@tldraw/tldraw";
 
 type CheckItemProps = {
   label: string;
@@ -12,10 +12,10 @@ type CheckItemProps = {
 export const CheckItem = ({ checked, label, setValue }: CheckItemProps) => {
   return (
     <div className={flexRowStyle({ justify: "start" })}>
-      <Button type="icon" onPointerDown={() => setValue(!checked)}>
+      <TldrawUiButton type="icon" onPointerDown={() => setValue(!checked)}>
         {checked && <BsCheckSquare />}
         {!checked && <BsSquare />}
-      </Button>
+      </TldrawUiButton>
       <div>{label}</div>
     </div>
   );

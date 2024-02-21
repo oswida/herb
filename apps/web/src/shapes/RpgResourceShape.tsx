@@ -1,9 +1,9 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
+  TldrawUiButton,
   track,
   useEditor,
 } from "@tldraw/tldraw";
@@ -216,23 +216,23 @@ const RpgResourceMain = track(({ shape }: { shape: RpgResourceShape }) => {
         className={flexRowStyle({ justify: "center" })}
         style={{ width: "100%", flexWrap: "nowrap", gap: 4 }}
       >
-        <Button
+        <TldrawUiButton
           type="icon"
           onPointerDown={() => mod(-1)}
           style={{ visibility: !isSelected ? "hidden" : undefined }}
         >
           <FaMinusCircle size={16} fill={shape.props.color} />
-        </Button>
+        </TldrawUiButton>
         {items.map((v, i) => (
           <div key={`res-${i}-${shape.id}`}>{dotShape(v)}</div>
         ))}
-        <Button
+        <TldrawUiButton
           type="icon"
           onPointerDown={() => mod(1)}
           style={{ visibility: !isSelected ? "hidden" : undefined }}
         >
           <FaPlusCircle size={16} fill={shape.props.color} />
-        </Button>
+        </TldrawUiButton>
       </div>
     </div>
   );

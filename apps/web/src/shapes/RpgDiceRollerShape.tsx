@@ -1,10 +1,10 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapeId,
+  TldrawUiButton,
   getDefaultColorTheme,
   getUserPreferences,
   track,
@@ -85,10 +85,14 @@ const RpgDiceRollerSettings = track(
           title="D6 dice as numbers"
           vtype="boolean"
         />
-        <Button type="normal" onPointerDown={selectPool} style={{ gap: 20 }}>
+        <TldrawUiButton
+          type="normal"
+          onPointerDown={selectPool}
+          style={{ gap: 20 }}
+        >
           <FaDice size={16} />
           <span>Select dice pool</span>
-        </Button>
+        </TldrawUiButton>
       </div>
     );
   }
@@ -255,12 +259,16 @@ const RpgDiceRollerActions = ({ shape }: { shape: RpgDiceRollerShape }) => {
       className={flexRowStyle({ justify: "center" })}
       style={{ flexWrap: "nowrap", gap: "2px" }}
     >
-      <Button type="icon" title="Roll" onPointerDown={insertDice}>
+      <TldrawUiButton type="icon" title="Roll" onPointerDown={insertDice}>
         <FaDice size={16} />
-      </Button>
-      <Button type="icon" title="Clean dice" onPointerDown={clearChildren}>
+      </TldrawUiButton>
+      <TldrawUiButton
+        type="icon"
+        title="Clean dice"
+        onPointerDown={clearChildren}
+      >
         <FaReplyAll size={16} />
-      </Button>
+      </TldrawUiButton>
     </div>
   );
 };

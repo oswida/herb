@@ -1,8 +1,11 @@
 import {
-  Button,
-  Dialog,
   TLInstancePresence,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
   useEditor,
 } from "@tldraw/tldraw";
 import { flexColumnStyle } from "../../common";
@@ -36,23 +39,23 @@ export const Follow = ({ onClose, roomProvider }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Follow user</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Follow user</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})} style={{ padding: "10px" }}>
           {users.map((usr) => (
-            <Button
+            <TldrawUiButton
               type="normal"
               key={usr.id}
               onPointerDown={() => follow(usr.userId)}
             >
               {usr.userName}
-            </Button>
+            </TldrawUiButton>
           ))}
         </div>
-      </Dialog.Body>
+      </TldrawUiDialogBody>
     </>
   );
 };

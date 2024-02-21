@@ -1,10 +1,10 @@
 import {
   BaseBoxShapeTool,
-  Button,
   ShapeProps,
   T,
   TLBaseShape,
   TLShapePartial,
+  TldrawUiButton,
   track,
   useEditor,
 } from "@tldraw/tldraw";
@@ -124,14 +124,14 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
             gap: 1,
           }}
         >
-          <Button
+          <TldrawUiButton
             type="icon"
             title="Increase"
             onPointerDown={() => inc(1)}
             style={{ visibility: !isSelected ? "hidden" : undefined }}
           >
             <FaPlusCircle size={16} fill={shape.props.color} />
-          </Button>
+          </TldrawUiButton>
           <svg
             height={shape.props.h - 80}
             width={shape.props.w}
@@ -150,22 +150,26 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
             </text>
           </svg>
 
-          <Button
+          <TldrawUiButton
             type="icon"
             title="Decrease"
             onPointerDown={() => inc(-1)}
             style={{ visibility: !isSelected ? "hidden" : undefined }}
           >
             <FaMinusCircle size={16} fill={shape.props.color} />
-          </Button>
+          </TldrawUiButton>
         </div>
       )}
       {!shape.props.actionsVertical && (
         <div className={flexRowStyle({ justify: "center" })}>
           {isSelected && (
-            <Button type="icon" title="Decrease" onPointerDown={() => inc(-1)}>
+            <TldrawUiButton
+              type="icon"
+              title="Decrease"
+              onPointerDown={() => inc(-1)}
+            >
               <FaMinusCircle size={16} fill={shape.props.color} />
-            </Button>
+            </TldrawUiButton>
           )}
           <svg
             height={shape.props.h}
@@ -185,9 +189,13 @@ const RpgAttrMain = track(({ shape }: { shape: RpgAttrShape }) => {
             </text>
           </svg>
           {isSelected && (
-            <Button type="icon" title="Increase" onPointerDown={() => inc(1)}>
+            <TldrawUiButton
+              type="icon"
+              title="Increase"
+              onPointerDown={() => inc(1)}
+            >
               <FaPlusCircle size={16} fill={shape.props.color} />
-            </Button>
+            </TldrawUiButton>
           )}
         </div>
       )}

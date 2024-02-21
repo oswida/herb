@@ -1,9 +1,13 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLShapePartial,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   useEditor,
 } from "@tldraw/tldraw";
 import React, { useMemo, useState } from "react";
@@ -50,11 +54,11 @@ export const CardStackBack = ({ shape, onClose }: Props) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Card stack back image</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Card stack back image</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})} style={{ minWidth: 250 }}>
           <div
             className={assetListStyle}
@@ -70,25 +74,25 @@ export const CardStackBack = ({ shape, onClose }: Props) => {
             ))}
           </div>
           <div className={flexRowStyle({})}>
-            <Input
+            <TldrawUiInput
               className="tlui-embed-dialog__input"
               placeholder="Filter..."
               defaultValue={filter}
               onValueChange={(value) => setFilter(value)}
             />
-            <Button type="icon" onPointerDown={() => setFilter("")}>
+            <TldrawUiButton type="icon" onPointerDown={() => setFilter("")}>
               <FaBackspace size={16} />
-            </Button>
+            </TldrawUiButton>
           </div>
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button type="normal" onClick={update}>
+          <TldrawUiButton type="normal" onClick={update}>
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };

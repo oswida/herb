@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { userNotAllowedStyle } from "./style.css";
-import { Button, Input, getUserPreferences } from "@tldraw/tldraw";
+import {
+  TldrawUiButton,
+  TldrawUiInput,
+  getUserPreferences,
+} from "@tldraw/tldraw";
 import { FaCopy } from "react-icons/fa";
 import { flexRowStyle } from "../../common";
 import useClipboard from "react-use-clipboard";
@@ -61,9 +65,13 @@ export const UserNotAlowed = ({
       <div>User</div>
       <div className={flexRowStyle({})}>
         <h3>{user.id}</h3>
-        <Button type="icon" title="Copy user ID" onPointerDown={userCopy}>
+        <TldrawUiButton
+          type="icon"
+          title="Copy user ID"
+          onPointerDown={userCopy}
+        >
           <FaCopy />
-        </Button>
+        </TldrawUiButton>
       </div>
       <div>
         need acceptance for room <b>{room}</b>
@@ -76,7 +84,7 @@ export const UserNotAlowed = ({
       )}
       <h3>Or alternatively you can login if you know the secret</h3>
       <div className={flexRowStyle({})}>
-        <Input
+        <TldrawUiInput
           className="tlui-embed-dialog__input"
           placeholder=""
           autofocus
@@ -84,9 +92,9 @@ export const UserNotAlowed = ({
             setSecret(value);
           }}
         />
-        <Button type="normal" onPointerDown={doLogin}>
+        <TldrawUiButton type="normal" onPointerDown={doLogin}>
           Authenticate
-        </Button>
+        </TldrawUiButton>
       </div>
     </div>
   );

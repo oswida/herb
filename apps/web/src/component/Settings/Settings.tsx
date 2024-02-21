@@ -1,8 +1,12 @@
 import {
-  Button,
-  Dialog,
-  Input,
   TLUiDialogProps,
+  TldrawUiButton,
+  TldrawUiDialogBody,
+  TldrawUiDialogCloseButton,
+  TldrawUiDialogFooter,
+  TldrawUiDialogHeader,
+  TldrawUiDialogTitle,
+  TldrawUiInput,
   getUserPreferences,
   setUserPreferences,
 } from "@tldraw/tldraw";
@@ -22,14 +26,14 @@ export const Settings = (props: TLUiDialogProps) => {
 
   return (
     <>
-      <Dialog.Header>
-        <Dialog.Title>Settings</Dialog.Title>
-        <Dialog.CloseButton />
-      </Dialog.Header>
-      <Dialog.Body>
+      <TldrawUiDialogHeader>
+        <TldrawUiDialogTitle>Settings</TldrawUiDialogTitle>
+        <TldrawUiDialogCloseButton />
+      </TldrawUiDialogHeader>
+      <TldrawUiDialogBody>
         <div className={flexColumnStyle({})}>
           <div>Name</div>
-          <Input
+          <TldrawUiInput
             className="tlui-embed-dialog__input"
             placeholder=""
             defaultValue={user.name !== null ? user.name : ""}
@@ -46,14 +50,14 @@ export const Settings = (props: TLUiDialogProps) => {
             onChange={(color) => setColor(color.hex)}
           />
         </div>
-      </Dialog.Body>
-      <Dialog.Footer>
+      </TldrawUiDialogBody>
+      <TldrawUiDialogFooter>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button onPointerDown={update} type="normal">
+          <TldrawUiButton onPointerDown={update} type="normal">
             Save
-          </Button>
+          </TldrawUiButton>
         </div>
-      </Dialog.Footer>
+      </TldrawUiDialogFooter>
     </>
   );
 };
