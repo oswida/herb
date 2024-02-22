@@ -49,7 +49,7 @@ export const RollResultItem = (props: Props) => {
           <div
             className={diceValueStyle}
             style={{
-              backgroundColor: `${theme.text}11`,
+              backgroundColor: `${theme.grey.semi}`,
               border: `dotted 1px var(--color-accent)`,
             }}
           >
@@ -70,7 +70,7 @@ export const RollResultItem = (props: Props) => {
                 <div
                   className={diceValueStyle}
                   style={{
-                    backgroundColor: `${theme.text}22`,
+                    backgroundColor: `${theme.grey.semi}`,
                     borderBottom: `${minmaxBorder(r)}`,
                   }}
                   key={`r${idx}-${ridx}`}

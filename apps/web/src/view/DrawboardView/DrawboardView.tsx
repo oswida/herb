@@ -261,7 +261,7 @@ export const DrawboardView = () => {
                 blockedList={blockedList}
                 changeSecret={changeSecret}
               />
-              <DiceRollerPanel isOwner={isOwner} />
+              <DiceRollerPanel isOwner={isOwner} roomProvider={roomProvider} />
               <AssetList roomId={room ?? ""} />
               <CustomSettings />
             </>

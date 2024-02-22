@@ -1,4 +1,5 @@
 import {
+  TLInstancePresence,
   getUserPreferences,
   stopEventPropagation,
   track,
@@ -12,14 +13,33 @@ import { DiceRollerSelector } from "./DiceRollerSelector";
 import React, { useEffect, useMemo, useRef } from "react";
 import { DiceRollerItem } from "./DiceRollerItem";
 import { rollNotationWithResults } from "../../common";
+import { WebsocketProvider } from "y-websocket";
 
-export const DiceRollerPanel = track(({ isOwner }: { isOwner: boolean }) => {
+type Props = {
+  isOwner: boolean;
+  roomProvider: WebsocketProvider;
+};
+
+export const DiceRollerPanel = track(({ isOwner, roomProvider }: Props) => {
   const visible = useAtomValue(diceRollerVisible);
   const editor = useEditor();
   const { chatList } = useChat(editor);
   const user = getUserPreferences();
   const ref = useRef<HTMLDivElement>(null);
   const setAnimatedRoll = useSetAtom(animatedRollNotation);
+
+  const users = useMemo(() => {
+    const retv: Record<string, TLInstancePresence> = {};
+    if (!roomProvider || !roomProvider.awareness) return retv;
+    const states = roomProvider.awareness.getStates() as Map<
+      number,
+      { presence: TLInstancePresence }
+    >;
+    states.forEach((it) => {
+      if (it && it.presence) retv[it.presence.userId] = it.presence;
+    });
+    return retv;
+  }, [roomProvider]);
 
   const list = useMemo(() => {
     return Object.values(chatList).filter(
@@ -52,7 +72,7 @@ export const DiceRollerPanel = track(({ isOwner }: { isOwner: boolean }) => {
             onWheelCapture={stopEventPropagation}
           >
             {list?.map((it) => (
-              <DiceRollerItem item={it} key={it.id} />
+              <DiceRollerItem item={it} key={it.id} users={users} />
             ))}
             <div ref={ref}></div>
           </div>

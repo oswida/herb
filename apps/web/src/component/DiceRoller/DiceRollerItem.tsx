@@ -1,23 +1,19 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { diceRollerItemStyle } from "./style.css";
-import { ChatMsg, flexRowStyle, roomPresence } from "../../common";
+import { ChatMsg, flexRowStyle } from "../../common";
 import { FaUserSecret } from "react-icons/fa";
-import { getDefaultColorTheme, useEditor } from "@tldraw/tldraw";
+import { TLInstancePresence, useEditor } from "@tldraw/tldraw";
 import { useChat } from "../../hooks";
 import { RollResultItem } from "./RollResultItem";
-import { useAtomValue } from "jotai";
 
 type Props = {
   item: ChatMsg;
+  users: Record<string, TLInstancePresence>;
 };
 
 export const DiceRollerItem = (props: Props) => {
   const editor = useEditor();
   const { updateChatMessage } = useChat(editor);
-  const rp = useAtomValue(roomPresence);
-  const theme = getDefaultColorTheme({
-    isDarkMode: editor.user.getIsDarkMode(),
-  });
 
   const reveal = () => {
     props.item.priv = false;
@@ -26,10 +22,10 @@ export const DiceRollerItem = (props: Props) => {
 
   const userColor = useCallback(
     (id: string) => {
-      if (!rp[id]) return theme.text;
-      return rp[id].color;
+      if (!props.users || !props.users[id]) return "var(--color-text)";
+      return props.users[id].color;
     },
-    [props.item]
+    [props.users]
   );
 
   return (

@@ -2,6 +2,8 @@ import {
   DefaultMainMenu,
   DefaultMainMenuContent,
   TLUiEventSource,
+  TldrawUiDropdownMenuIndicator,
+  TldrawUiMenuGroup,
   TldrawUiMenuItem,
   TldrawUiMenuSubmenu,
   useDefaultHelpers,
@@ -31,49 +33,54 @@ export const MainMenu = ({ roomId, baseUrl, roomProvider }: Props) => {
   return (
     <DefaultMainMenu>
       <DefaultMainMenuContent />
-      <TldrawUiMenuSubmenu id="upload-other" label="Upload Other">
+      <TldrawUiMenuGroup id="rpg-group">
+        <TldrawUiMenuSubmenu id="upload-other" label="Upload">
+          <TldrawUiMenuItem
+            id="upload-pdf"
+            label="PDF Document"
+            onSelect={function (source: TLUiEventSource): void | Promise<void> {
+              insertPdf();
+            }}
+          />
+          <TldrawUiMenuItem
+            id="upload-markdown"
+            label="Markdown File"
+            onSelect={function (source: TLUiEventSource): void | Promise<void> {
+              insertHandout();
+            }}
+          />
+        </TldrawUiMenuSubmenu>
+        <TldrawUiMenuSubmenu id="backup" label="Backup">
+          <TldrawUiMenuItem
+            id="backup-page"
+            label="Backup Page"
+            onSelect={function (source: TLUiEventSource): void | Promise<void> {
+              backupPage();
+            }}
+          />
+          <TldrawUiMenuItem
+            id="upload-json"
+            label="Restore JSON Data"
+            onSelect={function (source: TLUiEventSource): void | Promise<void> {
+              insertJson();
+            }}
+          />
+        </TldrawUiMenuSubmenu>
+
         <TldrawUiMenuItem
-          id="upload-pdf"
-          label="PDF Document"
+          id="follow-user"
+          label="Follow User"
           onSelect={function (source: TLUiEventSource): void | Promise<void> {
-            insertPdf();
+            addDialog({
+              id: "follow-user-dialog",
+              component: () => (
+                <Follow onClose={() => {}} roomProvider={roomProvider} />
+              ),
+              onClose: () => {},
+            });
           }}
         />
-        <TldrawUiMenuItem
-          id="upload-markdown"
-          label="Markdown File"
-          onSelect={function (source: TLUiEventSource): void | Promise<void> {
-            insertHandout();
-          }}
-        />
-        <TldrawUiMenuItem
-          id="upload-json"
-          label="Restore JSON"
-          onSelect={function (source: TLUiEventSource): void | Promise<void> {
-            insertJson();
-          }}
-        />
-      </TldrawUiMenuSubmenu>
-      <TldrawUiMenuItem
-        id="backup-page"
-        label="Backup Page"
-        onSelect={function (source: TLUiEventSource): void | Promise<void> {
-          backupPage();
-        }}
-      />
-      <TldrawUiMenuItem
-        id="follow-user"
-        label="Follow User"
-        onSelect={function (source: TLUiEventSource): void | Promise<void> {
-          addDialog({
-            id: "follow-user-dialog",
-            component: () => (
-              <Follow onClose={() => {}} roomProvider={roomProvider} />
-            ),
-            onClose: () => {},
-          });
-        }}
-      />
+      </TldrawUiMenuGroup>
     </DefaultMainMenu>
   );
 };
